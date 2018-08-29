@@ -6,7 +6,7 @@ const Linking = ({user_code, verification_uri}) => (
     <h1>Linking</h1>
     <h2>Log in with {user_code}</h2>
     {verification_uri &&
-    <a href={verification_uri}>{verification_uri}</a>
+    <a href={verification_uri} target="_blank">{verification_uri}</a>
     }
   </div>
 )

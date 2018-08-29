@@ -14,13 +14,13 @@ const client = axios.create({
 export const getCode = () => {
   return client.post('create/codepair', {
     response_type: 'device_code',
-    client_id: CONFIG.client_id,
-    scope: 'amazon_music:access',
+    client_id: CONFIG.linking.client_id,
+    scope: CONFIG.linking.scope,
     scope_data: {
-      'amazon_music:access': {
+      [CONFIG.linking.scope]: {
         productID: 'AmazonX1',
         productInstanceAttributes: {
-          deviceSerialNumber: CONFIG.serial_number
+          deviceSerialNumber: CONFIG.linking.serial_number
         }
       }
     }
@@ -39,7 +39,14 @@ const poll = (device_code, user_code) => {
 
 class Poller {
   static default_interval = 3000
-
+  cancel() {
+    if(this.polling) clearInterval(this.polling)
+    if(this.reject) this.reject({
+      error: 'canceled',
+      error_description: 'polling has been canceled'
+    })
+    this.reject = null
+  }
   getPollResult ({device_code, expires_in, user_code}) {
     if (this.polling) clearInterval(this.polling)
     this.interval = Poller.default_interval
@@ -47,13 +54,14 @@ class Poller {
       this.reject = reject
       this.polling = setInterval(() => {
         poll(device_code, user_code)
-          .then(resolve)
+          .then(payload => {
+            this.reject = null
+            return payload
+          })
           .catch(({error}) => {
             switch(error) {
               case 'authorization_pending':
-                return true
-              case 'slow_down':
-                this.interval += Poller.default_interval
+              case 'slow_down': // Need to figure out how to manage this.
                 return true
               default:
                 console.error('Error with polling, cancel and restart')
@@ -69,4 +77,8 @@ class Poller {
 export const poller = new Poller()
 export const pollForCode = (config) => {
   return poller.getPollResult(config)
+}
+
+export const cancelPoller = () => {
+  poller.cancel()
 }
