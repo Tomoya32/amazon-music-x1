@@ -2,6 +2,7 @@ export const LINKING_FETCHING_CODE = 'LINKING/LINKING_FETCHING_CODE'
 export const LINKING_FETCHING_CODE_FAILED = 'LINKING/LINKING_FETCHING_CODE_FAILED'
 export const LINKING_FETCHING_CODE_SUCCESS = 'LINKING/LINKING_FETCHING_CODE_SUCCESS'
 export const LINKING_POLL_FOR_CODE = 'LINKING/POLL_FOR_CODE'
+export const LINKING_ERROR = 'LINKING/LINKING_ERROR'
 
 
 const requestState = {
@@ -28,6 +29,8 @@ export default function authReducer(state = initialState, action) {
       return Object.assign({}, state, action.payload)
     case LINKING_FETCHING_CODE_FAILED:
       return Object.assign({}, state, {error_message: action.message})
+    case LINKING_ERROR:
+      return Object.assign({}, state, {error_message: 'linking failed'})
     default:
       return state
   }

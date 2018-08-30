@@ -4,13 +4,16 @@ const initialState = {
   access_token: null,
   refresh_token: null,
   token_type: 'bearer',
-  expires_in: null
+  expires_in: null,
+  expires_at: null
 }
 
 export default function authReducer(state = initialState, action) {
   switch(action.type) {
     case SET_AUTH_DATA:
-      return action.payload
+      const expires_at = new Date()
+      expires_at.setSeconds(expires_at.getSeconds() + action.payload.expires_in)
+      return Object.assign(action.payload, {expires_at})
     default:
       return state
   }

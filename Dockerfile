@@ -1,0 +1,14 @@
+FROM node:9 as builder
+RUN mkdir /amazonmusic-x1
+WORKDIR /amazonmusic-x1
+COPY . .
+
+RUN yarn
+RUN yarn build
+
+# Copy built app into nginx container
+FROM nginx:1.15.0
+COPY --from=builder /amazonmusic-x1/build /usr/share/nginx/html
+COPY --from=builder /amazonmusic-x1/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
