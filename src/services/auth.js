@@ -34,69 +34,58 @@ class Poller {
   static default_interval = 3000
 
   cancel () {
-    if (this.polling) clearInterval(this.polling)
     if (this.reject) this.reject({
       error: 'canceled',
       error_description: 'polling has been canceled'
     })
+    this.donePolling()
+  }
+
+  donePolling(error = false) {
+    console.info(`ending poll loop due to ${error ? 'error':'success'}`)
+    clearTimeout(this.polling)
     this.reject = null
+    this.pollrequest = null
   }
 
-  pollLoop (fun, interval, resolve, reject) {
-    this.polling = clearInterval(this.polling)
-    this.polling = setInterval(() => {
-      fun(resolve, reject)
-    }, interval)
-  }
-
-  poll (device_code, user_code, resolve, reject) {
+  poll (device_code, user_code, interval, resolve, reject) {
+    console.info('polling', interval)
     return client.post('token', {
       device_code, user_code,
       grant_type: 'device_code'
     })
       .then(response => {
-        const {data} = response
-        resolve(data)
+        resolve(response.data)
+        this.donePolling()
         return 'resolved'
       })
       .catch(error => {
         const {data} = error.response
         switch (data.error) {
-          case 'authorization_pending':
           case 'slow_down': // Need to figure out how to manage this.
-            return data
+            interval += interval
+          case 'authorization_pending':
+            clearTimeout(this.polling) // don't stack these
+            this.polling = setTimeout(() => {
+              this.poll(device_code, user_code, interval, resolve, reject)
+            }, 3000) // Switch this to use internval
+            break
           default:
             console.error('Error with polling, cancel and (maybe) restart')
-            reject(error)
+            this.donePolling(true)
+            this.reject(error)
         }
       })
   }
 
   getPollResult ({device_code, expires_in, user_code, interval = Poller.default_interval}) {
-    if (this.polling) clearInterval(this.polling)
-    this.interval = interval
     return new Promise((resolve, reject) => {
       this.reject = reject
-      this.polling = setInterval(() => {
-        console.info('poll loop', this.interval)
-        // See results and info at
-        // https://developer.amazon.com/docs/alexa-voice-service/code-based-linking-other-platforms.html
-        if (this.pollrequest) return this.pollrequest // Don't stack responses.
-        this.pollrequest = this.poll(device_code, user_code, resolve, reject)
-          .then((data) => {
-            switch (data.error) {
-              case  'authorization_pending':
-              case 'slow_down':
-                console.info('looping')
-                break
-              default:
-                console.info('ending poll loop ',  data)
-                this.reject = null
-                clearInterval(this.polling)
-                this.pollrequest = null
-            }
-          })
-      }, 3000)
+      // See results and info at
+      // https://developer.amazon.com/docs/alexa-voice-service/code-based-linking-other-platforms.html
+      if (this.pollrequest) return this.pollrequest // Don't stack responses.
+      this.reject = reject // used for canceling
+      this.pollrequest = this.poll(device_code, user_code, interval, resolve, reject)
     })
   }
 }
