@@ -1,0 +1,11 @@
+.HorinzontalLoadingMenuWrapper {
+    height: 150px;
+    width: 100000px;
+    background: cornflowerblue;
+}
+.HomeMenuHorizontalLoadingMenu {
+    margin: 0;
+}
+.HorinzontalLoadingMenuWrapper.focused {
+    background: yellowgreen;
+}

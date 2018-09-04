@@ -1,0 +1,2 @@
+import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenuContainer'
+export default HomeMenuHorizontalLoadingMenu

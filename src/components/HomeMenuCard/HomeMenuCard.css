@@ -1,0 +1,23 @@
+.HomeMenuCard {
+    display: inline-block;
+    height: 150px;
+    color: white;
+    font-size: 1em;
+    padding: 10px;
+    text-align: center;
+    width: 300px;
+    display: inline-block;
+    float: left;
+    box-sizing: content-box;
+    margin-top: 0;
+    margin-left: 0;
+}
+.HomeMenuCard > img  {
+    float: left;
+    margin-right: 10px;
+}
+.HomeMenuCard.focused {
+    height: 160px; width: 310px;
+    margin-top: -15px; margin-left: -10px;
+    background: cornflowerblue;
+}

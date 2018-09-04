@@ -1,14 +1,26 @@
-import React, { Component } from 'react';
-import './Home.css';
+import React from 'react'
+import VerticalTextMenu from '../../components/VerticalTextMenu'
+import HomeMenu from '../../components/HomeMenu'
+import ListMenu from '../../lib/reactv-redux/ListMenuRedux'
 
-class Home extends Component {
-  render() {
+
+const renderMenu = ({item, focused}) => (
+  <HomeMenu itemDescription={item} menuid={`homevert:${item.itemLabel}`} focused={focused}/>
+)
+
+const Home = ({itemDescriptions, topNav}) => {
+  if (itemDescriptions && itemDescriptions.length) {
     return (
-      <div className="Home">
-        <h1>Home Page</h1>
+      <div>
+        <VerticalTextMenu items={topNav} menuid={`home:topnav`} />
+        <div>
+          <ListMenu data={itemDescriptions} renderItem={renderMenu} menuid={'homevert'} focused />
+        </div>
       </div>
-    );
+    )
+  } else {
+    return null
   }
 }
 
-export default Home;
+export default Home

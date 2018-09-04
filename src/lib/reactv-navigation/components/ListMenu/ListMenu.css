@@ -1,0 +1,9 @@
+.ListMenu {
+    width: 1000000px;
+    margin: 2em 0;
+    height: 150px;
+}
+
+.ListMenu.horizontal > * {
+    display: inline-block;
+}

@@ -1,0 +1,8 @@
+.VerticalTextMenu {
+    width: 100000px;
+    height: 40px;
+}
+
+.VerticalTextMenu > div {
+    display: inline-block;
+}

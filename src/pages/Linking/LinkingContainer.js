@@ -2,19 +2,19 @@ import React, { Component } from 'react'
 import Linking from './Linking'
 import { connect } from 'react-redux'
 import { getCode } from '../../store/modules/linking'
+import {cancelPoller} from '../../services/auth'
 
-const mapStateToProps = ({linking: {user_code, verification_uri}}) => (
-  {
+const mapStateToProps = ({linking: {user_code, verification_uri}}) => ({
     user_code, verification_uri
   }
 )
 
 const mapDispatchToProps = {getCode}
 class LinkingContainer extends Component {
-  componentDidMount () {
-    this.props.getCode()
-  }
 
+  componentWillUnmount() {
+    cancelPoller()
+  }
   render () {
     const {verification_uri, user_code} = this.props
     return (
