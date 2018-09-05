@@ -1,5 +1,5 @@
 import React,{Component} from 'react'
-import Catalog from './CatalogDataContainer'
+import Catalog from './Catalog'
 import {connect} from 'react-redux'
 import {loadChildNode} from '../../store/modules/music'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
@@ -49,7 +49,16 @@ class CatalogContainer extends Component {
 
   render () {
     if(typeof(this.props.data) === 'object') {
-      return <Catalog {...this.props.data} location={this.props.location} kid={this.props.location.pathname + this.props.location.hash} onSelect={this.handleSelection.bind(this)} />
+      const {data:{itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result}, location: {hash}} = this.props
+      const currentNavigationNode = hash || result
+      let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
+      desc.summaryData = navigationNodeSummaries[noha(desc.summary)]
+      desc.itemsData = desc.items.map(item => {
+        let itemDesc = itemDescriptions[noha(item)]
+        itemDesc.ref = item
+        return itemDesc
+      })
+      return <Catalog {...desc} kid={this.props.location.pathname + this.props.location.hash} onSelect={this.handleSelection.bind(this)} />
     } else {
       return null
     }
