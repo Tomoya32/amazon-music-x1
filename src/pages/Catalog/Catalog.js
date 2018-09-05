@@ -6,7 +6,7 @@ const Catalog = ({kid, onSelect, image, itemsData, summary: {title}}) => (
   <div className='Catalog Page'>
     <div className={'CatalogInfo'}>
       {title && <h1>{title}</h1>}
-      {image && (<img src={image.uri} />)}
+      {image && (<img src={image.uri} alt={title || ''} />)}
     </div>
     <div className={'CatalogMenu'}>
       <PlaylistMenu menuid={`catalogmenu:${kid}`} data={itemsData} focused onClick={onSelect}/>

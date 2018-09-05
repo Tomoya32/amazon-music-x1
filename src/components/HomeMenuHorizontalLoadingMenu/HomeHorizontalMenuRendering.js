@@ -15,7 +15,7 @@ class HomeHorizontalMenuRendering extends Component {
   handleClick(item) {
     console.info(`Loading Item`, item)
     if(!item.playable) {
-      const {navigationNodeSummaries, replace, itemDescriptions} = this.props
+      const {navigationNodeSummaries, replace} = this.props
       const summary = navigationNodeSummaries[noha(item.navigationNodeSummary)]
       const path = this.props.path.replace(/#[^$]*/,'')
       if(summary) {

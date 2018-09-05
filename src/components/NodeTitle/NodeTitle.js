@@ -5,7 +5,7 @@ const NodeTitle = ({itemLabel, image, subtitle}) => (
   <div className='NodeTitle'>
     <h1>{itemLabel}</h1>
     {subtitle &&  (<h2>{subtitle}</h2>)}
-    {image  ? <img src={image.uri} height={300} width={300} /> : null }
+    {image  ? <img src={image.uri} height={300} width={300} alt={itemLabel} /> : null }
   </div>
 )
 

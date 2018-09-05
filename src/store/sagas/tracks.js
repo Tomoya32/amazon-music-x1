@@ -1,7 +1,6 @@
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
 import API from '../../services/music'
 import {LOAD_TRACK, ADD_TRACK} from '../modules/tracks'
-import { LOAD_CHILD_NODE, LOAD_CURRENT_NODE } from '../modules/music'
 
 const getData = state => state.tracks.tracks
 

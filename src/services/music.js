@@ -16,6 +16,7 @@ const API = {
   request: (path, method) => {
     if (API.cache[path]) return API.cache[path]
     path = path.replace(/\/?$/, '/');
+    console.info('requesting ', path, method)
     return client[method.toLowerCase()](path)
       .then(response => {
         const {data} = response

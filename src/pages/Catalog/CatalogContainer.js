@@ -37,8 +37,8 @@ class CatalogContainer extends Component {
       const item = itemDescriptions[noha(selected.ref)]
       const playable = playables[noha(item.playable)]
       let dest = ru(playable.self)
-      dest = dest.replace(/.*\/\/[^\/]*/, '').replace(/^\/list\//,'/playback/')
-      debugger
+      dest = dest.replace(/.*\/\/[^/]*/, '')
+          .replace(/^\/list\//,'/playback/')
       this.props.replace(dest)
     } else {
       const {navigationNodeSummaries} = this.props.data

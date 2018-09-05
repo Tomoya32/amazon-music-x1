@@ -1,4 +1,3 @@
-import errorx from 'error-ex'
 import parseMs from 'parse-ms'
 import addZero from 'add-zero'
 import debugWrapper from 'debug'
