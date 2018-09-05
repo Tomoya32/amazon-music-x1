@@ -9,30 +9,21 @@ import {noha} from '../../lib/utils'
 
 const keys = new KeyEvents()
 
-const getCachedData = (state, props) => {
-  const key = props.match.params.node
-  const cached = state.music.nodes[key]
-  return cached ?  cached : key
+const getCachedData = (state) => {
+  let key = state.router.location.pathname.replace(/^\/list/, '')
+  key = key === '' ? '/' : key
+  return state.music.nodes[key]
 }
 
-const mapStateToProps = (state, props) => ({
-  data: getCachedData(state, props),
-  key: props.location.pathname + props.location.hash
+const mapStateToProps = (state) => ({
+  data: getCachedData(state),
 })
 
 const mapDispatchToProps = {loadChildNode, replace, back}
 
 class CatalogContainer extends Component {
   componentDidMount() {
-    if(typeof this.props.data === 'string') {
-      this.props.loadChildNode(this.props.data)
-    }
     this._unsubBack = keys.subscribeTo('Back', () => this.handleBack() )
-  }
-  componentDidUpdate() {
-    if(typeof this.props.data === 'string') {
-      this.props.loadChildNode(this.props.data)
-    }
   }
   componentWillUnmount() {
     if(this._unsubBack) this._unsubBack.unsubscribe()

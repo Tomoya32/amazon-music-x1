@@ -1,10 +1,12 @@
-import { call, put, takeLatest, takeEvery } from 'redux-saga/effects'
+import { call, put, takeLatest, takeEvery, select } from 'redux-saga/effects'
 import API from '../../services/music'
 import {
   LOAD_CURRENT_NODE, PUSH_CURRENT_NAVIGATION_NODE, LOAD_CHILD_NODE, ADD_CHILD_NODE
 } from '../modules/music'
 import { SET_AUTH_DATA } from '../modules/auth'
 
+
+const getData = state => state.music.nodes
 // Dealing with some circular dependencies here.
 
 function * loadNodeForRoute (action) {
@@ -36,7 +38,13 @@ function * trackAccessToken (action) {
 function * registerPathChange (action) {
   try {
     const {pathname} = action.payload.location
-    if (API.loggedIn() && /^\/?music(\/|$)/.test(pathname)) { // TODO: Need a mechanism for managing these
+    if (API.loggedIn() && /^\/?list(\/|$)/.test(pathname)) {
+      let key = action.payload.location.pathname.replace(/^\/list/, '')
+      key = key.trim() === '' ?  '/' : key
+      const data = yield select(getData)
+      if(!data[key]) yield put({type: LOAD_CHILD_NODE, path: key})
+      // TODO: Handle loading data here....
+    } else if (API.loggedIn() && /^\/?music(\/|$)/.test(pathname)) { // TODO: Need a mechanism for managing these
       console.info('registered path change in music')
       yield(put({type: LOAD_CURRENT_NODE, payload: pathname.replace(/(^\/?music(\/|$))/, '')}))
     }
