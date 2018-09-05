@@ -3,7 +3,7 @@ import TrackInfo from '../../components/TrackInfo'
 import './Playback.css'
 
 const Playback = ({...props}) => (
-  <div className='Playback Page'>
+  <div className='Playback Page' style={{backgroundImage: `url(${props.image.uri})`, backgroundSize: 'cover' }}>
     <TrackInfo {...props} />
   </div>
 )

@@ -40,7 +40,6 @@ class CatalogContainer extends Component {
       let dest = ru(uj(pathname, playable.self))
       dest = dest.replace(/.*\/\/[^/]*/, '')
           .replace(/^\/list\//,'/playback/')
-      debugger
       this.props.replace(dest)
     } else {
       const {navigationNodeSummaries} = this.props.data

@@ -17,7 +17,7 @@ const addTrack = (state, track, requestPath, responsePath) => {
   track.responsePath = responsePath || requestPath
   newState.tracks[requestPath] = track
   newState.instanceIndex[requestPath] = 0
-  newState.pathResolvers[responsePath] = requestPath
+  newState.pathResolvers[requestPath] = responsePath
   return newState
 }
 

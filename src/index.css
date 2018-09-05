@@ -12,3 +12,16 @@ body {
   overflow: hidden;
   position: relative;
 }
+
+h1 {
+  font-size: 1.6em;
+  font-weight: normal;
+}
+h2 {
+  font-size: 1.3em;
+  font-weight: normal;
+}
+h3 {
+  font-size: 1.1em;
+  font-weight: normal;
+}

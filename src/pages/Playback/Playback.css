@@ -2,6 +2,15 @@
   text-align: center;
 }
 
+.Playback::before {
+  content: ' ';
+  display: block;
+  width: 1280px;
+  height: 720px;
+  position: absolute;
+  top: 0; left: 0;
+  background: rgba(0,0,0,0.7)
+}
 .Playback-logo {
   animation: Playback-logo-spin infinite 20s linear;
   height: 80px;

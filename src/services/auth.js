@@ -115,7 +115,7 @@ const refresh = (refresh_token, wait) => {
   return client.post(`${PAIRING_ENDPOINT}token`, qs.stringify({
     refresh_token,
     grant_type: 'refresh_token',
-    client_id: CONFIG.linking.client_id
+    // client_id: CONFIG.linking.client_id
   }), {
     transformRequest: [(data, headers) => {
       delete headers.common.Authorization
