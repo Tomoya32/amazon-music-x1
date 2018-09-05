@@ -15,8 +15,6 @@ const client = axios.create({
   }
 })
 
-
-
 export const getCode = () => {
   return client.post('create/codepair', qs.stringify({
     response_type: 'device_code',
@@ -34,7 +32,6 @@ export const getCode = () => {
     .then(({data}) => data)
 }
 
-
 export const storeAuthData = (data) => {
   return new Promise((resolve, reject) => {
     Cookie.set('amzn_music_auth', data)
@@ -47,6 +44,7 @@ export const getAuthData = () => {
     resolve(data)
   })
 }
+
 class Poller {
   static default_interval = 3000
 
@@ -58,8 +56,8 @@ class Poller {
     this.donePolling()
   }
 
-  donePolling(error = false) {
-    console.info(`ending poll loop due to ${error ? 'error':'success'}`)
+  donePolling (error = false) {
+    console.info(`ending poll loop due to ${error ? 'error' : 'success'}`)
     clearTimeout(this.polling)
     this.reject = null
     this.pollrequest = null
@@ -81,7 +79,7 @@ class Poller {
         switch (data.error) {
           case 'slow_down': // Need to figure out how to manage this.
             interval += interval
-            // falls through
+          // falls through
           case 'authorization_pending':
             clearTimeout(this.polling) // don't stack these
             this.polling = setTimeout(() => {
@@ -95,7 +93,6 @@ class Poller {
         }
       })
   }
-
 
   getPollResult ({device_code, expires_in, user_code, interval = Poller.default_interval}) {
     return new Promise((resolve, reject) => {
@@ -115,21 +112,25 @@ export const pollForCode = (config) => {
 }
 
 const refresh = (refresh_token, wait) => {
-  return client.post('token', qs.stringify({
+  return client.post(`${PAIRING_ENDPOINT}token`, qs.stringify({
     refresh_token,
     grant_type: 'refresh_token',
     client_id: CONFIG.linking.client_id
-  }))
+  }), {
+    transformRequest: [(data, headers) => {
+      delete headers.common.Authorization
+      return data
+    }],
+  })
     .then(response => {
       return response.data
     })
 }
 
 export const refreshToken = ({refresh_token, expires_in}, force = false) => {
-  const wait = force ? 0 : (expires_in - 100) * 1000
+  const wait = force ? 0 : (expires_in - 100)
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-
       refresh(refresh_token)
         .then(resolve)
         .catch(reject)

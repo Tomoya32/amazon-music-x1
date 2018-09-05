@@ -67,11 +67,7 @@ function* registerPathChange (action) {
       const authData = yield call(getAuthData)
       if(authData) {
         console.info("got auth data, trying token")
-        // const payload = yield call(refreshToken, authData, true)
         yield put({type: SET_AUTH_DATA, payload: authData})
-        // console.info("got payload data, trying token")
-        // if(payload) yield put({type: SET_AUTH_DATA, payload})
-        // else yield put({type:  LINKING_FETCHING_CODE})
       } else {
         yield put({type:  LINKING_FETCHING_CODE})
       }

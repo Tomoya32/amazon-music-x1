@@ -6,6 +6,7 @@ import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import {replace, back} from '../../store/modules/nav'
 import uj from 'url-join'
 import {noha} from '../../lib/utils'
+import ru from 'resolve-url'
 
 const keys = new KeyEvents()
 
@@ -18,6 +19,7 @@ const getCachedData = (state) => {
 const mapStateToProps = (state) => ({
   data: getCachedData(state),
 })
+
 
 const mapDispatchToProps = {loadChildNode, replace, back}
 
@@ -34,7 +36,10 @@ class CatalogContainer extends Component {
       const {playables, itemDescriptions} = this.props.data
       const item = itemDescriptions[noha(selected.ref)]
       const playable = playables[noha(item.playable)]
-      this.props.replace(uj('/playback', this.props.location.pathname,playable.self))
+      let dest = ru(playable.self)
+      dest = dest.replace(/.*\/\/[^\/]*/, '').replace(/^\/list\//,'/playback/')
+      debugger
+      this.props.replace(dest)
     } else {
       const {navigationNodeSummaries} = this.props.data
       const navNode = navigationNodeSummaries[noha(selected.navigationNodeSummary)]
