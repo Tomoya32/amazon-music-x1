@@ -1,0 +1,24 @@
+.CatalogInfo {
+    position: absolute;
+    top: 100px;
+    left: 50px;
+    height: 520px;
+    width: 400px;
+}
+
+.CatalogInfo > h1 {
+    font-size: 1.3em;
+    display: block;
+}
+
+.CatalogInfo > img {
+    height: 200px;
+    width: 200px;
+}
+.CatalogMenu {
+    position: absolute;
+    right: 50px;
+    top: 100px;
+    height: 620px;
+    overflow: hidden;
+}

@@ -1,0 +1,28 @@
+.Playback {
+  text-align: center;
+}
+
+.Playback-logo {
+  animation: Playback-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.Playback-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.Playback-title {
+  font-size: 1.5em;
+}
+
+.Playback-intro {
+  font-size: large;
+}
+
+@keyframes Playback-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

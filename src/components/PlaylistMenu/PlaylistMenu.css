@@ -1,0 +1,27 @@
+.PlaylistMenu {
+    width: 400px;
+    height: 100000px;
+}
+
+.PlaylistMenu > div {
+    display: block;
+    height: 50px; width: 400px;
+    position: relative;
+    margin-bottomn: 10px;
+}
+.PlaylistMenu > div.focused {
+    background: cornflowerblue;
+}
+
+
+.PlaylistMenu > div > img {
+    position: absolute;
+    top: 5px; left: 5px;
+    height: 40px; width: 40px;
+}
+
+.PlaylistMenu > div > h2 {
+    position: absolute;
+    top: 5px; left: 55px;
+    height: 40px; width: 340px;
+}

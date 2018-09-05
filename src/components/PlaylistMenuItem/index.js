@@ -1,2 +1,2 @@
-import PlaylistMenuItem from 'PlaylistMenuItem'
-export default Base
+import PlaylistMenuItem from './PlaylistMenuItem'
+export default PlaylistMenuItem

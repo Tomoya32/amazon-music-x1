@@ -37,7 +37,7 @@ const SpaceComposer = (InnerComponent) => {
       return (this.state.currentFocus === mid && this.props.focused)
     }
     render() {
-      return <InnerComponent isFocused={this.isFocused.bind(this)} changeFocus={this.changeFocus.bind(this)} updateFocus={this.updateFocus.bind(this)} />
+      return <InnerComponent isFocused={this.isFocused.bind(this)} changeFocus={this.changeFocus.bind(this)} updateFocus={this.updateFocus.bind(this)} {...this.props} />
     }
   }
   return Space

@@ -6,3 +6,9 @@ body {
   font-size: 16px;
   color: white;
 }
+
+.Page {
+  height: 720px; width: 1280px;
+  overflow: hidden;
+  position: relative;
+}

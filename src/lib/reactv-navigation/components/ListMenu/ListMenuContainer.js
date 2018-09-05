@@ -104,6 +104,8 @@ class MenuWrapper extends React.Component {
       this.setState({index: this.state.index + 1})
     } else if (this.props.horizontal && this.props.onRight) {
       this.props.onRight()
+    } else if(this.props.onDown) {
+      this.props.onDown()
     }
   }
 
@@ -112,6 +114,8 @@ class MenuWrapper extends React.Component {
       this.setState({index: this.state.index - 1})
     } else if (this.props.horizontal && this.props.onLeft) {
       this.props.onLeft()
+    } else if (this.props.onUp) {
+      this.props.onUp()
     }
   }
 

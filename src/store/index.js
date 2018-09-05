@@ -4,6 +4,7 @@ import createHistory from 'history/createBrowserHistory'
 import rootReducer from './modules'
 import rootSaga from './sagas'
 import createSagaMiddleware from 'redux-saga'
+import thunk from 'redux-thunk';
 
 
 export const history = createHistory()
@@ -12,7 +13,7 @@ const initialState = {}
 const enhancers = []
 const sagaMiddleware = createSagaMiddleware()
 const middleware = [
-  routerMiddleware(history), sagaMiddleware
+  routerMiddleware(history), sagaMiddleware, thunk
 ]
 
 if (process.env.NODE_ENV === 'development') {

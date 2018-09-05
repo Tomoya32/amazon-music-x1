@@ -23,8 +23,7 @@ class ListMenuRedux extends Component {
 
   render () {
     const {onChange, ...rest} = this.props
-    return (<ListMenu onFocusIndex={this.props.currentIndex}
-      onChange={this.onChange.bind(this)} {...rest} />)
+    return (<ListMenu onFocusIndex={this.props.currentIndex} onChange={this.onChange.bind(this)} {...rest} />)
   }
 }
 

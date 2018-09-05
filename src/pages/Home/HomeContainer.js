@@ -38,7 +38,7 @@ class HomeContainer extends React.Component {
       case 'node':
         return <Node {...this.props} />
       default:
-        return (<Home itemDescriptions={this.props.itemDescriptions} topNav={TOP_NAV} />)
+        return (<Home itemDescriptions={this.props.itemDescriptions} topNav={TOP_NAV} focused menuid={'homespace'} onFocusItem='topnav'/>)
     }
 
   }
