@@ -12,7 +12,7 @@ const getData = state => state.music.nodes
 function * loadNodeForRoute (action) {
   try {
     const payload = yield call(API.loadNavigationNode, action.payload)
-    yield put({type: PUSH_CURRENT_NAVIGATION_NODE, payload})
+    yield put({type: PUSH_CURRENT_NAVIGATION_NODE, payload: payload.data})
   } catch (e) {
     console.warn(`Error loading Node for route ${action.payload} ${e.message}`, e)
   }
@@ -21,7 +21,7 @@ function * loadNodeForRoute (action) {
 function * loadNavigationNode(action) {
   try {
     const payload = yield call(API.loadNavigationNode, action.path)
-    yield put({type: ADD_CHILD_NODE, payload, path: action.path})
+    yield put({type: ADD_CHILD_NODE, payload: payload.data, path: action.path})
   } catch (e) {
     console.warn(`Error loading Node for route ${action.payload} ${e.message}`, e)
   }

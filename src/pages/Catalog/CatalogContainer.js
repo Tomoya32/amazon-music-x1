@@ -34,11 +34,13 @@ class CatalogContainer extends Component {
   handleSelection(selected) {
     if(selected.playable) {
       const {playables, itemDescriptions} = this.props.data
+      const {pathname} = this.props.location
       const item = itemDescriptions[noha(selected.ref)]
       const playable = playables[noha(item.playable)]
-      let dest = ru(playable.self)
+      let dest = ru(uj(pathname, playable.self))
       dest = dest.replace(/.*\/\/[^/]*/, '')
           .replace(/^\/list\//,'/playback/')
+      debugger
       this.props.replace(dest)
     } else {
       const {navigationNodeSummaries} = this.props.data

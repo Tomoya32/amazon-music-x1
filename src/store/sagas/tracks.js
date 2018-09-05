@@ -7,7 +7,9 @@ const getData = state => state.tracks.tracks
 function * loadTrackForPath (action) {
   try {
     const payload = yield call(API.loadNavigationNode, action.path)
-    yield put({type: ADD_TRACK, payload, path: action.path})
+    const {responseURL} = payload.request
+    const responsePath = responseURL.replace(/.*\/\/[^/]*/, '')
+    yield put({type: ADD_TRACK, payload: payload.data, requestPath: action.path, responsePath})
   } catch (e) {
     console.warn(`Error loading track for route ${action.path} ${e.message}`, e)
   }

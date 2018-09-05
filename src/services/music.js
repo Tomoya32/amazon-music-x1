@@ -14,14 +14,11 @@ const API = {
   },
 
   request: (path, method) => {
-    if (API.cache[path]) return API.cache[path]
     path = path.replace(/\/?$/, '/');
     console.info('requesting ', path, method)
     return client[method.toLowerCase()](path)
       .then(response => {
-        const {data} = response
-        API.cache[path] = data
-        return data
+        return response
       })
       .catch(response =>{
         const e = new Error()
@@ -30,6 +27,7 @@ const API = {
         throw(e)
       })
   },
+
 
   loadNavigationNode: (path = '/') => {
     return API.request(path, 'get')

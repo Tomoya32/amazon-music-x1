@@ -5,4 +5,4 @@ const Base = () => (
   </div>
 )
 
-export default NodeTitle
+export default Base
