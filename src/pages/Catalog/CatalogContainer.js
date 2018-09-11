@@ -1,70 +1,55 @@
-import React,{Component} from 'react'
+import React, { Component } from 'react'
 import Catalog from './Catalog'
-import {connect} from 'react-redux'
-import {loadChildNode} from '../../store/modules/music'
+import { connect } from 'react-redux'
+import { loadChildNode } from '../../store/modules/music'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
-import {replace, back} from '../../store/modules/nav'
+import { replace, back } from '../../store/modules/nav'
 import uj from 'url-join'
-import {noha} from '../../lib/utils'
+import { noha, handleItemSelection } from '../../lib/utils'
 import ru from 'resolve-url'
-
-const keys = new KeyEvents()
-
-const getCachedData = (state) => {
-  let key = state.router.location.pathname.replace(/^\/list/, '')
-  key = key === '' ? '/' : key
-  return state.music.nodes[key]
-}
+import {
+  getCatalogData,
+  getPlayableSelector,
+  getItemDescriptionsSelectors,
+  getNavigationNodeSummariesSelector
+} from '../../lib/selectors/node_selectors'
 
 const mapStateToProps = (state) => ({
-  data: getCachedData(state),
+  catalog: getCatalogData(state),
+  itemDescriptions: getItemDescriptionsSelectors(state),
+  playables: getPlayableSelector(state),
+  pathname: state.router.location.pathname,
+  navigationNodeSummaries: getNavigationNodeSummariesSelector(state)
 })
-
 
 const mapDispatchToProps = {loadChildNode, replace, back}
 
+const keys = new KeyEvents()
+
 class CatalogContainer extends Component {
-  componentDidMount() {
-    this._unsubBack = keys.subscribeTo('Back', () => this.handleBack() )
+  constructor (p) {
+    super(p)
+    this.handleSelection = handleItemSelection.bind(this)
   }
-  componentWillUnmount() {
-    if(this._unsubBack) this._unsubBack.unsubscribe()
-    this._unsubBack = null
-  }
-  handleSelection(selected) {
-    if(selected.playable) {
-      const {playables, itemDescriptions} = this.props.data
-      const {pathname} = this.props.location
-      const item = itemDescriptions[noha(selected.ref)]
-      const playable = playables[noha(item.playable)]
-      let dest = ru(uj(pathname, playable.self))
-      dest = dest.replace(/.*\/\/[^/]*/, '')
-          .replace(/^\/list\//,'/playback/')
-      this.props.replace(dest)
-    } else {
-      const {navigationNodeSummaries} = this.props.data
-      const navNode = navigationNodeSummaries[noha(selected.navigationNodeSummary)]
-      const dest = uj(this.props.location.pathname, navNode.description)
-      this.props.replace(dest)
-    }
+  componentDidMount () {
+    this._unsubBack = keys.subscribeTo('Back', () => this.handleBack())
   }
 
-  handleBack() {
+  componentWillUnmount () {
+    if (this._unsubBack) this._unsubBack.unsubscribe()
+    this._unsubBack = null
+  }
+
+
+  handleBack () {
     this.props.back()
   }
 
   render () {
-    if(typeof(this.props.data) === 'object') {
-      const {data:{itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result}, location: {hash}} = this.props
-      const currentNavigationNode = hash || result
-      let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
-      desc.summaryData = navigationNodeSummaries[noha(desc.summary)]
-      desc.itemsData = desc.items.map(item => {
-        let itemDesc = itemDescriptions[noha(item)]
-        itemDesc.ref = item
-        return itemDesc
-      })
-      return <Catalog {...desc} kid={this.props.location.pathname + this.props.location.hash} onSelect={this.handleSelection.bind(this)} />
+    if (typeof(this.props.catalog) === 'object') {
+      return <Catalog {...this.props.catalog}
+        kid={this.props.location.pathname + this.props.location.hash}
+        onSelect={this.handleSelection.bind(this)} />
     } else {
       return null
     }

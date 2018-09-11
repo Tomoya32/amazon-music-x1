@@ -5,6 +5,7 @@ import music from './music'
 import tracks from './tracks'
 import menus from '../../lib/reactv-redux/ReacTVReduxReducer'
 import home from './home'
+import player from './player'
 import {default as nav} from './nav'
 
 export default combineReducers({
@@ -14,5 +15,6 @@ export default combineReducers({
   menus,
   home,
   tracks,
-  nav
+  nav,
+  player
 })

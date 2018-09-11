@@ -27,7 +27,8 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
     "resolve-url": "^0.2.1",
-    "url-join": "^4.0.0"
+    "url-join": "^4.0.0",
+    "url-parse": "^1.4.3"
   },
   "scripts": {
     "start": "react-scripts start",

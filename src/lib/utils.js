@@ -3,6 +3,10 @@ import addZero from 'add-zero'
 import debugWrapper from 'debug'
 import config from '../config'
 import qs from 'query-string'
+import ru from 'resolve-url'
+import uj from 'url-join'
+import uparse from 'url-parse'
+
 
 export function getParam (param) {
   const parsed = qs.parse(document.location.search)
@@ -40,9 +44,9 @@ export const noha = str => typeof(str) === 'string' ? str.replace(/^#/,'') : str
 export const perha = str => typeof(str) === 'string' ?  str.replace(/^#/,'$') : str
 export const haper = str => typeof(str) === 'string' ?  str.replace(/^\$/,'#') : str
 
-// export function isNumeric (n) {
-//   return !isNaN(parseFloat(n)) && isFinite(n)
-// }
+export function isNumeric (n) {
+  return !isNaN(parseFloat(n)) && isFinite(n)
+}
 
 export function formatDuration (ms) {
   let {days, hours, minutes, seconds} = parseMs(ms)
@@ -121,4 +125,36 @@ export function shallowEqual (objA, objB) {
 export function proxyMediaUrl (src) {
   debug('proxyMediaUrl', process.env.NPR_ONE_PROXY_MEDIA_URL, src)
   return (process.env.NPR_ONE_PROXY_MEDIA_URL) ? `${process.env.NPR_ONE_PROXY_MEDIA_URL}?url=${src}` : src
+}
+
+export function handleItemSelection(selected) {
+  if (selected.playable) {
+    const {playables, itemDescriptions, pathname} = this.props
+    const item = itemDescriptions[noha(selected.ref)]
+    const playable = playables[noha(item.playable)]
+    let dest = ru(uj(pathname, playable.self))
+    dest = dest.replace(/.*\/\/[^/]*/, '')
+      .replace(/^\/list\//, '/playback/')
+    this.props.replace(dest)
+  } else {
+    const {navigationNodeSummaries} = this.props
+    const navNode = navigationNodeSummaries[noha(selected.navigationNodeSummary)]
+    const dest = uj(this.props.location.pathname, navNode.description)
+    this.props.replace(dest)
+  }
+}
+
+export function mergePath () {
+  if(!arguments.length) return ''
+  const args =  Array.prototype.slice.call(arguments)
+  let joined = uj.call(null, args)
+  joined = ru(joined)
+  return joined.replace(/.*\/\/[^/]*/, '')
+}
+
+export function parseAPIPath(path) {
+  if(!path) return null
+  const resolved = ru(path)
+  const {pathname, hash} = uparse(resolved)
+  return {pathname, hash}
 }

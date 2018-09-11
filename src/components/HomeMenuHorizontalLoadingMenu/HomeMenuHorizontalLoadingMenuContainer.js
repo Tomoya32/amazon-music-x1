@@ -1,14 +1,21 @@
 import React, { Component } from 'react'
-import HomeHorizontalMenuRendering from './HomeHorizontalMenuRendering'
 import { loadChildNode } from '../../store/modules/music'
 import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
 import cx from 'classnames'
 import PropTypes from 'prop-types'
-import {showNode} from '../../store/modules/home'
+import { showNode } from '../../store/modules/home'
+import {
+  getNavigationDescriptionFromSummarySelector,
+  getKeySelector
+} from '../../lib/selectors/node_selectors'
+import { handleItemSelection } from '../../lib/utils'
+import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
 
 const mapStateToProps = (state, props) => ({
-  data: props.data ? props.data : state.music.nodes[props.description],
+  summary: getNavigationDescriptionFromSummarySelector(state, props),
+  pathKey: getKeySelector(state)
+
 })
 
 const mapDispatchToProps = {
@@ -16,38 +23,36 @@ const mapDispatchToProps = {
 }
 
 class HomeMenuHorizontalLoadingMenuContainer extends Component {
+  constructor (p) {
+    super(p)
+    this.handleSelection = handleItemSelection.bind(this)
+  }
+
   static propTypes = {
-    data: PropTypes.object,
-    description: PropTypes.string.isRequired
+    itemDescription: PropTypes.object.isRequired
   }
 
   componentDidMount () {
-    if (!this.props.data) this.loadRemote()
+    this.loadIfNeeded()
   }
 
   componentDidUpdate () {
-    if (!this.props.data) this.loadRemote()
+    this.loadIfNeeded()
   }
 
-  loadRemote () {
-    this.props.loadChildNode(this.props.description)
+  loadIfNeeded () {
+    if (typeof(this.props.summary) === 'string') {
+      this.props.loadChildNode(this.props.summary)
+    }
   }
 
   render () {
-    if (this.props.data) {
+    if (typeof(this.props.summary) === 'object') {
       return (
-        <div className={cx('HorinzontalLoadingMenuWrapper', {focused: this.props.focused})}>
-          <HomeHorizontalMenuRendering {...this.props.data} focused={this.props.focused} enclosing={this.props.data.result} showNode={this.props.showNode}  />
-        </div>
-      )
+        <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection} />)
     } else {
-      return (
-        <div className='HorinzontalLoadingMenuWrapper'>
-          <h2>Loading</h2>
-        </div>
-      )
+      return null
     }
-
   }
 }
 

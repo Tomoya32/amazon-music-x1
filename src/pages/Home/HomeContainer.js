@@ -1,8 +1,23 @@
 import React  from 'react'
-import { getNodeDescriptionSelector } from './selectors'
 import Home from './Home'
 import {connect} from 'react-redux'
-import Node from '../Node'
+import {
+  getCatalogData,
+  getPlayableSelector,
+  getItemDescriptionsSelectors,
+  getNavigationNodeSummariesSelector,
+  getKeySelector
+} from '../../lib/selectors/node_selectors'
+
+const mapStateToProps = (state) => ({
+  catalog: getCatalogData(state),
+  itemDescriptions: getItemDescriptionsSelectors(state),
+  playables: getPlayableSelector(state),
+  pathname: state.router.location.pathname,
+  navigationNodeSummaries: getNavigationNodeSummariesSelector(state),
+  display: state.home.display,
+  pathKey: getKeySelector(state)
+})
 
 const TOP_NAV = [
   {
@@ -27,20 +42,14 @@ const TOP_NAV = [
   }
 ]
 
-const mapStateToProps = state => ({
-  display: state.home.display,
-  ...getNodeDescriptionSelector(state)
-})
 
 class HomeContainer extends React.Component {
   render() {
-    switch(this.props.display) {
-      case 'node':
-        return <Node {...this.props} />
-      default:
-        return (<Home itemDescriptions={this.props.itemDescriptions} topNav={TOP_NAV} focused menuid={'homespace'} onFocusItem='topnav'/>)
+    if(this.props.catalog) {
+      return (<Home catalog={this.props.catalog} pathKey={this.props.pathKey} topNav={TOP_NAV} focused menuid={'homespace'} onFocusItem='topnav'/>)
+    } else {
+      return null
     }
-
   }
 }
 export default connect(mapStateToProps)(HomeContainer)
