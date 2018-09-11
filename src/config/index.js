@@ -10,4 +10,7 @@ const CONFIG = {
   }
 }
 
+console.log('linking with client ID:', process.env.REACT_APP_AMAZON_MUSIC_CLIENT_ID)
+console.log('linking with serial number:', process.env.REACT_APP_SERIAL_NUMBER)
+
 export default CONFIG
