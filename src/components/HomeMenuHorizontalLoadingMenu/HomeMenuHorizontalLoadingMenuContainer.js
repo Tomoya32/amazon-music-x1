@@ -36,13 +36,13 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
   render () {
     if (this.props.data) {
       return (
-        <div className={cx('HorinzontalLoadingMenuWrapper', {focused: this.props.focused})}>
+        <div className={cx('HorizontalLoadingMenuWrapper', {focused: this.props.focused})}>
           <HomeHorizontalMenuRendering {...this.props.data} focused={this.props.focused} enclosing={this.props.data.result} showNode={this.props.showNode}  />
         </div>
       )
     } else {
       return (
-        <div className='HorinzontalLoadingMenuWrapper'>
+        <div className='HorizontalLoadingMenuWrapper'>
           <h2>Loading</h2>
         </div>
       )

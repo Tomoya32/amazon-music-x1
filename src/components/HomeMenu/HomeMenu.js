@@ -1,7 +1,7 @@
 import React from 'react'
 import HomeHorizontalLoadingMenu from '../HomeMenuHorizontalLoadingMenu'
 const HomeMenu = ({itemDescription: {itemLabel, summary: {description}}, focused}) => (
-  <div>
+  <div className="HomeHorizontalScroll">
     <h1>{itemLabel}</h1>
     <HomeHorizontalLoadingMenu description={description} focused={focused}/>
   </div>
