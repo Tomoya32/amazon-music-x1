@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { loadChildNode } from '../../store/modules/music'
 import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
-import cx from 'classnames'
 import PropTypes from 'prop-types'
 import { showNode } from '../../store/modules/home'
 import {
@@ -11,11 +10,20 @@ import {
 } from '../../lib/selectors/node_selectors'
 import { handleItemSelection } from '../../lib/utils'
 import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
+import {
+  getPlayableSelector,
+  getItemDescriptionsSelectors,
+  getNavigationNodeSummariesSelector,
+  getCatalogData,
+} from '../../lib/selectors/node_selectors'
 
 const mapStateToProps = (state, props) => ({
+  catalog: getCatalogData(state),
   summary: getNavigationDescriptionFromSummarySelector(state, props),
-  pathKey: getKeySelector(state)
-
+  pathKey: getKeySelector(state),
+  itemDescriptions: getItemDescriptionsSelectors(state),
+  playables: getPlayableSelector(state),
+  navigationNodeSummaries: getNavigationNodeSummariesSelector(state)
 })
 
 const mapDispatchToProps = {
@@ -49,7 +57,7 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
   render () {
     if (typeof(this.props.summary) === 'object') {
       return (
-        <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection} />)
+        <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection} focused={this.props.focused} />)
     } else {
       return null
     }
