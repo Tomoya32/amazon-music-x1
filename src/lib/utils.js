@@ -1,7 +1,7 @@
 import parseMs from 'parse-ms'
 import addZero from 'add-zero'
 import debugWrapper from 'debug'
-import config from '../config'
+import config from './config'
 import qs from 'query-string'
 
 export function getParam (param) {

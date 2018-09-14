@@ -6,6 +6,7 @@ import { authWrapper, userIsNotAuthenticated } from '../../services/auth'
 import Node from '../Node'
 import Catalog from '../Catalog'
 import Playback from '../Playback'
+import Search from '../Search'
 
 const Routes = () => (
   <main>
@@ -14,6 +15,7 @@ const Routes = () => (
     <Route exact path="/music/:parent_id/:current_id" component={authWrapper(Node)} />
     <Route path="/list/:node*" component={authWrapper(Catalog)} />
     <Route path="/playback/:track*" component={authWrapper(Playback)} />
+    <Route exact path="/search" component={authWrapper(Search)} />
     <Route exact path="/linking" component={userIsNotAuthenticated(Linking)} />
   </main>
 )
