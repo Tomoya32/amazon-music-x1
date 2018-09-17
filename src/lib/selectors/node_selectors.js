@@ -37,6 +37,7 @@ const getNavigationNodeSummary= (state, props) => {
   return result
 }
 
+
 export const getNavigationNodeSelector = createSelector([getNavigationNodeDescription], node => node)
 export const getPlayableSelector = createSelector([getPlayables], (playables) => playables)
 export const getItemDescriptionsSelectors = createSelector([getItemDescriptions], (items) => items)
@@ -44,9 +45,11 @@ export const getNavigationNodeSummariesSelector = createSelector([getNavigationN
 export const getNavigationNodeSummarySelector = createSelector([getNavigationNodeSummary], summary => summary)
 
 
+
 export const getNavigationDescriptionFromSummarySelector = createSelector([getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
   if(summary.description.indexOf('#') === 0) {
     //TODO: this is not right, we need a path to get this back.....
+    debugger
     return descs[noha(summary.description)]
   }
   else {
@@ -54,7 +57,6 @@ export const getNavigationDescriptionFromSummarySelector = createSelector([getNa
     const {pathname, hash} = up(path)
 
     if(nodes[pathname]) {
-        // to do...
       const node = nodes[pathname]
       const {itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result} = node
       return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
@@ -65,10 +67,53 @@ export const getNavigationDescriptionFromSummarySelector = createSelector([getNa
 })
 export const getKeySelector = createSelector([getKey], key => key)
 
+export const getChildData = createSelector(
+  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descriptions, key, nodes) => {
+    const path = mergePath(key, summary.description)
+    const {pathname} = up(path)
+    return {
+      summary, descriptions, parentKey: key, node: nodes[pathname], pathname,
+    }
+  }
+)
+
 export const getCatalogData = createSelector(
   [getItemDescriptions, getNavigationNodeDescriptions, getNavigationNodeSummaries, getResult, getHash],
   (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
     return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
+  }
+)
+
+
+export const getChildItemDescriptionsSelector = createSelector(
+  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
+    const path = mergePath(key, summary.description)
+    const {pathname} = up(path)
+    if(nodes[pathname]) return nodes[pathname].itemDescriptions
+    else return null
+  }
+)
+export const getChildItemPathname = createSelector(
+  [getNavigationNodeSummarySelector, getKey], (summary, key) => {
+    const path = mergePath(key, summary.description)
+    const {pathname} = up(path)
+    return pathname
+  }
+)
+export const getChildItemPlayablesSelector = createSelector(
+  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
+    const path = mergePath(key, summary.description)
+    const {pathname} = up(path)
+    if(nodes[pathname]) return nodes[pathname].playables
+    else return null
+  }
+)
+export const getChildItemDescriptionSelector = createSelector(
+  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
+    const path = mergePath(key, summary.description)
+    const {pathname} = up(path)
+    if(nodes[pathname]) return nodes[pathname].navigationNodeSummaries
+    else return null
   }
 )
 

@@ -10,24 +10,31 @@ import {
 } from '../../lib/selectors/node_selectors'
 import { handleItemSelection } from '../../lib/utils'
 import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
+import {replace} from '../../store/modules/nav'
 import {
   getPlayableSelector,
   getItemDescriptionsSelectors,
-  getNavigationNodeSummariesSelector,
+  getChildPathSelector,
+  getChildItemPlayablesSelector,
+  getChildItemDescriptionSelector,
   getCatalogData,
+  getChildItemDescriptionsSelector,
+  getChildItemPathname
 } from '../../lib/selectors/node_selectors'
 
 const mapStateToProps = (state, props) => ({
   catalog: getCatalogData(state),
+  location: state.router.location,
   summary: getNavigationDescriptionFromSummarySelector(state, props),
   pathKey: getKeySelector(state),
-  itemDescriptions: getItemDescriptionsSelectors(state),
-  playables: getPlayableSelector(state),
-  navigationNodeSummaries: getNavigationNodeSummariesSelector(state)
+  itemDescriptions: getChildItemDescriptionsSelector(state, props),
+  playables: getChildItemPlayablesSelector(state, props),
+  navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
+  pathname: getChildItemPathname(state, props)
 })
 
 const mapDispatchToProps = {
-  loadChildNode, showNode
+  loadChildNode, showNode, replace
 }
 
 class HomeMenuHorizontalLoadingMenuContainer extends Component {

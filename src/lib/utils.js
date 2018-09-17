@@ -3,7 +3,7 @@ import addZero from 'add-zero'
 import debugWrapper from 'debug'
 import config from '../config'
 import qs from 'query-string'
-import ru from 'resolve-url'
+import ru from 'resolve-pathname'
 import uj from 'url-join'
 import uparse from 'url-parse'
 
@@ -132,15 +132,13 @@ export function handleItemSelection(selected) {
     const {playables, itemDescriptions, pathname} = this.props
     const item = itemDescriptions[noha(selected.ref)]
     const playable = playables[noha(item.playable)]
-    let dest = ru(uj(pathname, playable.self))
-    dest = dest.replace(/.*\/\/[^/]*/, '')
-      .replace(/^\/list\//, '/playback/')
-    this.props.replace(dest)
+    const playDest = ru(uj('/playback', pathname, playable.self))
+    this.props.replace(playDest)
   } else {
-    const {navigationNodeSummaries} = this.props
+    const {navigationNodeSummaries, pathKey, pathname} = this.props
     const navNode = navigationNodeSummaries[noha(selected.navigationNodeSummary)]
-    const dest = uj(this.props.location.pathname, navNode.description)
-    this.props.replace(dest)
+    const listDest = uj('/list', pathname, navNode.description)
+    this.props.replace(listDest)
   }
 }
 

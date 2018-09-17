@@ -4,9 +4,7 @@ import { connect } from 'react-redux'
 import { loadChildNode } from '../../store/modules/music'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import { replace, back } from '../../store/modules/nav'
-import uj from 'url-join'
-import { noha, handleItemSelection } from '../../lib/utils'
-import ru from 'resolve-url'
+import {  handleItemSelection } from '../../lib/utils'
 import {
   getCatalogData,
   getPlayableSelector,
@@ -18,7 +16,7 @@ const mapStateToProps = (state) => ({
   catalog: getCatalogData(state),
   itemDescriptions: getItemDescriptionsSelectors(state),
   playables: getPlayableSelector(state),
-  pathname: state.router.location.pathname,
+  pathname: state.router.location.pathname.replace(/^\/?list\//,''),
   navigationNodeSummaries: getNavigationNodeSummariesSelector(state)
 })
 

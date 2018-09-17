@@ -1,21 +1,23 @@
-import React,{Component} from 'react'
-import {connect} from 'react-redux'
-import {loadTrack} from '../../store/modules/tracks'
-import {replace} from 'connected-react-router'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { loadTrack } from '../../store/modules/tracks'
+import { replace } from 'connected-react-router'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
-import {noha} from '../../lib/utils'
-import {back} from '../../store/modules/nav'
+import { noha } from '../../lib/utils'
+import { back } from '../../store/modules/nav'
 import Playback from './Playback'
-import {playerCurrentSrc} from '../../store/modules/player'
-import {createSelector} from 'reselect'
+import { playerCurrentSrc } from '../../store/modules/player'
+import { createSelector } from 'reselect'
 import gt from 'lodash/get'
 
 const keys = new KeyEvents()
 
-
 const getTrackData = state => {
   const key = state.router.location.pathname.replace(/^\/?playback(\/|$)/, '')
-  return state.tracks.tracks[key]
+  const resolver = state.tracks.pathResolvers && state.tracks.pathResolvers[key] ? state.tracks.pathResolvers[key] : key
+  const track = state.tracks.tracks[key] ||  state.tracks.tracks[resolver]
+  debugger
+  return track
 }
 const getTrackIndex = state => {
   const key = state.router.location.pathname.replace(/^\/?playback(\/|$)/, '')
@@ -24,10 +26,11 @@ const getTrackIndex = state => {
 const getRouterHash = state => state.router.location.hash
 const getCurrentTrack = createSelector(
   [getTrackData, getTrackIndex, getRouterHash], (trackData, trackIndex, hash) => {
-    if(!trackData) return null
+    if (!trackData) return null
     const {trackContainerChunkDescriptions, playables, trackInstances, trackDefinitions} = trackData
     let chunkPointer = trackData.result
-    if(hash) {
+    if (!trackContainerChunkDescriptions) return null
+    if (hash) {
       const playable = playables[noha(hash)]
       if (playable) chunkPointer = playable.naturalTrackPointer.chunk
     }
@@ -39,37 +42,42 @@ const getCurrentTrack = createSelector(
 )
 
 const mapStateToProps = (state) => ({
-  current: getCurrentTrack(state)
+  current: getCurrentTrack(state),
+  tracks: state.tracks
 })
 
 const mapDispatchToProps = {loadTrack, replace, back, playerCurrentSrc}
 
 class PlaybackContainer extends Component {
-  componentDidMount() {
-    this._unsubBack = keys.subscribeTo('Back', () => this.handleBack() )
+  componentDidMount () {
+    this._unsubBack = keys.subscribeTo('Back', () => this.handleBack())
     this.handleTrackPlayback()
   }
-  componentDidUpdate() {
+
+  componentDidUpdate () {
     this.handleTrackPlayback()
   }
-  componentWillUnmount() {
-    if(this._unsubBack) this._unsubBack.unsubscribe()
+
+  componentWillUnmount () {
+    if (this._unsubBack) this._unsubBack.unsubscribe()
     this._unsubBack = null
   }
 
-  handleBack() {
+  handleBack () {
     console.info('handling back')
     this.props.back()
   }
-  handleTrackPlayback() {
+
+  handleTrackPlayback () {
     const {current, playerCurrentSrc} = this.props
-    if(current ) {
+    if (current) {
       const src = gt(current, 'audio.uri', null)
-      if(src) playerCurrentSrc(src)
+      if (src) playerCurrentSrc(src)
     }
   }
+
   render () {
-    if(this.props.current) {
+    if (this.props.current) {
       return (<Playback {...this.props.current} />)
     } else {
       return (<div>Loading</div>)
