@@ -4,7 +4,7 @@ import KeyEvent from '../../KeyEvents'
 import menuComposer from '../Menu/MenuComposer'
 import { updateMenu } from '../../../reactv-redux/MenusReducer'
 import { connect } from 'react-redux'
-import map from 'lodash.map'
+import { map } from 'lodash'
 import { isFunction } from '../../utils'
 
 const KeyEvents = new KeyEvent()
