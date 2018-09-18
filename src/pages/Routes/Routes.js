@@ -7,6 +7,8 @@ import Catalog from '../Catalog'
 import Playback from '../Playback'
 import config from '../../config'
 import uj from 'url-join'
+import Search from '../Search'
+
 
 const Routes = () => (
   <main>
@@ -15,6 +17,7 @@ const Routes = () => (
     <Route path="/music/:section?*" component={authWrapper(Home)} />
     <Route path="/list/:node*" component={authWrapper(Catalog)} />
     <Route path="/playback/:track*" component={authWrapper(Playback)} />
+    <Route exact path="/search" component={authWrapper(Search)} />
     <Route exact path="/linking" component={userIsNotAuthenticated(Linking)} />
   </main>
 )

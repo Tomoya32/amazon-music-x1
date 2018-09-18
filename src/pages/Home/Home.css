@@ -22,6 +22,22 @@
   font-size: large;
 }
 
+.Home-content {
+  width: 1240px;
+  margin-left: 40px;
+  overflow: hidden;
+}
+
+.Home-scrollable {
+  height: 610px;
+  width: 1240px;
+  overflow: hidden;
+}
+
+.Home-scrollable > div.ListMenu {
+  padding-bottom: 150px;
+}
+
 @keyframes Home-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

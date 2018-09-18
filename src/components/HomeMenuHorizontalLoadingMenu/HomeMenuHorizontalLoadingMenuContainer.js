@@ -12,8 +12,6 @@ import { handleItemSelection } from '../../lib/utils'
 import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
 import {replace} from '../../store/modules/nav'
 import {
-  getPlayableSelector,
-  getItemDescriptionsSelectors,
   getChildPathSelector,
   getChildItemPlayablesSelector,
   getChildItemDescriptionSelector,

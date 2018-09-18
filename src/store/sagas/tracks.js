@@ -1,8 +1,10 @@
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
 import API from '../../services/music'
 import {LOAD_TRACK, ADD_TRACK} from '../modules/tracks'
+import {setPlayable} from '../modules/playable'
+import {loadChildNode} from '../modules/music'
 
-const getData = state => state.tracks.tracks
+const getNode = (state, node) => state.music.nodes[node]
 
 function * loadTrackForPath (action) {
   try {
@@ -19,10 +21,14 @@ function * registerPathChange (action) {
   try {
     const {pathname} = action.payload.location
     if (API.loggedIn() && /^\/?playback(\/|$)/.test(pathname)) {
-      let key = action.payload.location.pathname.replace(/^\/?playback(\/|$)/, '')
-      key = key.trim() === '' ?  '/' : key
-      const data = yield select(getData)
-      if(!data[key]) yield put({type: LOAD_TRACK, path: key})
+      const node = action.payload.location.pathname.replace(/^\/?playback(\/|$)/, '')
+      const playable = action.payload.location.hash
+      const existingNode = yield(select(getNode, node))
+      if(!existingNode) {
+        debugger
+        yield put(loadChildNode(node))
+      }
+      yield put(setPlayable(node, playable))
     }
   } catch (e) {
     console.warn(`Error registering for path change ${e.message}`, e)

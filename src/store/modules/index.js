@@ -3,18 +3,23 @@ import linking from './linking'
 import auth from './auth'
 import music from './music'
 import tracks from './tracks'
-import menus from '../../lib/reactv-redux/ReacTVReduxReducer'
+import search from './search'
 import home from './home'
+import playable from './playable'
 import player from './player'
 import {default as nav} from './nav'
+import { ReactTVReduxReducer, MenusRedux} from '../../lib/reactv-redux'
 
 export default combineReducers({
   linking,
   auth,
   music,
-  menus,
+  menus: ReactTVReduxReducer,
   home,
   tracks,
   nav,
-  player
+  player,
+  playable,
+  search,
+  navigation: MenusRedux,
 })

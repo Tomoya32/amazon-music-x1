@@ -1,11 +1,16 @@
-.HorinzontalLoadingMenuWrapper {
-    height: 150px;
-    width: 100000px;
-    background: cornflowerblue;
+.HorizontalLoadingMenuWrapper {
+    height: 193px;
+    width: 1240px;
+    overflow: hidden;
+    /* background: cornflowerblue; */
+}
+.HorizontalLoadingMenuWrapper.focused {
+    /* background: yellowgreen; */
 }
 .HomeMenuHorizontalLoadingMenu {
     margin: 0;
+    height: 100%;
 }
-.HorinzontalLoadingMenuWrapper.focused {
-    background: yellowgreen;
+.HomeHorizontalScroll {
+  height: 239px;
 }

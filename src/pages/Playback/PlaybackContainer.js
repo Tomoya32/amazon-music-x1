@@ -3,47 +3,18 @@ import { connect } from 'react-redux'
 import { loadTrack } from '../../store/modules/tracks'
 import { replace } from 'connected-react-router'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
-import { noha } from '../../lib/utils'
 import { back } from '../../store/modules/nav'
 import Playback from './Playback'
 import { playerCurrentSrc } from '../../store/modules/player'
-import { createSelector } from 'reselect'
 import gt from 'lodash/get'
+import {getPlayable, getTrackDefinition, getPlayableNode} from './selectors'
 
 const keys = new KeyEvents()
 
-const getTrackData = state => {
-  const key = state.router.location.pathname.replace(/^\/?playback(\/|$)/, '')
-  const resolver = state.tracks.pathResolvers && state.tracks.pathResolvers[key] ? state.tracks.pathResolvers[key] : key
-  const track = state.tracks.tracks[key] ||  state.tracks.tracks[resolver]
-  debugger
-  return track
-}
-const getTrackIndex = state => {
-  const key = state.router.location.pathname.replace(/^\/?playback(\/|$)/, '')
-  return state.tracks.instanceIndex[key] || 0
-}
-const getRouterHash = state => state.router.location.hash
-const getCurrentTrack = createSelector(
-  [getTrackData, getTrackIndex, getRouterHash], (trackData, trackIndex, hash) => {
-    if (!trackData) return null
-    const {trackContainerChunkDescriptions, playables, trackInstances, trackDefinitions} = trackData
-    let chunkPointer = trackData.result
-    if (!trackContainerChunkDescriptions) return null
-    if (hash) {
-      const playable = playables[noha(hash)]
-      if (playable) chunkPointer = playable.naturalTrackPointer.chunk
-    }
-    const chunk = trackContainerChunkDescriptions[noha(chunkPointer)]
-    const instances = chunk.trackInstances.map(i => trackInstances[noha(i)]).map(x => x.def = trackDefinitions[noha(x.trackDefinition)])
-    const current = instances[trackIndex]
-    return current
-  }
-)
-
 const mapStateToProps = (state) => ({
-  current: getCurrentTrack(state),
-  tracks: state.tracks
+  playable: getPlayable(state),
+  trackDefinition: getTrackDefinition(state),
+  enclosing: getPlayableNode(state)
 })
 
 const mapDispatchToProps = {loadTrack, replace, back, playerCurrentSrc}
@@ -77,8 +48,8 @@ class PlaybackContainer extends Component {
   }
 
   render () {
-    if (this.props.current) {
-      return (<Playback {...this.props.current} />)
+    if (this.props.trackDefinition) {
+      return (<Playback {...this.props.trackDefinition} />)
     } else {
       return (<div>Loading</div>)
     }

@@ -2,10 +2,19 @@
     display: inline-block;
     height: 40px; line-height: 40px;
     color: white;
-    font-size: 1em;
-    padding: 0 10px;
+    font-size: 1.3em;
+    margin: 0 10px;
     text-align: center;
+    text-transform: uppercase;
 }
 .VerticalTextMenuCard.focused {
-    font-weight: bold;
+    border-bottom: solid 2px;
+    height: 38px; /* Account for border height on focus */
+}
+
+.VerticalTextMenuCard:nth-child(5) {
+  text-transform: capitalize;
+  position: relative;
+  left: 650px;
+  font-size: 1em;
 }

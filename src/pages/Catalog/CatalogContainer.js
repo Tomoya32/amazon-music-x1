@@ -16,7 +16,6 @@ const mapStateToProps = (state) => ({
   catalog: getCatalogData(state),
   itemDescriptions: getItemDescriptionsSelectors(state),
   playables: getPlayableSelector(state),
-  pathname: state.router.location.pathname.replace(/^\/?list\//,''),
   navigationNodeSummaries: getNavigationNodeSummariesSelector(state)
 })
 
@@ -27,7 +26,9 @@ const keys = new KeyEvents()
 class CatalogContainer extends Component {
   constructor (p) {
     super(p)
-    this.handleSelection = handleItemSelection.bind(this)
+    this.handleSelection = (dest) => {
+      handleItemSelection.call(this, dest, this.props.location.pathname.replace(/^\/list\/?/,''))
+    }
   }
   componentDidMount () {
     this._unsubBack = keys.subscribeTo('Back', () => this.handleBack())

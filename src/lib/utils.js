@@ -1,7 +1,7 @@
 import parseMs from 'parse-ms'
 import addZero from 'add-zero'
 import debugWrapper from 'debug'
-import config from '../config'
+import config from './config'
 import qs from 'query-string'
 import ru from 'resolve-pathname'
 import uj from 'url-join'
@@ -127,18 +127,26 @@ export function proxyMediaUrl (src) {
   return (process.env.NPR_ONE_PROXY_MEDIA_URL) ? `${process.env.NPR_ONE_PROXY_MEDIA_URL}?url=${src}` : src
 }
 
-export function handleItemSelection(selected) {
-  if (selected.playable) {
-    const {playables, itemDescriptions, pathname} = this.props
+
+
+export function handleItemSelection(selected, enclosingPath = '') {
+  if (!selected.navigationNodeSummary && selected.playable) {
+    const {itemDescriptions} = this.props
     const item = itemDescriptions[noha(selected.ref)]
-    const playable = playables[noha(item.playable)]
-    const playDest = ru(uj('/playback', pathname, playable.self))
-    this.props.replace(playDest)
-  } else {
-    const {navigationNodeSummaries, pathKey, pathname} = this.props
+    const dest = uj('/playback', enclosingPath) + item.playable
+    this.props.replace(dest)
+    debugger
+
+    //  const playable = playables[noha(item.playable)]
+    // const playDest = ru(uj('/playback', enclosingPath, playable.self))
+    // this.props.replace(playDest)
+  } else if(selected.navigationNodeSummary) {
+    const {navigationNodeSummaries} = this.props
     const navNode = navigationNodeSummaries[noha(selected.navigationNodeSummary)]
-    const listDest = uj('/list', pathname, navNode.description)
+    const listDest = uj('/list', enclosingPath, navNode.description)
     this.props.replace(listDest)
+  } else {
+    console.error('got invalid selected', selected)
   }
 }
 

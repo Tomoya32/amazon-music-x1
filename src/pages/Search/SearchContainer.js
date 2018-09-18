@@ -1,0 +1,79 @@
+import React, { PureComponent } from 'react'
+import Search from './Search'
+import { addLetterToSearchTerm, removeLetterFromSearchTerm } from '../../store/modules/search'
+import { connect } from 'react-redux'
+import NamedMenuComposer from '../../lib/reactv-navigation/components/NamedMenu/NamedMenuComposer'
+import { push, replace } from '../../store/modules/nav'
+import { uuid } from '../../lib/utils'
+import omit from 'lodash/omit'
+import { updateMenu } from '../../lib/reactv-redux/MenusReducer'
+
+
+const TOP_NAV = [
+  {
+    name: 'Browse',
+    path: '/music',
+  },
+  {
+    name: 'Recents',
+    path: '/recents',
+  },
+  {
+    name: 'My Music',
+    path: '/mymusic',
+  },
+  {
+    name: 'Search',
+    path: '/search',
+  },
+  {
+    name: 'Settings',
+    path: '/settings',
+  }
+]
+
+const mapDispatchToProps = {
+  removeLetterFromSearchTerm,
+  addLetterToSearchTerm,
+  push,
+  replace,
+  updateMenu,
+}
+const mapStateToProps = ({search: {term, results}, navigation: {menus}}) => ({term, results, menus})
+const ComposedSearch = NamedMenuComposer(Search)
+
+class SearchContainer extends PureComponent {
+  constructor (p) {
+    super(p)
+    this.key = 'WHAT_IS_THIS_MAGIC?'
+  }
+
+  componentWillUpdate (nextProps) {
+    if (nextProps.results !== this.props.results) {
+      this.key = uuid()
+    }
+  }
+
+  onLetter (letter) {
+    if (letter === String.fromCharCode(parseInt(2423, 16))) {
+      this.props.addLetterToSearchTerm(' ')
+    } else if (letter === 'del') {
+      this.props.removeLetterFromSearchTerm()
+    } else {
+      this.props.addLetterToSearchTerm(letter)
+    }
+  }
+
+  render () {
+    return (<ComposedSearch
+      mid='search'
+      defaultFocus='search:atoz' focused
+      onLetter={this.onLetter.bind(this)}
+      {...this.props}
+      contentKey={this.key}
+      topNav={TOP_NAV}
+    />)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchContainer)
