@@ -1,3 +1,3 @@
 #!/bin/bash
 echo "=> Building Environmental Variables"
-docker build --build-arg REACT_APP_AMAZON_MUSIC_CLIENT_ID=${REACT_APP_AMAZON_MUSIC_CLIENT_ID} --build-arg REACT_APP_SERIAL_NUMBER=${REACT_APP_SERIAL_NUMBER}  . -t $IMAGE_NAME
+docker build --build-arg REACT_APP_AMAZON_MUSIC_CLIENT_ID=${REACT_APP_AMAZON_MUSIC_CLIENT_ID} --build-arg REACT_APP_SERIAL_NUMBER=${REACT_APP_SERIAL_NUMBER}  . --debug -t $IMAGE_NAME
