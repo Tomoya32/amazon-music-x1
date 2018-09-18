@@ -3,6 +3,7 @@ import API from '../../services/music'
 import {LOAD_TRACK, ADD_TRACK} from '../modules/tracks'
 import {setPlayable} from '../modules/playable'
 import {loadChildNode} from '../modules/music'
+import querystring from 'querystring'
 
 const getNode = (state, node) => state.music.nodes[node]
 
@@ -21,14 +22,15 @@ function * registerPathChange (action) {
   try {
     const {pathname} = action.payload.location
     if (API.loggedIn() && /^\/?playback(\/|$)/.test(pathname)) {
-      const node = action.payload.location.pathname.replace(/^\/?playback(\/|$)/, '')
+      const node = action.payload.location.pathname.replace(/^\/?playback\/*/, '/').replace(/\/$/, '')
       const playable = action.payload.location.hash
-      const existingNode = yield(select(getNode, node))
+      const search = action.payload.location.search || ''
+      const indexWithinChunk = querystring.parse(search.replace(/^\?+/,'')).indexWithinChunk || 0
+      const existingNode = yield(select(getNode, node, indexWithinChunk))
       if(!existingNode) {
-        debugger
         yield put(loadChildNode(node))
       }
-      yield put(setPlayable(node, playable))
+      yield put(setPlayable(node, playable, indexWithinChunk))
     }
   } catch (e) {
     console.warn(`Error registering for path change ${e.message}`, e)

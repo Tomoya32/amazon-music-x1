@@ -16,7 +16,16 @@ const calculateStyle = (currentState, newState, ref) => {
 }
 
 const HomeMenuHorizontalLoadingMenu = ({itemsData, name, focused, onClick}) => (
-  <ListMenu data={itemsData} menuid={`homemenu:${name}`} renderItem={HomeMenuCard} className='HomeMenuHorizontalLoadingMenu' horizontal focused={focused} onClick={onClick} slots={5} calculateStyle={calculateStyle}/>
+  <ListMenu
+    data={itemsData.slice(0,5)}
+    menuid={`homemenu:${name}`}
+    renderItem={HomeMenuCard}
+    className='HomeMenuHorizontalLoadingMenu'
+    horizontal
+    focused={focused}
+    onClick={onClick}
+    slots={5}
+    calculateStyle={calculateStyle}/>
 )
 
 export default HomeMenuHorizontalLoadingMenu

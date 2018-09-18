@@ -30,6 +30,7 @@
     "reselect": "^3.0.1",
     "resolve-pathname": "^2.2.0",
     "resolve-url": "^0.2.1",
+    "uri-js": "^4.2.2",
     "url-join": "^4.0.0",
     "url-parse": "^1.4.3"
   },

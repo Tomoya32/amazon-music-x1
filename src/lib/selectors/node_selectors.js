@@ -6,7 +6,7 @@ import up from 'url-parse'
 
 const getKey = state => {
   const {pathname} = state.router.location
-  let key = pathname.replace(/^\/(list|music)/, '')
+  let key = pathname.replace(/^\/(list|music)\/*/, '/')
   return ((key === '' || key === '/') && /^\/?music(\/|$)/.test(pathname))
     ? config.music.browse_node : key === '' ? '/' : key
 }
@@ -49,7 +49,6 @@ export const getNavigationNodeSummarySelector = createSelector([getNavigationNod
 export const getNavigationDescriptionFromSummarySelector = createSelector([getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
   if(summary.description.indexOf('#') === 0) {
     //TODO: this is not right, we need a path to get this back.....
-    debugger
     return descs[noha(summary.description)]
   }
   else {
@@ -118,7 +117,7 @@ export const getChildItemDescriptionSelector = createSelector(
 )
 
 const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
-  if (!result) return
+  if (!result || !navigationNodeDescriptions) return
   const currentNavigationNode = hash || result
   let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
   desc.summaryData = navigationNodeSummaries[noha(desc.summary)]

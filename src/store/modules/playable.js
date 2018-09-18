@@ -1,22 +1,25 @@
+import {isNormalInteger} from '../../lib/utils'
+
 export const SET_CURRENT_PLAYABLE = 'PLAYABLES/SET_CURRENT_PLAYABLE'
 
 
-export function setPlayable(node, item) {
+export function setPlayable(node, chunk, indexWithinChunk) {
   return {
     type: SET_CURRENT_PLAYABLE,
-    node, item
+    node, chunk, indexWithinChunk
   }
 }
 
 const initialState = {
-  node: null, item: null
+  node: null, chunk: null, index: 0
 }
 
 
 export default function playableReducer(state = initialState, action ) {
   switch(action.type) {
     case SET_CURRENT_PLAYABLE:
-      return Object.assign({}, state, {node: action.node, item: action.item})
+      const indexWithinChunk = isNormalInteger(action.indexWithinChunk) ?  action.indexWithinChunk : 0
+      return Object.assign({}, state, {node: action.node, chunk: action.chunk, indexWithinChunk })
     default:
       return state
   }

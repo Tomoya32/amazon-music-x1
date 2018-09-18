@@ -7,13 +7,13 @@ import { back } from '../../store/modules/nav'
 import Playback from './Playback'
 import { playerCurrentSrc } from '../../store/modules/player'
 import gt from 'lodash/get'
-import {getPlayable, getTrackDefinition, getPlayableNode} from './selectors'
+import {getPlayable, getTrackInstance, getPlayableNode} from './selectors'
 
 const keys = new KeyEvents()
 
 const mapStateToProps = (state) => ({
   playable: getPlayable(state),
-  trackDefinition: getTrackDefinition(state),
+  trackInstance: getTrackInstance(state),
   enclosing: getPlayableNode(state)
 })
 
@@ -48,8 +48,8 @@ class PlaybackContainer extends Component {
   }
 
   render () {
-    if (this.props.trackDefinition) {
-      return (<Playback {...this.props.trackDefinition} />)
+    if (this.props.trackInstance && this.props.trackInstance.trackDefinitionData) {
+      return (<Playback {...this.props.trackInstance.trackDefinitionData} focused={true} menuid={'playback-containeer'} onFocusItem='trackInfo' />)
     } else {
       return (<div>Loading</div>)
     }

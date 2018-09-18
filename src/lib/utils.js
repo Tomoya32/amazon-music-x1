@@ -6,6 +6,7 @@ import qs from 'query-string'
 import ru from 'resolve-pathname'
 import uj from 'url-join'
 import uparse from 'url-parse'
+import querystring from 'querystring'
 
 
 export function getParam (param) {
@@ -131,19 +132,17 @@ export function proxyMediaUrl (src) {
 
 export function handleItemSelection(selected, enclosingPath = '') {
   if (!selected.navigationNodeSummary && selected.playable) {
-    const {itemDescriptions} = this.props
+    const {itemDescriptions, playables} = this.props
     const item = itemDescriptions[noha(selected.ref)]
-    const dest = uj('/playback', enclosingPath) + item.playable
+    const playable = playables[noha(item.playable)]
+    console.info('here', enclosingPath, item.playable)
+    const dest = mergeChunkWithPathAndQuery(mergePath('/playback', enclosingPath), playable.naturalTrackPointer.chunk, {indexWithinChunk: playable.naturalTrackPointer.indexWithinChunk} )
     this.props.replace(dest)
-    debugger
 
-    //  const playable = playables[noha(item.playable)]
-    // const playDest = ru(uj('/playback', enclosingPath, playable.self))
-    // this.props.replace(playDest)
   } else if(selected.navigationNodeSummary) {
     const {navigationNodeSummaries} = this.props
     const navNode = navigationNodeSummaries[noha(selected.navigationNodeSummary)]
-    const listDest = uj('/list', enclosingPath, navNode.description)
+    const listDest = mergePath('/list', enclosingPath, navNode.description)
     this.props.replace(listDest)
   } else {
     console.error('got invalid selected', selected)
@@ -158,9 +157,25 @@ export function mergePath () {
   return joined.replace(/.*\/\/[^/]*/, '')
 }
 
+export function mergeChunkWithPathAndQuery(path, chunk, query = {}) {
+  const qs = typeof query === 'object' ?  query : querystring.parse(query.replace(/^\?+/, ''))
+  const destPath = mergePath(path, chunk)
+  const href = uparse(destPath)
+  const parsed = querystring.parse(href.query)
+  const combined = Object.assign(qs, parsed)
+
+  const out =  `${href.pathname}?${querystring.stringify(combined)}${href.hash}`
+  return out
+
+}
+
 export function parseAPIPath(path) {
   if(!path) return null
   const resolved = ru(path)
   const {pathname, hash} = uparse(resolved)
   return {pathname, hash}
+}
+export function isNormalInteger(str) {
+  var n = Math.floor(Number(str));
+  return n !== Infinity && String(n) === str && n >= 0;
 }

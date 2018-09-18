@@ -38,7 +38,7 @@ const mapDispatchToProps = {
 class HomeMenuHorizontalLoadingMenuContainer extends Component {
   constructor (p) {
     super(p)
-    this.handleSelection = handleItemSelection.bind(this)
+    this.handleSelection = dest => handleItemSelection.call(this, dest, this.props.pathname)
   }
 
   static propTypes = {

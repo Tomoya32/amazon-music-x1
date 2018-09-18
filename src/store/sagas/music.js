@@ -6,21 +6,22 @@ import {
 } from '../modules/music'
 import { SET_AUTH_DATA, CLEAR_AUTH_DATA } from '../modules/auth'
 
-
 const getData = state => state.music.nodes
+
 // Dealing with some circular dependencies here.
 
-function * loadNavigationNode(action) {
+function * loadNavigationNode (action) {
   try {
     const payload = yield call(API.loadNavigationNode, action.path)
     yield put({type: ADD_CHILD_NODE, payload: payload.data, path: action.path})
   } catch (e) {
-    console.warn(`Error loading Node for route ${action.payload} ${e.message}, ${e.status}`, e)
-    if(e.status === 401 || e.status === 403) {
+    console.warn(`Error loading Node for route ${action.payload} ${e.message}, ${e.status}`, e.data)
+    if (e.status === 401 || e.status === 403) {
       yield put({type: CLEAR_AUTH_DATA})
-      debugger
     }
-
+    if (e.data) {
+      yield put({type: ADD_CHILD_NODE, payload: e.data, path: action.path})
+    }
   }
 }
 
@@ -37,10 +38,12 @@ function * registerPathChange (action) {
   try {
     const {pathname} = action.payload.location
     if (API.loggedIn() && /^\/?list(\/|$)/.test(pathname)) {
-      let key = action.payload.location.pathname.replace(/^\/list/, '')
-      key = key.trim() === '' ?  '/' : key
+      let key = action.payload.location.pathname.replace(/^\/list\/*/, '/')
+      key = key.trim() === '' ? '/' : key
       const data = yield select(getData)
-      if(!data[key]) yield put({type: LOAD_CHILD_NODE, path: key})
+      if (!data[key]) {
+        yield put({type: LOAD_CHILD_NODE, path: key})
+      }
       // TODO: Handle loading data here....
     } else if (API.loggedIn() && /^\/?music(\/|$)/.test(pathname)) { // TODO: Need a mechanism for managing these
       let path = pathname.replace(/(^\/?music(\/|$))/, '/')

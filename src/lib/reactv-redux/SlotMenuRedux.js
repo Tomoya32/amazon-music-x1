@@ -140,6 +140,12 @@ export const getWidthWithMargin = (c) => {
   return width
 }
 
+export const getHeightMargin = (c) => {
+  const style = window.getComputedStyle ? getComputedStyle(c) : c.currentStyle
+  const width = c.getBoundingClientRect().height + parseInt(style.marginTop, 10) + parseInt(style.marginBottom, 10)
+  return width
+}
+
 /**
  * Helper to calculate the offset of a menu based on index and slot index.
  * @param ref
@@ -153,4 +159,11 @@ export const calculateOffset = (ref, index, slotIndex) => {
   return Array.from(ref.childNodes).slice(0, itemsOffset).reduce((mem, c) => (mem += getWidthWithMargin(c)), 0)
 }
 
+export const calculateOffsetWidth = calculateOffset
+
+export const calculateOffsetHeight = (ref, index, slotIndex) => {
+  if (!ref) return null
+  const itemsOffset = index - slotIndex
+  return Array.from(ref.childNodes).slice(0, itemsOffset).reduce((mem, c) => (mem += getHeightMargin(c)), 0)
+}
 export default connect(mapStateToProps, mapDispatchToProps)(SlotMenuRedux)

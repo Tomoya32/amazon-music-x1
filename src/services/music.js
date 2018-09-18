@@ -24,7 +24,6 @@ const API = {
         const {response} = request
         const e = new Error(response.statusText)
         Object.assign(e, {data: response.data, status: response.status})
-
         if(e.status === 401 || e.status === 403) API.deleteToken()
         console.error(`Error getting path ${path}`, e)
         throw(e)
