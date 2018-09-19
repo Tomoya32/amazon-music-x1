@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>icon/info</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Assets" transform="translate(-700.000000, -495.000000)">
+            <g id="icon/info-copy" style="mix-blend-mode: screen;" transform="translate(700.000000, 495.000000)">
+                <g id="Group-3" transform="translate(0.666667, 0.666667)">
+                    <circle id="Oval" fill="#FFFFFF" cx="9.33333333" cy="9.33333333" r="9.33333333"></circle>
+                    <path d="M9.33333333,15.0083172 L9.33333333,8.32456747" id="Shape" stroke="#000000" stroke-width="2"></path>
+                    <circle id="Oval" stroke="#000000" stroke-width="1.5" fill="#000000" stroke-linecap="round" stroke-linejoin="round" cx="9.33333333" cy="4.66666667" r="1"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

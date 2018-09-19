@@ -1,15 +1,22 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
-import { getCode, pollForCode, refreshToken, getAuthData, storeAuthData } from '../../services/auth'
-import { SET_AUTH_DATA } from '../modules/auth'
+import {
+  getCode,
+  pollForCode,
+  refreshToken,
+  getAuthData,
+  storeAuthData,
+  deleteAuthData
+} from '../../services/auth'
+import { SET_AUTH_DATA, CLEAR_AUTH_DATA } from '../modules/auth'
 import {
   LINKING_FETCHING_CODE_SUCCESS,
   LINKING_FETCHING_CODE_FAILED,
   LINKING_FETCHING_CODE,
   LINKING_POLL_FOR_CODE,
   LINKING_ERROR,
-  LINKING_CANCELED
+  LINKING_CANCELED,
 } from '../modules/linking'
-
+import API from '../../services/music'
 
 function * getAuthDeviceCode (action) {
   try {
@@ -58,23 +65,32 @@ function * refreshTokenGen (action) {
   }
 }
 
-function* registerPathChange (action) {
+function * clearAuthData (action) {
+  try {
+    API.deleteToken()
+    yield call(deleteAuthData)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+function * registerPathChange (action) {
   console.info('Linking found path change')
   try {
-    const { pathname } = action.payload.location
-    if (/^\/?linking(\/|$)/.test(pathname) ) { // TODO: Need a mechanism for managing these
+    const {pathname} = action.payload.location
+    if (/^\/?linking(\/|$)/.test(pathname)) { // TODO: Need a mechanism for managing these
       console.info('Linking found path change')
       const authData = yield call(getAuthData)
-      if(authData) {
-        console.info("got auth data, trying token")
+      if (authData) {
+        console.info('got auth data, trying token')
         yield put({type: SET_AUTH_DATA, payload: authData})
       } else {
-        yield put({type:  LINKING_FETCHING_CODE})
+        yield put({type: LINKING_FETCHING_CODE})
       }
     }
   } catch (e) {
-    console.warn(`Error with path change for linking ${e.message}, trying to get linking code`,e)
-    yield put({type:  LINKING_FETCHING_CODE})
+    console.warn(`Error with path change for linking ${e.message}, trying to get linking code`, e)
+    yield put({type: LINKING_FETCHING_CODE})
   }
 }
 
@@ -82,6 +98,7 @@ function * authSaga () {
   yield takeLatest(LINKING_FETCHING_CODE, getAuthDeviceCode)
   yield takeLatest(LINKING_POLL_FOR_CODE, getTokenFromPolling)
   yield takeLatest(SET_AUTH_DATA, refreshTokenGen)
+  yield takeLatest(CLEAR_AUTH_DATA, clearAuthData)
   yield takeLatest('@@router/LOCATION_CHANGE', registerPathChange)
 }
 

@@ -1,23 +1,42 @@
 .HomeMenuCard {
-    display: inline-block;
-    height: 150px;
-    color: white;
-    font-size: 1em;
-    padding: 10px;
-    text-align: center;
-    width: 300px;
-    display: inline-block;
-    float: left;
-    box-sizing: content-box;
-    margin-top: 0;
-    margin-left: 0;
+  height: 110px; width: 240px;
+  background-color: #7688c396;
+  display: flex !important;
+  align-items: center;
+  color: white;
+  font-size: 0.8em;
+  padding: 17px;
+  text-align: center;
+  display: inline-block;
+  float: left;
+  box-sizing: content-box;
+  margin: 10px;
+  position: relative;
+  top: 20px;
+  left: 20px;
 }
 .HomeMenuCard > img  {
+  vertical-align: middle;
     float: left;
     margin-right: 10px;
+    height: 100%;
+    width: auto;
+    max-width: 50%;
 }
+.HomeMenuCard > div.itemLabel {
+  width: 50%;
+}
+
 .HomeMenuCard.focused {
-    height: 160px; width: 310px;
-    margin-top: -15px; margin-left: -10px;
-    background: cornflowerblue;
+    height: 150px; width: 280px;
+    margin: 0;
+    margin-left: -10px;
+    margin-right: -10px;
+    margin-top: -10px;
+    background: #68eaff;
+    color: #252d41;
+}
+
+.HomeMenuCard.focused > div.itemLabel {
+  padding: 20px;
 }

@@ -3,7 +3,7 @@
     top: 100px;
     left: 50px;
     height: 520px;
-    width: 400px;
+    width: 30%;
 }
 
 .CatalogInfo > h1 {
@@ -12,13 +12,14 @@
 }
 
 .CatalogInfo > img {
-    height: 200px;
-    width: 200px;
+    height: auto;
+    width: 100%;
 }
 .CatalogMenu {
     position: absolute;
-    right: 50px;
+    left: 470px;
     top: 100px;
     height: 620px;
+    width: 55%;
     overflow: hidden;
 }

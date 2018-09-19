@@ -5,6 +5,7 @@ import rootReducer from './modules'
 import rootSaga from './sagas'
 import createSagaMiddleware from 'redux-saga'
 import thunk from 'redux-thunk';
+import { enableBatching, batchDispatchMiddleware } from 'redux-batched-actions';
 
 
 export const history = createHistory()
@@ -13,7 +14,7 @@ const initialState = {}
 const enhancers = []
 const sagaMiddleware = createSagaMiddleware()
 const middleware = [
-  routerMiddleware(history), sagaMiddleware, thunk
+  routerMiddleware(history), sagaMiddleware, thunk, batchDispatchMiddleware
 ]
 
 if (process.env.NODE_ENV === 'development') {
@@ -30,7 +31,7 @@ const composedEnhancers = compose(
 )
 
 const store = createStore(
-  connectRouter(history)(rootReducer),
+  connectRouter(history)(enableBatching(rootReducer)),
   initialState,
   composedEnhancers
 )

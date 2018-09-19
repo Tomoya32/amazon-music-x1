@@ -1,8 +1,13 @@
 import parseMs from 'parse-ms'
 import addZero from 'add-zero'
 import debugWrapper from 'debug'
-import config from '../config'
+import config from './config'
 import qs from 'query-string'
+import ru from 'resolve-pathname'
+import uj from 'url-join'
+import uparse from 'url-parse'
+import querystring from 'querystring'
+
 
 export function getParam (param) {
   const parsed = qs.parse(document.location.search)
@@ -40,9 +45,9 @@ export const noha = str => typeof(str) === 'string' ? str.replace(/^#/,'') : str
 export const perha = str => typeof(str) === 'string' ?  str.replace(/^#/,'$') : str
 export const haper = str => typeof(str) === 'string' ?  str.replace(/^\$/,'#') : str
 
-// export function isNumeric (n) {
-//   return !isNaN(parseFloat(n)) && isFinite(n)
-// }
+export function isNumeric (n) {
+  return !isNaN(parseFloat(n)) && isFinite(n)
+}
 
 export function formatDuration (ms) {
   let {days, hours, minutes, seconds} = parseMs(ms)
@@ -121,4 +126,56 @@ export function shallowEqual (objA, objB) {
 export function proxyMediaUrl (src) {
   debug('proxyMediaUrl', process.env.NPR_ONE_PROXY_MEDIA_URL, src)
   return (process.env.NPR_ONE_PROXY_MEDIA_URL) ? `${process.env.NPR_ONE_PROXY_MEDIA_URL}?url=${src}` : src
+}
+
+
+
+export function handleItemSelection(selected, enclosingPath = '') {
+  if (!selected.navigationNodeSummary && selected.playable) {
+    const {itemDescriptions, playables} = this.props
+    const item = itemDescriptions[noha(selected.ref)]
+    const playable = playables[noha(item.playable)]
+    console.info('here', enclosingPath, item.playable)
+    const dest = mergeChunkWithPathAndQuery(mergePath('/playback', enclosingPath), playable.naturalTrackPointer.chunk, {indexWithinChunk: playable.naturalTrackPointer.indexWithinChunk} )
+    this.props.replace(dest)
+
+  } else if(selected.navigationNodeSummary) {
+    const {navigationNodeSummaries} = this.props
+    const navNode = navigationNodeSummaries[noha(selected.navigationNodeSummary)]
+    const listDest = mergePath('/list', enclosingPath, navNode.description)
+    this.props.replace(listDest)
+  } else {
+    console.error('got invalid selected', selected)
+  }
+}
+
+export function mergePath () {
+  if(!arguments.length) return ''
+  const args =  Array.prototype.slice.call(arguments)
+  let joined = uj.call(null, args)
+  joined = ru(joined)
+  return joined.replace(/.*\/\/[^/]*/, '')
+}
+
+export function mergeChunkWithPathAndQuery(path, chunk, query = {}) {
+  const qs = typeof query === 'object' ?  query : querystring.parse(query.replace(/^\?+/, ''))
+  const destPath = mergePath(path, chunk)
+  const href = uparse(destPath)
+  const parsed = querystring.parse(href.query)
+  const combined = Object.assign(qs, parsed)
+
+  const out =  `${href.pathname}?${querystring.stringify(combined)}${href.hash}`
+  return out
+
+}
+
+export function parseAPIPath(path) {
+  if(!path) return null
+  const resolved = ru(path)
+  const {pathname, hash} = uparse(resolved)
+  return {pathname, hash}
+}
+export function isNormalInteger(str) {
+  var n = Math.floor(Number(str));
+  return n !== Infinity && String(n) === str && n >= 0;
 }

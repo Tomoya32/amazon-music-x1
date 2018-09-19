@@ -1,3 +1,5 @@
+import React from 'react'
+import Player from '../components/Player'
 import axios from 'axios'
 import CONFIG from '../config'
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
@@ -20,14 +22,6 @@ export const getCode = () => {
     response_type: 'device_code',
     client_id: CONFIG.linking.client_id,
     scope: CONFIG.linking.scope,
-    // scope_data: {
-    //   [CONFIG.linking.scope]: {
-    //     productID: 'AmazonX1',
-    //     productInstanceAttributes: {
-    //       deviceSerialNumber: CONFIG.linking.serial_number
-    //     }
-    //   }
-    // }
   }))
     .then(({data}) => data)
 }
@@ -41,6 +35,12 @@ export const storeAuthData = (data) => {
 export const getAuthData = () => {
   return new Promise((resolve, reject) => {
     const data = Cookie.getJSON('amzn_music_auth')
+    resolve(data)
+  })
+}
+export const deleteAuthData = () => {
+  return new Promise((resolve) => {
+    const data = Cookie.remove('amzn_music_auth')
     resolve(data)
   })
 }
@@ -115,7 +115,7 @@ const refresh = (refresh_token, wait) => {
   return client.post(`${PAIRING_ENDPOINT}token`, qs.stringify({
     refresh_token,
     grant_type: 'refresh_token',
-    // client_id: CONFIG.linking.client_id
+    client_id: CONFIG.linking.code_id
   }), {
     transformRequest: [(data, headers) => {
       delete headers.common.Authorization
@@ -128,7 +128,7 @@ const refresh = (refresh_token, wait) => {
 }
 
 export const refreshToken = ({refresh_token, expires_in}, force = false) => {
-  const wait = force ? 0 : (expires_in - 100)
+  const wait = force ? 0 : (expires_in - 100) * 1000
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       refresh(refresh_token)
@@ -142,7 +142,21 @@ export const cancelPoller = () => {
   poller.cancel()
 }
 
-export const authWrapper = connectedRouterRedirect({
+const playerWrapper =(Wrapped) => {
+  return class extends React.Component {
+    render() {
+      return (
+        <div>
+          <Wrapped {...this.props} />
+          <Player />
+        </div>
+      )
+    }
+  }
+}
+
+export const authWrapper =(c) => playerWrapper(authorizeWrapper(c))
+export const authorizeWrapper = connectedRouterRedirect({
   redirectPath: '/linking',
   authenticatedSelector: state => state.auth.access_token !== null,
   wrapperDisplayName: 'UserIsAuthenticated'

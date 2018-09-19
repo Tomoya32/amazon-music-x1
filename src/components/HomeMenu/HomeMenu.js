@@ -1,9 +1,9 @@
 import React from 'react'
 import HomeHorizontalLoadingMenu from '../HomeMenuHorizontalLoadingMenu'
-const HomeMenu = ({itemDescription: {itemLabel, summary: {description}}, focused}) => (
+const HomeMenu = ({focused, itemDescription, pathKey}) => (
   <div>
-    <h1>{itemLabel}</h1>
-    <HomeHorizontalLoadingMenu description={description} focused={focused}/>
+    <h1>{itemDescription.itemLabel}</h1>
+    <HomeHorizontalLoadingMenu focused={focused} itemDescription={itemDescription} pathKey={pathKey} nodeKey={itemDescription}/>
   </div>
 )
 

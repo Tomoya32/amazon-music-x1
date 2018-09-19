@@ -1,53 +1,93 @@
 import React, { Component } from 'react'
-import HomeHorizontalMenuRendering from './HomeHorizontalMenuRendering'
+import ReactDOM from 'react-dom'
 import { loadChildNode } from '../../store/modules/music'
 import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
-import cx from 'classnames'
 import PropTypes from 'prop-types'
-import {showNode} from '../../store/modules/home'
+import { showNode } from '../../store/modules/home'
+import {
+  getNavigationDescriptionFromSummarySelector,
+  getKeySelector
+} from '../../lib/selectors/node_selectors'
+import { handleItemSelection } from '../../lib/utils'
+import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
+import {replace} from '../../store/modules/nav'
+import {
+  getChildPathSelector,
+  getChildItemPlayablesSelector,
+  getChildItemDescriptionSelector,
+  getCatalogData,
+  getChildItemDescriptionsSelector,
+  getChildItemPathname
+} from '../../lib/selectors/node_selectors'
 
 const mapStateToProps = (state, props) => ({
-  data: props.data ? props.data : state.music.nodes[props.description],
+  allMenuIDs: state.menus.allMenuIDs,
+  catalog: getCatalogData(state),
+  location: state.router.location,
+  summary: getNavigationDescriptionFromSummarySelector(state, props),
+  pathKey: getKeySelector(state),
+  itemDescriptions: getChildItemDescriptionsSelector(state, props),
+  playables: getChildItemPlayablesSelector(state, props),
+  navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
+  pathname: getChildItemPathname(state, props)
 })
 
 const mapDispatchToProps = {
-  loadChildNode, showNode
+  loadChildNode, showNode, replace
 }
 
 class HomeMenuHorizontalLoadingMenuContainer extends Component {
+  constructor (p) {
+    super(p)
+    this.handleSelection = dest => handleItemSelection.call(this, dest, this.props.pathname)
+  }
+
   static propTypes = {
-    data: PropTypes.object,
-    description: PropTypes.string.isRequired
+    itemDescription: PropTypes.object.isRequired
   }
 
   componentDidMount () {
-    if (!this.props.data) this.loadRemote()
+    this.loadIfNeeded()
   }
 
   componentDidUpdate () {
-    if (!this.props.data) this.loadRemote()
+    this.loadIfNeeded()
+    this.scrollElementIntoViewIfNeeded()
   }
 
-  loadRemote () {
-    this.props.loadChildNode(this.props.description)
+  loadIfNeeded () {
+    if (typeof(this.props.summary) === 'string') {
+      this.props.loadChildNode(this.props.summary)
+    }
+  }
+
+  scrollElementIntoViewIfNeeded () {
+    if (this.props.focused) {
+      // node is the element to make visible within container
+      const node = ReactDOM.findDOMNode(this);
+      if (node) {
+        // scrollable container
+        let container = node.parentElement.parentElement.parentElement;
+        if (container) {
+          // to control scroll position:
+          let refTop = 252.5
+          if ((node.offsetTop > refTop) || (container.scrollTop > node.offsetTop - refTop)) {
+            // check if horizontal selection is within view
+            container.scrollTop = node.offsetTop - refTop;
+          }
+        }
+      }
+    }
   }
 
   render () {
-    if (this.props.data) {
+    if (typeof(this.props.summary) === 'object') {
       return (
-        <div className={cx('HorinzontalLoadingMenuWrapper', {focused: this.props.focused})}>
-          <HomeHorizontalMenuRendering {...this.props.data} focused={this.props.focused} enclosing={this.props.data.result} showNode={this.props.showNode}  />
-        </div>
-      )
+        <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
     } else {
-      return (
-        <div className='HorinzontalLoadingMenuWrapper'>
-          <h2>Loading</h2>
-        </div>
-      )
+      return null
     }
-
   }
 }
 

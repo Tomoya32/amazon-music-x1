@@ -20,10 +20,12 @@ const API = {
       .then(response => {
         return response
       })
-      .catch(response =>{
-        const e = new Error()
-        Object.assign(e, response.data)
-        console.error(`Error getting path ${path}`)
+      .catch(request =>{
+        const {response} = request
+        const e = new Error(response.statusText)
+        Object.assign(e, {data: response.data, status: response.status})
+        if(e.status === 401 || e.status === 403) API.deleteToken()
+        console.error(`Error getting path ${path}`, e)
         throw(e)
       })
   },
@@ -38,6 +40,9 @@ const API = {
     // get it now, track changes
     API.ACCESS_TOKEN = token
     client.defaults.headers.common['Authorization'] = `Bearer ${API.ACCESS_TOKEN}`
+  },
+  deleteToken: () => {
+    API.ACCESS_TOKEN = null
   }
 }
 
