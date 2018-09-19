@@ -10,7 +10,10 @@ const initialState = {}
 
 export default function reactvReduxReducer(state = initialState, action) {
   if(action.type === UPDATE_MENU_STATE) {
-    return Object.assign({}, state, {[action.menuid]: action.state})
+    let current = state[action.menuid], updated
+    if(typeof current === 'object') updated = Object.assign({}, current, action.state)
+    else updated = action.state
+    return Object.assign({}, state, {[action.menuid]: updated})
   } else {
     return state
   }

@@ -15,7 +15,7 @@ const Home = ({catalog: {itemsData}, pathKey, topNav, isFocused, changeFocus}) =
     <div>
       <VerticalTextMenu items={topNav} menuid={`home:topnav`} focused={isFocused('topnav')}
         onDown={changeFocus('home:main')} />
-      <div>
+      <div className="Home-scrollable">
         {itemsData && itemsData.length &&
         <ListMenu data={itemsData} renderItem={renderMenu(pathKey)} menuid={'homevert'}
           focused={isFocused('home:main')} onUp={changeFocus('topnav')} />}

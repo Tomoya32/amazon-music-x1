@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 import { loadChildNode } from '../../store/modules/music'
 import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
@@ -21,6 +22,7 @@ import {
 } from '../../lib/selectors/node_selectors'
 
 const mapStateToProps = (state, props) => ({
+  allMenuIDs: state.menus.allMenuIDs,
   catalog: getCatalogData(state),
   location: state.router.location,
   summary: getNavigationDescriptionFromSummarySelector(state, props),
@@ -51,6 +53,7 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
 
   componentDidUpdate () {
     this.loadIfNeeded()
+    this.scrollElementIntoViewIfNeeded()
   }
 
   loadIfNeeded () {
@@ -59,10 +62,29 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
     }
   }
 
+  scrollElementIntoViewIfNeeded () {
+    if (this.props.focused) {
+      // node is the element to make visible within container
+      const node = ReactDOM.findDOMNode(this);
+      if (node) {
+        // scrollable container
+        let container = node.parentElement.parentElement.parentElement;
+        if (container) {
+          // to control scroll position:
+          let refTop = 252.5
+          if ((node.offsetTop > refTop) || (container.scrollTop > node.offsetTop - refTop)) {
+            // check if horizontal selection is within view
+            container.scrollTop = node.offsetTop - refTop;
+          }
+        }
+      }
+    }
+  }
+
   render () {
     if (typeof(this.props.summary) === 'object') {
       return (
-        <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection} focused={this.props.focused} />)
+        <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
     } else {
       return null
     }
