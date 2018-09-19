@@ -1,9 +1,20 @@
 import keymap from './KeyMaps'
+import dw from 'debug'
+
+const debug = dw('reactv:keyevents')
+
+var events = 0
 
 export default class KeyEvents {
-  constructor () {
+  constructor (id) {
+    events++
+    debug('New Events', events)
     this.handlers = {}
+    this.id = id || events
+    this.publishing = false
+    this._postRegister = []
     document.addEventListener('keydown', (e) => {
+      debug('start keydown')
       const name = keymap(e.keyCode)
       if (!name) return
       this.publish(name)
@@ -11,6 +22,7 @@ export default class KeyEvents {
         e.preventDefault()
         e.stopPropagation()
       }
+      debug('end keydown')
     })
 
     document.addEventListener('keyup', (e) => {
@@ -44,6 +56,10 @@ export default class KeyEvents {
    */
   subscribeTo (key, func) {
     // Find or create Queue
+    if(this.publishing) {
+      console.warn('tried to bind when publishing')
+      return
+    }
     if (!this.handlers.hasOwnProperty(key)) { this.handlers[key] = [] }
     let index = this.handlers[key].push(func) - 1
     var that = this
@@ -53,6 +69,15 @@ export default class KeyEvents {
         delete that.handlers[key][index]
       }
     }
+  }
+
+  startPublishing() {
+    this.publishing = true
+  }
+
+
+  endPublishing() {
+    this.publishing = false
   }
 
   /**
@@ -69,8 +94,13 @@ export default class KeyEvents {
     const handlers = this.handlers[evt].slice(0)
 
     // Do this on next tick to prevent some issues with bindings happening during event.
+    if(!handlers.length) return
+    this.startPublishing()
     setTimeout(() => {
-      handlers.forEach(handler => handler())
-    }, 0)
+      handlers.forEach(handler => {
+        handler()
+      })
+      this.endPublishing()
+    }, 10)
   }
 }

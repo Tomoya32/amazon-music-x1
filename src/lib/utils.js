@@ -136,7 +136,7 @@ export function handleItemSelection(selected, enclosingPath = '') {
     const item = itemDescriptions[noha(selected.ref)]
     const playable = playables[noha(item.playable)]
     console.info('here', enclosingPath, item.playable)
-    const dest = mergeChunkWithPathAndQuery(mergePath('/playback', enclosingPath), playable.naturalTrackPointer.chunk, {indexWithinChunk: playable.naturalTrackPointer.indexWithinChunk} )
+    const dest = mergeChunkWithPathAndQuery(['/playback', enclosingPath], playable.naturalTrackPointer.chunk, {indexWithinChunk: playable.naturalTrackPointer.indexWithinChunk} )
     this.props.replace(dest)
 
   } else if(selected.navigationNodeSummary) {
@@ -152,21 +152,24 @@ export function handleItemSelection(selected, enclosingPath = '') {
 export function mergePath () {
   if(!arguments.length) return ''
   const args =  Array.prototype.slice.call(arguments)
-  let joined = uj.call(null, args)
+  if(!args && !args.length) return ''
+  let joined = uj.call(null, args.filter(a => !!a))
   joined = ru(joined)
   return joined.replace(/.*\/\/[^/]*/, '')
 }
 
+/**
+ *
+ */
 export function mergeChunkWithPathAndQuery(path, chunk, query = {}) {
+  if(Array.isArray(path)) path = mergePath.apply(null, path)
   const qs = typeof query === 'object' ?  query : querystring.parse(query.replace(/^\?+/, ''))
   const destPath = mergePath(path, chunk)
   const href = uparse(destPath)
   const parsed = querystring.parse(href.query)
   const combined = Object.assign(qs, parsed)
-
   const out =  `${href.pathname}?${querystring.stringify(combined)}${href.hash}`
   return out
-
 }
 
 export function parseAPIPath(path) {

@@ -9,20 +9,23 @@ export function loadChildNode(path) {
     path
   }
 }
+export function addChildNode(node, path, resolvePath) {
+  return {
+    type: ADD_CHILD_NODE,
+    node, path, resolvePath
+  }
+}
 const initialState = {
   currentParent: null,
   nodes: {},
-  pathLookup: {},
-  navigationNodeSummaries: {},
-  playables: {},
-  navigationNodeDescriptions: {},
+  pathResolvers: {}
 }
 
-const addNode = (state, node, path) => {
+const addNode = (state, {node, path, resolvePath}) => {
   const newState = Object.assign({}, state)
   const key = path || node.result
   newState.nodes[key] = node
-  newState.pathLookup[node.result] = path
+  newState.pathResolvers[path] = resolvePath
  // Object.assign(newState.itemDescriptions, {...node.itemDescriptions})
   return newState
 }
@@ -33,7 +36,7 @@ export default function musicReducer(state = initialState, action) {
       const newState = addNode(state, action.payload)
       return Object.assign(newState, { currentParent: action.payload.result })
     case ADD_CHILD_NODE:
-      return addNode(state, action.payload, action.path)
+      return addNode(state, action)
     default:
       return state
   }

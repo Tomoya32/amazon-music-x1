@@ -2,7 +2,8 @@ import React, {Component} from 'react'
 import { KeyEvents } from '../../../reactv-redux/index'
 import PropTypes from 'prop-types'
 
-const keys = new KeyEvents()
+const keys = new KeyEvents('buttonizer')
+
 
 const Buttonizer = (InnerComponent) => {
   class Button extends Component {
@@ -24,14 +25,25 @@ const Buttonizer = (InnerComponent) => {
       if(this.props.focused && !prevProps.focused) this.bind()
       if(!this.props.focused && prevProps.focused) this.unbind()
     }
+
     bind() {
-      ['Up','Down','Left', 'Right','Down', 'Enter'].forEach(event => {
+      console.info('binding enter')
+      this.unbind()
+      const dirs = ['Up','Down','Left', 'Right']
+      dirs.forEach(event => {
         if(this.props[`on${event}`]) {
           this.bindings.push(keys.subscribeTo(event, this.props[`on${event}`]))
         }
       })
+
+      const Enter = keys.subscribeTo('Enter', () => {
+        if(this.props.onClick) this.props.onClick()
+        if(this.props.onEnter) this.props.onEnter()
+      })
+      this.bindings.push(Enter)
     }
     unbind() {
+      console.info('unbinding keys', this.bindings)
       this.bindings.forEach(binding => binding.unsubscribe())
       this.bindings = []
     }
