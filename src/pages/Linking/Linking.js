@@ -8,6 +8,7 @@ const Linking = ({user_code, verification_uri}) => (
     {verification_uri &&
     <a href={verification_uri} target="_blank">{verification_uri}</a>
     }
+    <p>Using endpoint: {process.env.REACT_APP_MUSIC_ENDPOINT}</p>
   </div>
 )
 export default Linking
