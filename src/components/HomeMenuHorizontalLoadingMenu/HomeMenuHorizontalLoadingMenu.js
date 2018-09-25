@@ -18,9 +18,11 @@ const calculateStyle = (currentState, newState, ref) => {
 
 const HomeMenuHorizontalLoadingMenu = ({itemsData, name, focused, onClick, allMenuIDs}) => {
   const menuid = `homemenu:${name}`;
+  const data = itemsData.slice(0,5);
+  data.push({itemLabel: 'See More', navigationNodeSummary: name})
   return (
   <ListMenu
-    data={itemsData.slice(0,5)}
+    data={data}
     menuid={menuid}
     renderItem={HomeMenuCard}
     className='HomeMenuHorizontalLoadingMenu'

@@ -7,30 +7,7 @@ import { push, replace } from '../../store/modules/nav'
 import { uuid } from '../../lib/utils'
 import omit from 'lodash/omit'
 import { updateMenu } from '../../lib/reactv-redux/MenusReducer'
-
-
-const TOP_NAV = [
-  {
-    name: 'Browse',
-    path: '/music',
-  },
-  {
-    name: 'Recents',
-    path: '/recents',
-  },
-  {
-    name: 'My Music',
-    path: '/mymusic',
-  },
-  {
-    name: 'Search',
-    path: '/search',
-  },
-  {
-    name: 'Settings',
-    path: '/settings',
-  }
-]
+import topnav from '../../components/MainMenu/topnav'
 
 const mapDispatchToProps = {
   removeLetterFromSearchTerm,
@@ -54,6 +31,8 @@ class SearchContainer extends PureComponent {
     }
   }
 
+  onSubmit (value) { this.props.history.push(value.path) }
+
   onLetter (letter) {
     if (letter === String.fromCharCode(parseInt(2423, 16))) {
       this.props.addLetterToSearchTerm(' ')
@@ -67,11 +46,12 @@ class SearchContainer extends PureComponent {
   render () {
     return (<ComposedSearch
       mid='search'
-      defaultFocus='search:atoz' focused
+      defaultFocus='topnav' focused
+      onSubmit={this.onSubmit.bind(this)}
       onLetter={this.onLetter.bind(this)}
       {...this.props}
       contentKey={this.key}
-      topNav={TOP_NAV}
+      topNav={topnav}
     />)
   }
 }

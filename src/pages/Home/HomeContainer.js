@@ -8,7 +8,9 @@ import {
   getNavigationNodeSummariesSelector,
   getKeySelector
 } from '../../lib/selectors/node_selectors'
+import { updateMenu } from '../../lib/reactv-redux/MenusReducer'
 import { updateMenuState } from '../../lib/reactv-redux/ReacTVReduxReducer'
+import topnav from '../../components/MainMenu/topnav'
 
 const mapStateToProps = (state) => ({
   allMenuIDs: state.menus.allMenuIDs,
@@ -21,31 +23,7 @@ const mapStateToProps = (state) => ({
   pathKey: getKeySelector(state)
 })
 
-const mapDispatchToProps = {updateMenuState}
-
-const TOP_NAV = [
-  {
-    name: 'Browse',
-    path: '/music',
-  },
-  {
-    name: 'Recents',
-    path: '/recents',
-  },
-  {
-    name: 'My Music',
-    path: '/mymusic',
-  },
-  {
-    name: 'Search',
-    path: '/search',
-  },
-  {
-    name: 'Settings',
-    path: '/settings',
-  }
-]
-
+const mapDispatchToProps = {updateMenuState, updateMenu}
 
 class HomeContainer extends React.Component {
 
@@ -57,9 +35,11 @@ class HomeContainer extends React.Component {
     }
   }
 
+  onSubmit (value) { this.props.history.push(value.path) }
+
   render() {
     if(this.props.catalog) {
-      return (<Home catalog={this.props.catalog} pathKey={this.props.pathKey} topNav={TOP_NAV} focused menuid={'homespace'} onFocusItem='topnav'/>)
+      return (<Home catalog={this.props.catalog} pathKey={this.props.pathKey} topNav={topnav} focused menuid={'homespace'} onFocusItem='topnav' {...this.props} onSubmit={this.onSubmit.bind(this)}/>)
     } else {
       return null
     }
