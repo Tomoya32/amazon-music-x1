@@ -1,3 +1,0 @@
-#!/bin/bash
-echo "=> Building Environmental Variables"
-docker build --build-arg AMAZON_MUSIC_CLIENT_ID=${REACT_APP_AMAZON_MUSIC_CLIENT_ID} --build-arg SERIAL_NUMBER=${REACT_APP_SERIAL_NUMBER} --build-arg MUSIC_ENDPOINT=https://music-api.amazon.com --build-arg TEST_STRING=hello --build-arg "test_variable=helloworld" --build-arg test_variable2=helloworld2 . -t $IMAGE_NAME
