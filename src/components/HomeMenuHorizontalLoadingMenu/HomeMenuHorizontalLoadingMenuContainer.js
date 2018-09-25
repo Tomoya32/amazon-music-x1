@@ -53,31 +53,11 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
 
   componentDidUpdate () {
     this.loadIfNeeded()
-    this.scrollElementIntoViewIfNeeded()
   }
 
   loadIfNeeded () {
     if (typeof(this.props.summary) === 'string') {
       this.props.loadChildNode(this.props.summary)
-    }
-  }
-
-  scrollElementIntoViewIfNeeded () {
-    if (this.props.focused) {
-      // node is the element to make visible within container
-      const node = ReactDOM.findDOMNode(this);
-      if (node) {
-        // scrollable container
-        let container = node.parentElement.parentElement.parentElement;
-        if (container) {
-          // to control scroll position:
-          let refTop = 252.5
-          if ((node.offsetTop > refTop) || (container.scrollTop > node.offsetTop - refTop)) {
-            // check if horizontal selection is within view
-            container.scrollTop = node.offsetTop - refTop;
-          }
-        }
-      }
     }
   }
 
