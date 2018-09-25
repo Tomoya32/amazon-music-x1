@@ -11,9 +11,7 @@ const Linking = ({user_code, verification_uri}) => (
     <p>Client ID: {process.env.REACT_APP_AMAZON_MUSIC_CLIENT_ID}</p>
     <p>Serial Number: {process.env.REACT_APP_SERIAL_NUMBER}</p>
     <p>Test string: {process.env.REACT_APP_TEST_STRING}</p>
-    <p>Test string 2: {process.env.REACT_APP_TEST_STRING_2}</p>
-    <p>Test variable: {process.env.test_environment_variable}</p>
-    <p>Test variable: {process.env.test_environment_variable2}</p>
+    <p>Explicit variable value: {process.env.REACT_APP_EXPLICIT_VALUE}</p>
     <small>You are running this application in <b>{process.env.NODE_ENV}</b> mode.</small>
   </div>
 )

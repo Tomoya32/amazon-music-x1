@@ -17,6 +17,7 @@ ENV REACT_APP_MUSIC_ENDPOINT=$MUSIC_ENDPOINT
 ENV REACT_APP_TEST_STRING=$TEST_STRING
 ENV test_environment_variable=$test_variable
 ENV test_environment_variable2=$test_variable2
+ENV REACT_APP_EXPLICIT_VALUE=yolo
 
 RUN echo "Using client ID ${REACT_APP_AMAZON_MUSIC_CLIENT_ID}"
 RUN echo "Using serial number ${REACT_APP_SERIAL_NUMBER}"
