@@ -17,6 +17,8 @@ ENV REACT_APP_TEST_STRING=${REACT_APP_TEST_STRING}
 ENV test_variable=$test_variable
 
 RUN echo "Using endpoint ${REACT_APP_MUSIC_ENDPOINT}"
+RUN echo "Using test variable ${test_variable}"
+RUN echo "Using test variable ${test_variable}"
 
 RUN yarn
 RUN yarn build
