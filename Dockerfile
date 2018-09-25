@@ -15,7 +15,7 @@ RUN echo "Using client ID ${REACT_APP_AMAZON_MUSIC_CLIENT_ID}"
 RUN echo "Using serial number ${REACT_APP_SERIAL_NUMBER}"
 RUN echo "Using endpoint ${REACT_APP_MUSIC_ENDPOINT}"
 
-RUN sh ./scripts/create_env_file.sh
+#RUN sh ./scripts/create_env_file.sh
 
 RUN yarn
 RUN yarn build
