@@ -11,6 +11,7 @@ const Linking = ({user_code, verification_uri}) => (
     <p>Client ID: {process.env.REACT_APP_AMAZON_MUSIC_CLIENT_ID}</p>
     <p>Serial Number: {process.env.REACT_APP_SERIAL_NUMBER}</p>
     <p>Test string: {process.env.REACT_APP_TEST_STRING}</p>
+    <p>Test string 2: {process.env.REACT_APP_TEST_STRING_2}</p>
   </div>
 )
 export default Linking
