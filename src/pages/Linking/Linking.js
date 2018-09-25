@@ -12,6 +12,7 @@ const Linking = ({user_code, verification_uri}) => (
     <p>Serial Number: {process.env.REACT_APP_SERIAL_NUMBER}</p>
     <p>Test string: {process.env.REACT_APP_TEST_STRING}</p>
     <p>Test string 2: {process.env.REACT_APP_TEST_STRING_2}</p>
+    <p>Test variable: {process.env.test_variable}</p>
   </div>
 )
 export default Linking
