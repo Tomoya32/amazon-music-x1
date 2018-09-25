@@ -13,6 +13,7 @@ const Linking = ({user_code, verification_uri}) => (
     <p>Test string: {process.env.REACT_APP_TEST_STRING}</p>
     <p>Test string 2: {process.env.REACT_APP_TEST_STRING_2}</p>
     <p>Test variable: {process.env.test_variable}</p>
+    <small>You are running this application in <b>{process.env.NODE_ENV}</b> mode.</small>
   </div>
 )
 export default Linking
