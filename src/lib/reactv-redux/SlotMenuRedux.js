@@ -142,7 +142,7 @@ export const getWidthWithMargin = (c) => {
 
 export const getHeightMargin = (c) => {
   const style = window.getComputedStyle ? getComputedStyle(c) : c.currentStyle
-  const height = c.getBoundingClientRect().height + parseInt(style.marginTop, 10) + parseInt(style.marginBottom, 10) + 32
+  const height = c.getBoundingClientRect().height + parseInt(style.marginTop, 10) + parseInt(style.marginBottom, 10)
   return height
 }
 

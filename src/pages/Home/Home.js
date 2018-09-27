@@ -14,10 +14,10 @@ const renderMenu = (pathKey) => (
 const calculateStyle = (currentState, newState, ref) => {
   let offset;
   if (newState.index > currentState.index && newState.slotIndex === currentState.slotIndex) {
-    offset = calculateOffsetHeight(ref, newState.index, newState.slotIndex);
+    offset = calculateOffsetHeight(ref, newState.index, newState.slotIndex) + currentState.index*32;
     return {transform: `translateY(-${offset}px)`}
   } else if (newState.index < currentState.index && currentState.slotIndex === 0) {
-    offset = calculateOffsetHeight(ref, newState.index, newState.slotIndex);
+    offset = calculateOffsetHeight(ref, newState.index, newState.slotIndex) + newState.index*32;
     return {transform: `translateY(-${offset}px)`}
   } else {
     console.info('nothing moved, returning null')
