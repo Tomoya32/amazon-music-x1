@@ -12,7 +12,8 @@ import {
   getNavigationNodeSummariesSelector
 } from '../../lib/selectors/node_selectors'
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state,ownProps) => ({
+  highlightedTrack: state.menus[`catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`],
   catalog: getCatalogData(state),
   itemDescriptions: getItemDescriptionsSelectors(state),
   playables: getPlayableSelector(state),
@@ -46,7 +47,13 @@ class CatalogContainer extends Component {
 
   render () {
     if (typeof(this.props.catalog) === 'object') {
+      let thumbnail, currentIndex;
+      if (this.props.highlightedTrack) {
+        currentIndex = this.props.highlightedTrack.index;
+        thumbnail = this.props.catalog.itemsData[currentIndex].image
+      }
       return <Catalog {...this.props.catalog}
+        thumbnail={thumbnail}
         kid={this.props.location.pathname + this.props.location.hash}
         onSelect={this.handleSelection.bind(this)} />
     } else {
