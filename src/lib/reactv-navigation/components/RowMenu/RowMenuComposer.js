@@ -50,7 +50,7 @@ const RowMenuComposer = (InnerComponent, direction = 'horizontal') => {
 
     componentDidMount () {
       setTimeout(() => {
-        if (this.props.focused && !this._bound) {
+        if (this.props.focused && !this._bound && ! this._unmounted) {
           debug('not bound but focused, trying to bind ...')
           this.bind()
         }
@@ -66,6 +66,7 @@ const RowMenuComposer = (InnerComponent, direction = 'horizontal') => {
     }
 
     componentWillUnmount () {
+      this._unmounted = true;
       this.unbind()
     }
 
