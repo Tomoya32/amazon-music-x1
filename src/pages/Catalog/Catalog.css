@@ -1,14 +1,15 @@
 .CatalogInfo {
     position: absolute;
-    top: 100px;
+    top: 30px;
     left: 50px;
     height: 520px;
     width: 30%;
 }
 
 .CatalogInfo > h1 {
-    font-size: 1.3em;
+    font-size: 1.8em;
     display: block;
+    margin-bottom: 13.5%;
 }
 
 .CatalogInfo > img {

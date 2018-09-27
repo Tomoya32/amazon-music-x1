@@ -2,7 +2,7 @@ import React from 'react'
 import './Catalog.css'
 import PlaylistMenu from '../../components/PlaylistMenu'
 
-const Catalog = ({kid, onSelect, thumbnail, itemsData, summary: {title}}) => (
+const Catalog = ({kid, onSelect, thumbnail, itemsData, summaryData: {title}}) => (
   <div className='Catalog Page'>
     <div className={'CatalogInfo'}>
       {title && <h1>{title}</h1>}
