@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react'
 import Search from './Search'
 import { addLetterToSearchTerm, removeLetterFromSearchTerm } from '../../store/modules/search'
 import { connect } from 'react-redux'
-import NamedMenuComposer from '../../lib/reactv-navigation/components/NamedMenu/NamedMenuComposer'
 import { push, replace } from '../../store/modules/nav'
 import { uuid } from '../../lib/utils'
 import omit from 'lodash/omit'
@@ -17,7 +16,6 @@ const mapDispatchToProps = {
   updateMenu,
 }
 const mapStateToProps = ({search: {term, results}, navigation: {menus}}) => ({term, results, menus})
-const ComposedSearch = NamedMenuComposer(Search)
 
 class SearchContainer extends PureComponent {
   constructor (p) {
@@ -44,9 +42,9 @@ class SearchContainer extends PureComponent {
   }
 
   render () {
-    return (<ComposedSearch
-      mid='search'
-      defaultFocus='topnav' focused
+    return (<Search
+      menuid='search'
+      onFocusItem='topnav' focused
       onSubmit={this.onSubmit.bind(this)}
       onLetter={this.onLetter.bind(this)}
       {...this.props}

@@ -2,15 +2,14 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import VerticalTextMenu from '../../components/VerticalTextMenu'
 import MainMenu from '../../components/MainMenu'
-// import ExploreMenu from '../../components/ExploreMenu'
+import Space from '../../lib/reactv-redux/SpaceRedux'
 import AtoZMenu from '../../components/AtoZMenu'
 import {alphabet} from '../../components/AtoZMenu/AtoZContainer'
 import topnav from '../../components/MainMenu/topnav'
 import './Search.css'
 
+
 const Search = ({changeFocus, isFocused, term, results, onLetter, onSubmit, updateMenu}) => {
-  // what happens to topnav.length?
-  // debugger
     return (
       <div className="Home-content">
         <MainMenu className='main-menu' menuid='topnav' mid='topnav' focused={isFocused('topnav')} onEnter={onSubmit}
@@ -26,4 +25,4 @@ const Search = ({changeFocus, isFocused, term, results, onLetter, onSubmit, upda
     )
 }
 
-export default Search
+export default Space(Search)
