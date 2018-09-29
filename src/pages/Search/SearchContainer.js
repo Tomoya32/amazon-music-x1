@@ -29,8 +29,6 @@ class SearchContainer extends PureComponent {
     }
   }
 
-  onSubmit (value) { this.props.history.push(value.path) }
-
   onLetter (letter) {
     if (letter === String.fromCharCode(parseInt(2423, 16))) {
       this.props.addLetterToSearchTerm(' ')
@@ -45,11 +43,11 @@ class SearchContainer extends PureComponent {
     return (<Search
       menuid='search'
       onFocusItem='topnav' focused
-      onSubmit={this.onSubmit.bind(this)}
+      entryFocus='search:atoz'
       onLetter={this.onLetter.bind(this)}
       {...this.props}
       contentKey={this.key}
-      topNav={topnav}
+      topnav={topnav}
     />)
   }
 }

@@ -5,11 +5,11 @@ const topnav = [
   },
   {
     name: 'Recents',
-    path: '/recents',
+    path: '/music/widescreen_recents/',
   },
   {
     name: 'My Music',
-    path: '/mymusic',
+    path: '/music/widescreen_library/',
   },
   {
     name: 'Search',

@@ -32,16 +32,16 @@ class HomeContainer extends React.Component {
   componentDidUpdate() {
     if (this.props.catalog && !this.props.allMenuIDs) {
       const allMenuIDs = this.props.catalog.itemsData.map(item => `homemenu:${item.navigationNodeSummary}`);
-      allMenuIDs.shift(); // First entry is Try Amazon Unlimited row, which has no slots to track
+      if (allMenuIDs[0] === "homemenu:#_obj0") {
+        allMenuIDs.shift(); // First entry is Try Amazon Unlimited row, which has no slots to track
+      }
       this.props.updateMenuState('allMenuIDs',allMenuIDs)
     }
   }
 
-  onSubmit (value) { this.props.history.push(value.path) }
-
   render() {
     if(this.props.catalog) {
-      return (<Home catalog={this.props.catalog} pathKey={this.props.pathKey} topNav={topnav} focused menuid={'homespace'} onFocusItem='topnav' {...this.props} onSubmit={this.onSubmit.bind(this)}/>)
+      return (<Home catalog={this.props.catalog} pathKey={this.props.pathKey} topnav={topnav} focused menuid={'homespace'} onFocusItem='topnav' {...this.props} entryFocus='home:main'/>)
     } else {
       return null
     }

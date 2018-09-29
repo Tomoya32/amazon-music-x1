@@ -2,34 +2,35 @@ import React, { Component } from 'react'
 import MainMenu from './MainMenu'
 import { connect } from 'react-redux'
 import omit from 'lodash/omit'
-import { updateMenu } from '../../lib/reactv-redux/MenusReducer'
 import RowMenuComposer from '../../lib/reactv-navigation/components/RowMenu/RowMenuComposer'
-import topnav from './topnav'
 
 const ComposedMenu = RowMenuComposer(MainMenu)
-const mapStateToProps = ({router}) => ({pathname: router.location.pathname})
+const mapStateToProps = ({router, playable}) => ({pathname: router.location.pathname, playable})
 
 class MainMenuContainer extends Component {
-  constructor (p) {
-    super(p)
-    this.state = {
-      clicked: ''
+  constructor(props){
+    super(props)
+    this.state = {topnav: props.topnav};
+  }
+  componentDidUpdate() {
+    const {playable} = this.props;
+    if (playable.node && this.state.topnav.length < 6) {
+      let newTopnav = this.props.topnav
+      newTopnav.push({
+        name: 'Now Playing',
+        path:`/playback${playable.node}?indexWithinChunk=${playable.indexWithinChunk}#chunk`
+      })
+      this.setState({topnav: newTopnav})
     }
   }
-
-  setClicked (value) {
-    const {onEnter} = this.props
-    onEnter(value)
-  }
-
   render() {
     const {onEnter} = this.props
-    let onSubmit = value => console.info('Value: ' + value)
+    let onSubmit;
     const props = omit(this.props, 'onEnter')
     if (onEnter && typeof onEnter === 'function') {
-      onSubmit = value => { this.setClicked(value) }
+      onSubmit = value => { onEnter(value) }
     }
-    return (<ComposedMenu {...props} menuItems={topnav} onEnter={onSubmit} clicked={this.state.clicked} />)
+    return (<ComposedMenu {...props} menuItems={this.state.topnav} onEnter={onSubmit} />)
   }
 }
 
