@@ -9,6 +9,7 @@ import playable from './playable'
 import player from './player'
 import {default as nav} from './nav'
 import { ReactTVReduxReducer, MenusRedux} from '../../lib/reactv-redux'
+import modal from './modal'
 
 export default combineReducers({
   linking,
@@ -22,4 +23,5 @@ export default combineReducers({
   playable,
   search,
   navigation: MenusRedux,
+  modal
 })

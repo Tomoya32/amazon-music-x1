@@ -16,10 +16,12 @@ const calculateStyle = (currentState, newState, ref) => {
   }
 }
 
-const HomeMenuHorizontalLoadingMenu = ({itemsData, name, focused, onClick, allMenuIDs}) => {
+const HomeMenuHorizontalLoadingMenu = ({itemsData, name, focused, onClick, allMenuIDs, summary}) => {
   const menuid = `homemenu:${name}`;
   const data = itemsData.slice(0,5);
-  data.push({itemLabel: 'See More', navigationNodeSummary: name})
+  if (summary != "/upsell-banner/") {
+    data.push({itemLabel: 'See More', navigationNodeSummary: name})
+  }
   return (
   <ListMenu
     data={data}

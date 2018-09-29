@@ -1,0 +1,28 @@
+.music-modal {
+  font-size: 1em;
+  text-align: center;
+}
+
+.music-modal > button {
+  background-color: #68eaff;
+  width: 80px;
+  height: 20px;
+  color: #252d41;
+}
+
+.ReactModal__Content {
+  opacity: 0.90;
+  position:fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 30%;
+  height:16%;
+  margin-top: -9em; /*set to a negative number 1/2 of your height*/
+  margin-left: -13em; /*set to a negative number 1/2 of your width*/
+  border: 1px solid #ccc;
+  background-color: #131721 !important;
+}
+
+.ReactModal__Overlay {
+  background-color: transparent !important;
+}

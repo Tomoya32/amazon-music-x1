@@ -6,6 +6,7 @@ import ListMenu, { calculateOffsetHeight } from '../../lib/reactv-redux/SlotMenu
 import Space from '../../lib/reactv-redux/SpaceRedux'
 import topnav from '../../components/MainMenu/topnav'
 import './Home.css'
+import Modal from '../../components/Modal'
 
 const renderMenu = (pathKey) => (
   ({item, focused}) => (<HomeMenu itemDescription={item} pathKey={pathKey} menuid={`homemenu:${item.itemLabel}`} focused={focused} />)
@@ -25,11 +26,17 @@ const calculateStyle = (currentState, newState, ref) => {
   }
 }
 
-const Home = ({catalog: {itemsData}, pathKey, topNav, isFocused, changeFocus, onSubmit, updateMenu}) => {
+const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, onSubmit, updateMenu, showModal, closeModal}) => {
+  if (showModal && !isFocused('modal')) { changeFocus('modal')() }
   return (
     <div>
       <MainMenu className='main-menu' menuid='topnav' mid='topnav' focused={isFocused('topnav')} onEnter={onSubmit}
         onDown={changeFocus('home:main')} onRight={() => updateMenu('topnav', {index: 0})} onLeft={() => updateMenu('topnav', {index: topnav.length - 1 })}/>
+        {showModal && <Modal className='amazon-unlimited-modal' menuid='modal' showModal={showModal} focused={isFocused('modal')}
+        onEnter={() => {
+          closeModal()
+          changeFocus('home:main')()
+      }}/>}
       <div className="Home-scrollable">
         {itemsData && itemsData.length &&
         <ListMenu data={itemsData} renderItem={renderMenu(pathKey)} menuid={'home:main'}

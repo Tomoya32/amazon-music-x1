@@ -20,6 +20,7 @@ import {
   getChildItemDescriptionsSelector,
   getChildItemPathname
 } from '../../lib/selectors/node_selectors'
+import { openModal } from '../../store/modules/modal'
 
 const mapStateToProps = (state, props) => ({
   allMenuIDs: state.menus.allMenuIDs,
@@ -34,13 +35,14 @@ const mapStateToProps = (state, props) => ({
 })
 
 const mapDispatchToProps = {
-  loadChildNode, showNode, replace
+  loadChildNode, showNode, replace, openModal
 }
 
 class HomeMenuHorizontalLoadingMenuContainer extends Component {
   constructor (p) {
     super(p)
     this.handleSelection = dest => handleItemSelection.call(this, dest, this.props.pathname)
+    this.handleOpenModal = this.handleOpenModal.bind(this);
   }
 
   static propTypes = {
@@ -61,7 +63,22 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
     }
   }
 
+  handleOpenModal () {
+    this.props.openModal()
+  }
+
   render () {
+    if (this.props.itemDescription) {
+      if (this.props.itemDescription.ref== "#_obj0") {
+        // If the data is for 'Try Amazon Unlimited Music', manipulate API response to populate HomeMenuCard
+        let summary = {
+          image: ["#_obj0"],
+          itemsData: [this.props.itemDescription],
+          summary: "/upsell-banner/"
+        }
+        return (<HomeMenuHorizontalLoadingMenu {...summary} onClick={this.handleOpenModal} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
+      }
+    }
     if (typeof(this.props.summary) === 'object') {
       return (
         <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)

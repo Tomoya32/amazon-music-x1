@@ -17,7 +17,6 @@ const TrackInfo = ({title, artist, album, image, isFocused}) => (
         <h1>{title}</h1>
         {artist && artist.name && (<h2>{artist.name}</h2>)}
         {album && album.name && (<h3>{album.name}</h3>)}
-s
         <NextTrackButton menuid="nextTrack" onEnter={() => {
           console.info('do this')
         }} focused={isFocused('nextTrack')}/>

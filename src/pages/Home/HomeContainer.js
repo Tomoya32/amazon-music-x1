@@ -11,8 +11,10 @@ import {
 import { updateMenu } from '../../lib/reactv-redux/MenusReducer'
 import { updateMenuState } from '../../lib/reactv-redux/ReacTVReduxReducer'
 import topnav from '../../components/MainMenu/topnav'
+import { closeModal } from '../../store/modules/modal'
 
 const mapStateToProps = (state) => ({
+  showModal: state.modal.showModal,
   allMenuIDs: state.menus.allMenuIDs,
   catalog: getCatalogData(state),
   itemDescriptions: getItemDescriptionsSelectors(state),
@@ -23,7 +25,7 @@ const mapStateToProps = (state) => ({
   pathKey: getKeySelector(state)
 })
 
-const mapDispatchToProps = {updateMenuState, updateMenu}
+const mapDispatchToProps = {updateMenuState, updateMenu, closeModal}
 
 class HomeContainer extends React.Component {
 
