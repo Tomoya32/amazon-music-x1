@@ -8,13 +8,11 @@ var events = 0
 export default class KeyEvents {
   constructor (id) {
     events++
-    debug('New Events', events)
     this.handlers = {}
     this.id = id || events
     this.publishing = false
     this._postRegister = []
     document.addEventListener('keydown', (e) => {
-      debug('start keydown')
       const name = keymap(e.keyCode)
       if (!name) return
       this.publish(name)
@@ -22,7 +20,6 @@ export default class KeyEvents {
         e.preventDefault()
         e.stopPropagation()
       }
-      debug('end keydown')
     })
 
     document.addEventListener('keyup', (e) => {

@@ -16,6 +16,9 @@ const CONFIG = {
     recent_node: '/widescreen_recents/',
     my_music_node: '/widescreen_library/',
     search: '/wisescreen_search/'
+  },
+  auth: {
+    endpoint: process.env.REACT_APP_AUTH_ENDPOINT || 'https://api.amazon.com/auth/O2/'
   }
 }
 

@@ -27,7 +27,6 @@ const Buttonizer = (InnerComponent) => {
     }
 
     bind() {
-      console.info('binding enter')
       this.unbind()
       const dirs = ['Up','Down','Left', 'Right']
       dirs.forEach(event => {
@@ -43,7 +42,6 @@ const Buttonizer = (InnerComponent) => {
       this.bindings.push(Enter)
     }
     unbind() {
-      console.info('unbinding keys', this.bindings)
       this.bindings.forEach(binding => binding.unsubscribe())
       this.bindings = []
     }

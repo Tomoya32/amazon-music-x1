@@ -160,7 +160,7 @@ export default class Player extends Component {
 
     return (
       <div ref={(div) => this._wrapperDiv = div}>
-        <audio src={playerUrl}
+        <video src={playerUrl}
           controls={false}
           autoPlay={userPlayState === 'playing'}
           preload='metadata'

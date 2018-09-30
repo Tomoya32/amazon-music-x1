@@ -57,12 +57,13 @@ class PlaybackContainer extends Component {
   }
 
   handleTrackPlayback () {
-    const {current, playerCurrentSrc} = this.props
-    if (current) {
-      const src = gt(current, 'audio.uri', null)
+    const {trackInstance, playerCurrentSrc} = this.props
+    if (trackInstance) {
+      const src = gt(trackInstance, 'trackDefinitionData.audio.uri', null)
       if (src) playerCurrentSrc(src)
     }
   }
+
   handleTransition(transition) {
     if(!this.props.trackPointers[transition]) return null
     return () => {

@@ -14,7 +14,7 @@ function * loadNavigationNode (action) {
   try {
     const payload = yield call(API.loadNavigationNode, action.path)
     const {responseURL} = payload.request
-    const responsePath = responseURL.replace(/.*\/\/[^/]*/, '')
+    const responsePath = responseURL.replace(config.music.endpoint, '')
     yield put(addChildNode(payload.data, action.path, responsePath))
     // yield put({type: ADD_CHILD_NODE, payload: payload.data, path: action.path})
   } catch (e) {
