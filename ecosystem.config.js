@@ -7,15 +7,11 @@ module.exports = {
       script    : 'serve',
       env : {
         "PM2_SERVE_PATH": './build',
-        "PM2_SERVE_PORT": 8002
+        "PM2_SERVE_PORT": 8084
       },
-      env_production : {
-        NODE_ENV: 'production',
-        PORT: '8001'
-      },
-      env_development : {
+      env_mike : {
         NODE_ENV: 'development',
-        PM2_SERVE_PORT: 8002
+        PM2_SERVE_PORT: 8084
       }
     }
   ],
@@ -30,8 +26,8 @@ module.exports = {
       user : 'deploybot',
       host : 'doorkey-staging.weade.co',
       ref  : 'origin/mike',
-      repo : 'git@github.com:adiffengine/doorbell-x1.git',
-      path : '/var/www/apps/doorbell-x1-staging',
+      repo : 'git@github.com:adiffengine/amazon-music-x1.git',
+      path : '/var/www/apps/amazon-x1-mike',
       'post-deploy' : 'npm install && npm run build && pm2 startOrRestart ecosystem.config.js --env development'
     }
   }
