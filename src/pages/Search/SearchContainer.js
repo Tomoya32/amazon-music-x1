@@ -2,35 +2,11 @@ import React, { PureComponent } from 'react'
 import Search from './Search'
 import { addLetterToSearchTerm, removeLetterFromSearchTerm } from '../../store/modules/search'
 import { connect } from 'react-redux'
-import NamedMenuComposer from '../../lib/reactv-navigation/components/NamedMenu/NamedMenuComposer'
 import { push, replace } from '../../store/modules/nav'
 import { uuid } from '../../lib/utils'
 import omit from 'lodash/omit'
 import { updateMenu } from '../../lib/reactv-redux/MenusReducer'
-
-
-const TOP_NAV = [
-  {
-    name: 'Browse',
-    path: '/music',
-  },
-  {
-    name: 'Recents',
-    path: '/recents',
-  },
-  {
-    name: 'My Music',
-    path: '/mymusic',
-  },
-  {
-    name: 'Search',
-    path: '/search',
-  },
-  {
-    name: 'Settings',
-    path: '/settings',
-  }
-]
+import topnav from '../../components/MainMenu/topnav'
 
 const mapDispatchToProps = {
   removeLetterFromSearchTerm,
@@ -40,7 +16,6 @@ const mapDispatchToProps = {
   updateMenu,
 }
 const mapStateToProps = ({search: {term, results}, navigation: {menus}}) => ({term, results, menus})
-const ComposedSearch = NamedMenuComposer(Search)
 
 class SearchContainer extends PureComponent {
   constructor (p) {
@@ -65,13 +40,14 @@ class SearchContainer extends PureComponent {
   }
 
   render () {
-    return (<ComposedSearch
-      mid='search'
-      defaultFocus='search:atoz' focused
+    return (<Search
+      menuid='search'
+      onFocusItem='topnav' focused
+      entryFocus='search:atoz'
       onLetter={this.onLetter.bind(this)}
       {...this.props}
       contentKey={this.key}
-      topNav={TOP_NAV}
+      topnav={topnav}
     />)
   }
 }

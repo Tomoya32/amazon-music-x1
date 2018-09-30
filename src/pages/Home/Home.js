@@ -1,27 +1,40 @@
 import React from 'react'
 import VerticalTextMenu from '../../components/VerticalTextMenu'
 import HomeMenu from '../../components/HomeMenu'
-import ListMenu from '../../lib/reactv-redux/SlotMenuRedux'
+import MainMenu, { MenuComposer } from '../../components/MainMenu'
+import ListMenu, { calculateOffsetHeight } from '../../lib/reactv-redux/SlotMenuRedux'
 import Space from '../../lib/reactv-redux/SpaceRedux'
 import './Home.css'
+import Modal from '../../components/Modal'
 
 const renderMenu = (pathKey) => (
-  ({item, focused}) => (<HomeMenu itemDescription={item} pathKey={pathKey} menuid={`homevert:${item.itemLabel}`} focused={focused} />)
+  ({item, focused}) => (<HomeMenu itemDescription={item} pathKey={pathKey} menuid={`homemenu:${item.itemLabel}`} focused={focused} />)
 )
 
+const calculateStyle = (currentState, newState, ref) => {
+  let offset;
+  if (newState.index > currentState.index && newState.slotIndex === currentState.slotIndex) {
+    offset = calculateOffsetHeight(ref, newState.index, newState.slotIndex) + currentState.index*32;
+    return {transform: `translateY(-${offset}px)`}
+  } else if (newState.index < currentState.index && currentState.slotIndex === 0) {
+    offset = calculateOffsetHeight(ref, newState.index, newState.slotIndex) + newState.index*32;
+    return {transform: `translateY(-${offset}px)`}
+  } else {
+    console.info('nothing moved, returning null')
+    return null
+  }
+}
 
-const Home = ({catalog: {itemsData}, pathKey, topNav, isFocused, changeFocus}) => {
+const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, updateMenu}) => {
   return (
-    <div>
-      <VerticalTextMenu items={topNav} menuid={`home:topnav`} focused={isFocused('topnav')}
-        onDown={changeFocus('home:main')} />
       <div className="Home-scrollable">
         {itemsData && itemsData.length &&
-        <ListMenu data={itemsData} renderItem={renderMenu(pathKey)} menuid={'homevert'}
-          focused={isFocused('home:main')} onUp={changeFocus('topnav')} />}
+        <ListMenu data={itemsData} renderItem={renderMenu(pathKey)} menuid={'home:main'}
+          focused={isFocused('home:main')} onUp={changeFocus('topnav')}
+          slots={2}
+          calculateStyle={calculateStyle}/>}
       </div>
-    </div>
   )
 }
 
-export default Space(Home)
+export default Space(MenuComposer(MainMenu,Home))

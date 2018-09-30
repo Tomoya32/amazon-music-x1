@@ -48,7 +48,7 @@ class AtoZContainer extends Component {
         // onEnter(value)
       }
     }
-    return (<ComposedMenu {...props} menuItems={alphabet} onEnter={onLetter} clicked={this.state.clicked} />)
+    return (<ComposedMenu {...props} menuItems={alphabet} onEnter={onLetter} clicked={this.state.clicked} className='AtoZMenu'/>)
   }
 }
 

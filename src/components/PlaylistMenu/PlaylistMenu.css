@@ -18,8 +18,11 @@
     height: 40px; width: 40px;
 }
 .PlaylistMenu > div > h2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     position: absolute;
     top: 15px; left: 95px;
-    height: 100%; width: 100%;
+    width: 80%;
     margin: 0;
 }

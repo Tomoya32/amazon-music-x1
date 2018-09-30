@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import { KeyEvents } from '../../../reactv-redux/index'
 import PropTypes from 'prop-types'
+import debugWrapper from 'debug'
+const debug = debugWrapper('app:buttonizer')
 
 const keys = new KeyEvents('buttonizer')
 
@@ -25,7 +27,9 @@ const Buttonizer = (InnerComponent) => {
       if(this.props.focused && !prevProps.focused) this.bind()
       if(!this.props.focused && prevProps.focused) this.unbind()
     }
-
+    componentWillUnmount() {
+      this.unbind()
+    }
     bind() {
       this.unbind()
       const dirs = ['Up','Down','Left', 'Right']
@@ -34,16 +38,17 @@ const Buttonizer = (InnerComponent) => {
           this.bindings.push(keys.subscribeTo(event, this.props[`on${event}`]))
         }
       })
-
       const Enter = keys.subscribeTo('Enter', () => {
         if(this.props.onClick) this.props.onClick()
         if(this.props.onEnter) this.props.onEnter()
       })
       this.bindings.push(Enter)
+      debug('Got bind for ', this.props.mid)
     }
     unbind() {
       this.bindings.forEach(binding => binding.unsubscribe())
       this.bindings = []
+      debug('Got unbind for ', this.props.mid)
     }
     render() {
       return <InnerComponent {...this.props} />

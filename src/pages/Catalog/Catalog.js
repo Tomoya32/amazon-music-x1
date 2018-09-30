@@ -2,11 +2,11 @@ import React from 'react'
 import './Catalog.css'
 import PlaylistMenu from '../../components/PlaylistMenu'
 
-const Catalog = ({kid, onSelect, image, itemsData, summary: {title}}) => (
+const Catalog = ({kid, onSelect, thumbnail, itemsData, summaryData: {title}}) => (
   <div className='Catalog Page'>
     <div className={'CatalogInfo'}>
       {title && <h1>{title}</h1>}
-      {image && (<img src={image.uri} alt={title || ''} />)}
+      {thumbnail && (<img src={thumbnail.uri} alt={title || ''} />)}
     </div>
     <div className={'CatalogMenu'}>
       <PlaylistMenu menuid={`catalogmenu:${kid}`} data={itemsData} focused onClick={onSelect}/>
