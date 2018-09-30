@@ -1,7 +1,7 @@
 import keymap from './KeyMaps'
-import dw from 'debug'
 
-const debug = dw('reactv:keyevents')
+
+const debug = console.info
 
 var events = 0
 

@@ -8,9 +8,8 @@ import Playback from './Playback'
 import { playerCurrentSrc } from '../../store/modules/player'
 import gt from 'lodash/get'
 import {getPlayable, getTrackInstance, getPlayableNode, getTrackPointers} from './selectors'
-import debugw from 'debug'
 
-const debug = debugw('app:playback_container')
+const debug = console.info
 
 const keys = new KeyEvents()
 

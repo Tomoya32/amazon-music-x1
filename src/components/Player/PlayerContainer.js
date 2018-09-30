@@ -19,9 +19,8 @@ import {
 import Player from './Player'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import debugWrapper from 'debug'
 
-const debug = debugWrapper('app:player_container')
+const debug = console.info
 
 const mapDispatchToProps = {
   playerCurrentSrc,

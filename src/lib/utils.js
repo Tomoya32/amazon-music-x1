@@ -1,6 +1,5 @@
 import parseMs from 'parse-ms'
 import addZero from 'add-zero'
-import debugWrapper from 'debug'
 import config from './config'
 import qs from 'query-string'
 import ru from 'resolve-pathname'
@@ -15,7 +14,7 @@ export function getParam (param) {
   else return undefined
 }
 
-const debug = debugWrapper('app:utils')
+const debug = console.info
 
 export function secondsToHms (d) {
   d = Number(d)

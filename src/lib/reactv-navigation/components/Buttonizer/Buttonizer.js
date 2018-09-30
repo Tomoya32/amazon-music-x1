@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import { KeyEvents } from '../../../reactv-redux/index'
 import PropTypes from 'prop-types'
-import debugWrapper from 'debug'
-const debug = debugWrapper('app:buttonizer')
+
+const debug = console.info
 
 const keys = new KeyEvents('buttonizer')
 
