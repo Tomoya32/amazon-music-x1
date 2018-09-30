@@ -44,9 +44,10 @@ const Buttonizer = (InnerComponent) => {
       })
       this.bindings.push(Enter)
       debug('Got bind for ', this.props.mid)
+
     }
     unbind() {
-      this.bindings.forEach(binding => binding.unsubscribe())
+      this.bindings.forEach(binding => binding && binding.unsubscribe && binding.unsubscribe())
       this.bindings = []
       debug('Got unbind for ', this.props.mid)
     }

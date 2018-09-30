@@ -58,9 +58,8 @@ export default class Player extends Component {
 
   onEnded (event) {
     event.persist()
-    const {recommendationEnded, onEnded} = this.props
+    const { onEnded} = this.props
     onEnded()
-    recommendationEnded()
   }
 
   errorHandler (e, code = 301) {
@@ -91,7 +90,7 @@ export default class Player extends Component {
       if (userPlayState === 'playing') {
         setTimeout(() => {
           const {userPlayState} = this.props
-          if (userPlayState === 'playing' && this.player.paused) {
+          if (userPlayState === 'playing' &&  this.player && this.player.paused) {
             this.player.play()
           }
         }, 1000)
@@ -160,7 +159,7 @@ export default class Player extends Component {
 
     return (
       <div ref={(div) => this._wrapperDiv = div}>
-        <video src={playerUrl}
+        <audio src={playerUrl}
           controls={false}
           autoPlay={userPlayState === 'playing'}
           preload='metadata'
