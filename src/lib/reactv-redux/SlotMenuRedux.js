@@ -4,6 +4,7 @@ import { updateMenuState } from './ReacTVReduxReducer'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import store from '../../store'
+import { batchActions } from 'redux-batched-actions';
 
 const mapStateToProps = (state, ownProps) => ({
   current: state.menus[ownProps.menuid]
@@ -120,6 +121,7 @@ export class SlotLinker {
         mem[name] = allMenus[name]
         return mem
       }, {})
+      let actionsBatch = [];
       Object.keys(theseMenus).forEach(key => {
         const menu = theseMenus[key]
         let slotOffset = currentState.slotIndex - menu.slotIndex
@@ -128,8 +130,9 @@ export class SlotLinker {
         let newSlot = menu.slotIndex + slotOffset
         if (newSlot > menu.maxSlot) newSlot = menu.maxSlot
         const newState = {index: newIndex, slotIndex: newSlot}
-        this.store.dispatch(updateMenuState(key, newState))
+        actionsBatch.push(updateMenuState(key,newState))
       })
+      this.store.dispatch(batchActions(actionsBatch))
     }
   }
 }
