@@ -63,12 +63,15 @@ export default class Player extends Component {
   }
 
   errorHandler (e, code = 301) {
-    const {playerUrl} = this.props
+    const {playerUrl, errorHandler} = this.props
     console.error('Error playing %s %s', playerUrl, e.message, e)
     $badger.errorMetricsHandler('PlaybackError', false, code, {
       message: e ? e.message : 'no message passed',
       url: playerUrl
     })
+
+    if(errorHandler) errorHandler(e)
+
   }
 
   checkIfPlayed () {

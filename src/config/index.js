@@ -19,7 +19,8 @@ const CONFIG = {
   },
   auth: {
     endpoint: process.env.REACT_APP_AUTH_ENDPOINT || 'https://api.amazon.com/auth/O2/'
-  }
+  },
+  errorModalTimeout: 5000
 }
 
 export default CONFIG

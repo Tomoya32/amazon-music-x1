@@ -1,0 +1,23 @@
+.ErrorModal {
+    position: absolute;
+    top: 40px; left: 100px;
+    width: 1200px;
+    background: darkred;
+    border: 3px solid white;
+    color: white;
+    font-size: 18px;
+    display: none;
+    z-index: 100;
+    box-sizing: border-box;
+    padding: 40px 80px;
+}
+
+.ErrorModal.visible {
+    display: block;
+}
+
+
+.ErrorModal h1 {
+    font-size: 1.5em;
+    font-weight: bold;
+}

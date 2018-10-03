@@ -1,5 +1,7 @@
 import React from 'react'
 import Player from '../components/Player'
+import ErrorModal from '../components/ErrorModal'
+
 import axios from 'axios'
 import CONFIG from '../config'
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
@@ -150,6 +152,7 @@ const playerWrapper =(Wrapped) => {
         <div>
           <Wrapped {...this.props} />
           <Player />
+
         </div>
       )
     }
