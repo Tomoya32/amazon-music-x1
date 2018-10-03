@@ -3,6 +3,7 @@ import './Player.css'
 import $badger from '../../lib/badger'
 import config from '../../config'
 import {isNumeric} from '../../lib/utils'
+import ReactHLS from 'react-hls';
 
 
 export default class Player extends Component {
@@ -162,9 +163,9 @@ export default class Player extends Component {
 
     return (
       <div ref={(div) => this._wrapperDiv = div}>
-        <audio src={playerUrl}
+        <ReactHLS url={playerUrl}
           controls={false}
-          autoPlay={userPlayState === 'playing'}
+          autoplay={userPlayState === 'playing'}
           preload='metadata'
           ref={element => {
             this.player = element
