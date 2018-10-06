@@ -50,7 +50,8 @@ class CatalogContainer extends Component {
       let thumbnail, currentIndex;
       if (this.props.highlightedTrack) {
         currentIndex = this.props.highlightedTrack.index;
-        thumbnail = this.props.catalog.itemsData[currentIndex].image
+        const { itemsData } = this.props.catalog;
+        if (itemsData.length) thumbnail = itemsData[currentIndex].image
       }
       return <Catalog {...this.props.catalog}
         thumbnail={thumbnail}

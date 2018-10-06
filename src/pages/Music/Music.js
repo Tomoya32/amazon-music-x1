@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import ReactModal from 'react-modal'
-import './Music.css'
 
 class MusicModal extends Component {
   constructor() {

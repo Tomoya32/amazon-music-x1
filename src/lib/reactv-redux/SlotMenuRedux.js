@@ -124,13 +124,15 @@ export class SlotLinker {
       let actionsBatch = [];
       Object.keys(theseMenus).forEach(key => {
         const menu = theseMenus[key]
-        let slotOffset = currentState.slotIndex - menu.slotIndex
-        let newIndex = menu.index + slotOffset
-        if(newIndex > menu.max) newIndex = menu.max
-        let newSlot = menu.slotIndex + slotOffset
-        if (newSlot > menu.maxSlot) newSlot = menu.maxSlot
-        const newState = {index: newIndex, slotIndex: newSlot}
-        actionsBatch.push(updateMenuState(key,newState))
+        if (menu) {
+          let slotOffset = currentState.slotIndex - menu.slotIndex
+          let newIndex = menu.index + slotOffset
+          if(newIndex > menu.max) newIndex = menu.max
+          let newSlot = menu.slotIndex + slotOffset
+          if (newSlot > menu.maxSlot) newSlot = menu.maxSlot
+          const newState = {index: newIndex, slotIndex: newSlot}
+          actionsBatch.push(updateMenuState(key,newState))
+        }
       })
       this.store.dispatch(batchActions(actionsBatch))
     }
