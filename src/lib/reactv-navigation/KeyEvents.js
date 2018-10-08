@@ -53,10 +53,6 @@ export default class KeyEvents {
    */
   subscribeTo (key, func) {
     // Find or create Queue
-    if(this.publishing) {
-      console.warn('tried to bind when publishing')
-      return
-    }
     if (!this.handlers.hasOwnProperty(key)) { this.handlers[key] = [] }
     let index = this.handlers[key].push(func) - 1
     var that = this

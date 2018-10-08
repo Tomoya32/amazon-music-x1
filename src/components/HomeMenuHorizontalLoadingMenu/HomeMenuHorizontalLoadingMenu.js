@@ -20,7 +20,7 @@ const HomeMenuHorizontalLoadingMenu = ({itemsData, name, focused, onClick, allMe
   const menuid = `homemenu:${name}`;
   const data = itemsData.slice(0,5);
   if (summary != "/upsell-banner/") {
-    data.push({itemLabel: 'See More', navigationNodeSummary: name})
+    data.push({itemLabel: 'See More', navigationNodeSummary: name, type: 'SEE_MORE'})
   }
   return (
   <ListMenu

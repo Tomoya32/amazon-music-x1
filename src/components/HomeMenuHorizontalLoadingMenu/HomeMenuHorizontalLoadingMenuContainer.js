@@ -42,7 +42,11 @@ const mapDispatchToProps = {
 class HomeMenuHorizontalLoadingMenuContainer extends Component {
   constructor (p) {
     super(p)
-    this.handleSelection = dest => handleItemSelection.call(this, dest, this.props.pathname)
+    this.handleSelection = dest => {
+      const {pathname, replace} = this.props
+      if(dest.type === 'SEE_MORE') replace(`/list/${pathname}`)
+      else handleItemSelection.call(this, dest, this.props.pathname)
+    }
     this.handleOpenModal = this.handleOpenModal.bind(this);
   }
 
@@ -82,7 +86,7 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
     }
     if (typeof(this.props.summary) === 'object') {
       return (
-        <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
+        <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection.bind(this)} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
     } else {
       return null
     }
