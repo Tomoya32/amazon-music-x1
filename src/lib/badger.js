@@ -1,11 +1,10 @@
 import Cookie from 'js-cookie'
-import debugWrapper from 'debug'
 import { notify } from './logger'
 import { alert } from './utils'
 
 
-const debug = debugWrapper('app:badger')
-const debugMock = debugWrapper('app:badger:mock')
+const debug = console.info
+const debugMock = console.info
 const getBadger = () => {
   return typeof window.$badger !== 'undefined' ? window.$badger : false
 }

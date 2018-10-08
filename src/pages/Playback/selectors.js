@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect'
 import { noha } from '../../lib/utils'
+import {mergePath, mergeChunkWithPathAndQuery} from '../../lib/utils'
 
 export const getPlayableNode = state => {
   if (state.playable.node) {
@@ -23,6 +24,12 @@ const getDescriptionFromNode = (node, playable) => {
   return trackContainerChunkDescription
 }
 
+const getResolvedPath = state => {
+  if (state.playable.node) {
+    return state.music.pathResolvers[state.playable.node]
+  }
+}
+
 export const getTrackContainerChunkDescription = createSelector(getPlayableNode, getPlayable, getDescriptionFromNode )
 
 export const getTrackInstance = createSelector( getPlayableNode, getPlayable, (node, playable) => {
@@ -35,3 +42,15 @@ export const getTrackInstance = createSelector( getPlayableNode, getPlayable, (n
   return data
 })
 
+
+export const getTrackPointers = createSelector(getPlayable, getTrackContainerChunkDescription, getResolvedPath, (node, chunk, resolved) => {
+  if(!node || !chunk) return {}
+  const out = ['first','next','last','prev','shuffle'].reduce((mem, k) => {
+    const key = `${k}TrackPointer`
+    const pointer = chunk[key]
+    if(!pointer) return mem
+    mem[key] = mergeChunkWithPathAndQuery(['/playback', resolved], pointer.chunk, {indexWithinChunk: pointer.indexWithinChunk})
+    return mem
+  }, {})
+  return out
+})

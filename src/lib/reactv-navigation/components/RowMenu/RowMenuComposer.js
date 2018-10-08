@@ -7,8 +7,7 @@ import { connect } from 'react-redux'
 import KeyEvent from '../../KeyEvents'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
-import debugWrapper from 'debug'
-const debug = debugWrapper('app:rowmenu')
+const debug = console.info
 
 const KeyEvents = new KeyEvent()
 

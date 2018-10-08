@@ -4,10 +4,9 @@ import AtoZMenu from './AtoZMenu'
 import omit from 'lodash/omit'
 import without from 'lodash/without'
 
-import debugWrapper from 'debug'
 import config from '../../lib/config'
 
-const debug = debugWrapper('app:atoz_menu')
+const debug = console.info
 
 const ComposedMenu = RowMenuComposer(AtoZMenu)
 

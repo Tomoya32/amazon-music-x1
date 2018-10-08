@@ -19,9 +19,9 @@ import {
 import Player from './Player'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import debugWrapper from 'debug'
+import { displayError } from '../../store/modules/errormodal'
 
-const debug = debugWrapper('app:player_container')
+const debug = console.info
 
 const mapDispatchToProps = {
   playerCurrentSrc,
@@ -37,7 +37,8 @@ const mapDispatchToProps = {
   onLoadEnd,
   setProperties,
   setBadState,
-  gotDuration: playerGotDuration
+  gotDuration: playerGotDuration,
+  displayError
 }
 
 const mapStateToProps = (state) => ({
@@ -58,11 +59,27 @@ class PlayerWrapper extends Component {
       nextProps.updateCurrentTime !== this.props.updateCurrentTime)
   }
 
+  errorHandler (e) {
+    const {displayError} = this.props
+    if(!e.code) {
+      displayError('Media Error', e.message && e.message.length ? e.message : 'No message')
+    } else {
+      const titles = ['none', 'Media Aborted', 'Media Network Error', 'Media Decode Error', 'Media Source Not Supported']
+      const descriptions = ['', `The fetching of the associated resource was aborted by the user's request.`,
+        `	Some kind of network error occurred which prevented the media from being successfully fetched, despite having previously been available.`,
+        `Despite having previously been determined to be usable, an error occurred while trying to decode the media resource, resulting in an error.`,
+        `The associated resource or media provider object (such as a MediaStream) has been found to be unsuitable.`]
+      displayError(titles[e.code], descriptions[e.code])
+    }
+
+  }
+
   render () {
     if (!this.props.playerUrl) {
       return null
     } else {
-      return <Player {...this.props} disableTimeUpdates={false} />
+      return <Player {...this.props} disableTimeUpdates={false}
+        errorHandler={this.errorHandler.bind(this)} />
     }
   }
 }

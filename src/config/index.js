@@ -1,7 +1,7 @@
 const CONFIG = {
   linking: {
     client_id: process.env.REACT_APP_AMAZON_MUSIC_CLIENT_ID,
-    code_id: process.env.REACT_APP_AMAZON_MUSIC_CLIENT_ID,
+    code_id: process.env.REACT_APP_AMAZON_CODE_CLIENT_ID,
     serial_number: process.env.REACT_APP_SERIAL_NUMBER,
     scope: 'amazon_music:access'
   },
@@ -16,7 +16,11 @@ const CONFIG = {
     recent_node: '/widescreen_recents/',
     my_music_node: '/widescreen_library/',
     search: '/wisescreen_search/'
-  }
+  },
+  auth: {
+    endpoint: process.env.REACT_APP_AUTH_ENDPOINT || 'https://api.amazon.com/auth/O2/'
+  },
+  errorModalTimeout: 5000
 }
 
 export default CONFIG

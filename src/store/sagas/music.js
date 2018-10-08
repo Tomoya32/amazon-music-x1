@@ -2,7 +2,7 @@ import { call, put, takeLatest, takeEvery, select } from 'redux-saga/effects'
 import API from '../../services/music'
 import config from '../../config'
 import {
-  LOAD_CURRENT_NODE, PUSH_CURRENT_NAVIGATION_NODE, LOAD_CHILD_NODE, ADD_CHILD_NODE
+  addChildNode, LOAD_CHILD_NODE, ADD_CHILD_NODE
 } from '../modules/music'
 import { SET_AUTH_DATA, CLEAR_AUTH_DATA } from '../modules/auth'
 
@@ -13,7 +13,10 @@ const getData = state => state.music.nodes
 function * loadNavigationNode (action) {
   try {
     const payload = yield call(API.loadNavigationNode, action.path)
-    yield put({type: ADD_CHILD_NODE, payload: payload.data, path: action.path})
+    const {responseURL} = payload.request
+    const responsePath = responseURL.replace(config.music.endpoint, '')
+    yield put(addChildNode(payload.data, action.path, responsePath))
+    // yield put({type: ADD_CHILD_NODE, payload: payload.data, path: action.path})
   } catch (e) {
     console.warn(`Error loading Node for route ${action.payload} ${e.message}, ${e.status}`, e.data)
     if (e.status === 401 || e.status === 403) {

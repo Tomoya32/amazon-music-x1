@@ -1,8 +1,8 @@
 // Mock Logger
 import $badger from './badger'
-import debugWrapper from 'debug'
 
-const debug = debugWrapper('app:logger')
+
+const debug = console.info
 
 export function logError (e) {
   console.error('error', e)

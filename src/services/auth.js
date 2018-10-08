@@ -1,5 +1,7 @@
 import React from 'react'
 import Player from '../components/Player'
+import ErrorModal from '../components/ErrorModal'
+
 import axios from 'axios'
 import CONFIG from '../config'
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
@@ -7,7 +9,7 @@ import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper'
 import qs from 'querystring'
 import Cookie from 'js-cookie'
 
-export const PAIRING_ENDPOINT = 'https://api.amazon.com/auth/O2/'
+export const PAIRING_ENDPOINT = CONFIG.auth.endpoint
 
 const client = axios.create({
   baseURL: PAIRING_ENDPOINT,
@@ -128,7 +130,8 @@ const refresh = (refresh_token, wait) => {
 }
 
 export const refreshToken = ({refresh_token, expires_in}, force = false) => {
-  const wait = force ? 0 : (expires_in - 100) * 1000
+ // const wait = force ? 0 : (expires_in - 100) * 1000
+  const wait = 100;
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       refresh(refresh_token)
@@ -149,6 +152,7 @@ const playerWrapper =(Wrapped) => {
         <div>
           <Wrapped {...this.props} />
           <Player />
+
         </div>
       )
     }

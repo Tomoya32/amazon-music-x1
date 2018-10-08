@@ -5,13 +5,19 @@ import store, { history } from '../../store'
 import Routes from '../Routes'
 
 import './App.css'
+import ErrorModal from '../../components/ErrorModal'
 
 const App = () => (
-  <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <Routes />
-    </ConnectedRouter>
-  </Provider>
+  <div>
+    <Provider store={store}>
+      <div>
+        <ConnectedRouter history={history}>
+          <Routes />
+        </ConnectedRouter>
+        <ErrorModal />
+      </div>
+    </Provider>
+  </div>
 )
 
 export default App
