@@ -1,8 +1,6 @@
 const CONFIG = {
   linking: {
-    client_id: process.env.REACT_APP_AMAZON_MUSIC_CLIENT_ID,
-    code_id: process.env.REACT_APP_AMAZON_MUSIC_CLIENT_ID,
-    serial_number: process.env.REACT_APP_SERIAL_NUMBER,
+    base_url: process.env.REACT_APP_AMAZON_API_BASE_URL || 'http://localhost:9000',
     scope: 'amazon_music:access'
   },
   player: {
@@ -11,7 +9,7 @@ const CONFIG = {
     disable_time_updates: false
   },
   music: {
-    endpoint: process.env.REACT_APP_MUSIC_ENDPOINT || 'https://music-api.amazon.com',
+    base_url: process.env.REACT_APP_AMAZON_MUSIC_BASE_URL || 'https://music-api.amazon.com',
     browse_node: '/widescreen_catalog/',
     recent_node: '/widescreen_recents/',
     my_music_node: '/widescreen_library/',

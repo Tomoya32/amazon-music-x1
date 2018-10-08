@@ -7,7 +7,7 @@ import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper'
 import qs from 'querystring'
 import Cookie from 'js-cookie'
 
-export const PAIRING_ENDPOINT = 'https://api.amazon.com/auth/O2/'
+export const PAIRING_ENDPOINT = `${CONFIG.linking.base_url}/auth/O2/`;
 
 const client = axios.create({
   baseURL: PAIRING_ENDPOINT,
@@ -18,11 +18,7 @@ const client = axios.create({
 })
 
 export const getCode = () => {
-  return client.post('create/codepair', qs.stringify({
-    response_type: 'device_code',
-    client_id: CONFIG.linking.client_id,
-    scope: CONFIG.linking.scope,
-  }))
+  return client.post('create/codepair')
     .then(({data}) => data)
 }
 
@@ -115,7 +111,7 @@ const refresh = (refresh_token, wait) => {
   return client.post(`${PAIRING_ENDPOINT}token`, qs.stringify({
     refresh_token,
     grant_type: 'refresh_token',
-    client_id: CONFIG.linking.code_id
+    // client_id: CONFIG.linking.code_id
   }), {
     transformRequest: [(data, headers) => {
       delete headers.common.Authorization
