@@ -166,6 +166,8 @@ class MenuWrapper extends React.Component {
       this.updateMenuState(this.state.index - 1, slotIndex)
     } else if (this.props.horizontal && typeof this.props.onLeft === 'function') {
       this.props.onLeft()
+    } else if (this.props.onUp) {
+      this.props.onUp()
     }
   }
 

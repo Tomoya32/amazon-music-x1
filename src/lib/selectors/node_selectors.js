@@ -46,6 +46,16 @@ export const getNavigationNodeSummarySelector = createSelector([getNavigationNod
 
 
 
+export const getMenuIDsSelector = createSelector([getItemDescriptions], (items) => {
+  if (items) {
+    let menuIDs = [];
+    for (let key in items) {
+      menuIDs.push(`homemenu:${items[key].navigationNodeSummary}`)
+    }
+    return menuIDs
+  }
+  else return
+})
 export const getNavigationDescriptionFromSummarySelector = createSelector([getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
   if(summary.description.indexOf('#') === 0) {
     //TODO: this is not right, we need a path to get this back.....
