@@ -6,6 +6,7 @@ import './HomeMenuHorizontalLoadingMenu.css'
 import PropTypes from 'prop-types'
 import { showNode } from '../../store/modules/home'
 import {
+  getMenuIDsSelector,
   getNavigationDescriptionFromSummarySelector,
   getKeySelector
 } from '../../lib/selectors/node_selectors'
@@ -23,7 +24,7 @@ import {
 import { openModal } from '../../store/modules/modal'
 
 const mapStateToProps = (state, props) => ({
-  allMenuIDs: state.menus.allMenuIDs,
+  allMenuIDs: getMenuIDsSelector(state),
   catalog: getCatalogData(state),
   location: state.router.location,
   summary: getNavigationDescriptionFromSummarySelector(state, props),
