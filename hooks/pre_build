@@ -1,5 +1,17 @@
 #!/bin/bash
-echo "=> Building Environmental Variables"
+echo "=> Building Environmental Variables for ${NODE_ENV} environment"
+
+if [ $NODE_ENV == "production" ]; then
+    ENV=PROD
+elif [ $NODE_ENV == "staging" ]; then
+    ENV=STAGE
+else
+    ENV=DEV
+fi
+
+REACT_APP_AMAZON_MUSIC_BASE_URL=$ENV"_REACT_APP_AMAZON_MUSIC_BASE_URL"
+REACT_APP_AMAZON_API_BASE_URL=$ENV"_REACT_APP_AMAZON_API_BASE_URL"
+
 docker build \
 --build-arg REACT_APP_AMAZON_MUSIC_BASE_URL=${REACT_APP_AMAZON_MUSIC_BASE_URL} \
 --build-arg REACT_APP_AMAZON_API_BASE_URL=${REACT_APP_AMAZON_API_BASE_URL}  \
