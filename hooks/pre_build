@@ -17,9 +17,9 @@ docker build \
 --build-arg REACT_APP_AMAZON_API_BASE_URL=${REACT_APP_AMAZON_API_BASE_URL}  \
 . -t $IMAGE_NAME
 
-#if [ -e .env ]; then
-#    echo ".env file already exists"
-#else
+if [ -e .env ]; then
+    echo ".env file already exists"
+else
     echo "REACT_APP_AMAZON_MUSIC_BASE_URL=$REACT_APP_AMAZON_MUSIC_BASE_URL" > .env
     echo "REACT_APP_AMAZON_API_BASE_URL=$REACT_APP_AMAZON_API_BASE_URL" >> .env
-#fi
+fi
