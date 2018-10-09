@@ -3,6 +3,7 @@ import './Player.css'
 import $badger from '../../lib/badger'
 import config from '../../config'
 import {isNumeric} from '../../lib/utils'
+import ReactHLS from 'react-hls';
 
 
 export default class Player extends Component {
@@ -58,18 +59,20 @@ export default class Player extends Component {
 
   onEnded (event) {
     event.persist()
-    const {recommendationEnded, onEnded} = this.props
+    const { onEnded} = this.props
     onEnded()
-    recommendationEnded()
   }
 
   errorHandler (e, code = 301) {
-    const {playerUrl} = this.props
+    const {playerUrl, errorHandler} = this.props
     console.error('Error playing %s %s', playerUrl, e.message, e)
     $badger.errorMetricsHandler('PlaybackError', false, code, {
       message: e ? e.message : 'no message passed',
       url: playerUrl
     })
+
+    if(errorHandler) errorHandler(e)
+
   }
 
   checkIfPlayed () {
@@ -91,7 +94,7 @@ export default class Player extends Component {
       if (userPlayState === 'playing') {
         setTimeout(() => {
           const {userPlayState} = this.props
-          if (userPlayState === 'playing' && this.player.paused) {
+          if (userPlayState === 'playing' &&  this.player && this.player.paused) {
             this.player.play()
           }
         }, 1000)
@@ -160,9 +163,9 @@ export default class Player extends Component {
 
     return (
       <div ref={(div) => this._wrapperDiv = div}>
-        <audio src={playerUrl}
+        <ReactHLS url={playerUrl}
           controls={false}
-          autoPlay={userPlayState === 'playing'}
+          autoplay={userPlayState === 'playing'}
           preload='metadata'
           ref={element => {
             this.player = element

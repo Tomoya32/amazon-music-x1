@@ -1,5 +1,7 @@
 import React from 'react'
 import Player from '../components/Player'
+import ErrorModal from '../components/ErrorModal'
+
 import axios from 'axios'
 import CONFIG from '../config'
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
@@ -124,7 +126,8 @@ const refresh = (refresh_token, wait) => {
 }
 
 export const refreshToken = ({refresh_token, expires_in}, force = false) => {
-  const wait = force ? 0 : (expires_in - 100) * 1000
+ // const wait = force ? 0 : (expires_in - 100) * 1000
+  const wait = 100;
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       refresh(refresh_token)

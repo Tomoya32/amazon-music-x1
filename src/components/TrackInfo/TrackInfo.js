@@ -5,11 +5,11 @@ import {Buttonizer} from '../../lib/reactv-navigation'
 import cx from 'classnames'
 
 
-let NextTrackButton = Buttonizer(({focused}) => (
-  <div className={cx('NextButton', {focused})}>Next</div>
+const NextTrackButton = Buttonizer(({focused, children}) => (
+  <div className={cx('NextButton', {focused})}>{children}</div>
 ))
 
-const TrackInfo = ({title, artist, album, image, isFocused}) => (
+const TrackInfo = ({title, artist, album, image, onNext, onShuffleNext, isFocused, changeFocus}) => (
   <div className='TrackInfo'>
     {image && (<img src={image.uri} alt={title} />)}
     <div className={'TrackDeets'}>
@@ -17,9 +17,9 @@ const TrackInfo = ({title, artist, album, image, isFocused}) => (
         <h1>{title}</h1>
         {artist && artist.name && (<h2>{artist.name}</h2>)}
         {album && album.name && (<h3>{album.name}</h3>)}
-        <NextTrackButton menuid="nextTrack" onEnter={() => {
-          console.info('do this')
-        }} focused={isFocused('nextTrack')}/>
+        <NextTrackButton menuid="nextTrack" onEnter={onNext} focused={isFocused('nextTrack')} onDown={changeFocus('shuffleNextTrack')}>Next</NextTrackButton>
+        <br />
+        <NextTrackButton menuid="shuffleNextTrack" onEnter={onNext} focused={isFocused('shuffleNextTrack')} onUp={changeFocus('nextTrack')}>Shuffle Next</NextTrackButton>
       </div>
     </div>
   </div>

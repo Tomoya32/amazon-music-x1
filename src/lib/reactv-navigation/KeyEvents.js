@@ -1,8 +1,17 @@
 import keymap from './KeyMaps'
 
+
+const debug = console.info
+
+var events = 0
+
 export default class KeyEvents {
-  constructor () {
+  constructor (id) {
+    events++
     this.handlers = {}
+    this.id = id || events
+    this.publishing = false
+    this._postRegister = []
     document.addEventListener('keydown', (e) => {
       const name = keymap(e.keyCode)
       if (!name) return
@@ -55,6 +64,15 @@ export default class KeyEvents {
     }
   }
 
+  startPublishing() {
+    this.publishing = true
+  }
+
+
+  endPublishing() {
+    this.publishing = false
+  }
+
   /**
    * Publish key event
    * @param {String} key - event to be published
@@ -69,8 +87,13 @@ export default class KeyEvents {
     const handlers = this.handlers[evt].slice(0)
 
     // Do this on next tick to prevent some issues with bindings happening during event.
+    if(!handlers.length) return
+    this.startPublishing()
     setTimeout(() => {
-      handlers.forEach(handler => handler())
-    }, 0)
+      handlers.forEach(handler => {
+        handler()
+      })
+      this.endPublishing()
+    }, 10)
   }
 }

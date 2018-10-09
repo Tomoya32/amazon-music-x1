@@ -55,7 +55,6 @@ const removeFromStack = (state) => {
 }
 
 export default function hisReducer (state = initialState, action) {
-  if(!action) debugger
   switch (action.type) {
     case PUSH:
       return pushAction(state, action.route)

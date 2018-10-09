@@ -26,3 +26,15 @@
     transform: translateY(-50%);
     text-align: left;
 }
+
+.NextButton {
+    display: inline-block;
+    height: 30px; line-height: 30px;
+    padding: 0 10px;
+    border: 1px solid white;
+}
+
+.NextButton.focused {
+    background: dodgerblue;
+    border: 1px solid dodgerblue;
+}
