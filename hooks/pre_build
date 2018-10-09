@@ -1,10 +1,25 @@
 #!/bin/bash
-echo "=> Building Environmental Variables"
-docker build --build-arg REACT_APP_AMAZON_MUSIC_CLIENT_ID=${REACT_APP_AMAZON_MUSIC_CLIENT_ID} --build-arg REACT_APP_SERIAL_NUMBER=${REACT_APP_SERIAL_NUMBER}  . -t $IMAGE_NAME
+echo "=> Building Environmental Variables for ${NODE_ENV} environment"
+
+if [ $NODE_ENV == "production" ]; then
+    ENV=PROD
+elif [ $NODE_ENV == "staging" ]; then
+    ENV=STAGE
+else
+    ENV=DEV
+fi
+
+REACT_APP_AMAZON_MUSIC_BASE_URL=$ENV"_REACT_APP_AMAZON_MUSIC_BASE_URL"
+REACT_APP_AMAZON_API_BASE_URL=$ENV"_REACT_APP_AMAZON_API_BASE_URL"
+
+docker build \
+--build-arg REACT_APP_AMAZON_MUSIC_BASE_URL=${REACT_APP_AMAZON_MUSIC_BASE_URL} \
+--build-arg REACT_APP_AMAZON_API_BASE_URL=${REACT_APP_AMAZON_API_BASE_URL}  \
+. -t $IMAGE_NAME
+
 if [ -e .env ]; then
     echo ".env file already exists"
 else
-    echo "REACT_APP_AMAZON_MUSIC_CLIENT_ID=$REACT_APP_AMAZON_MUSIC_CLIENT_ID" > .env
-    echo "REACT_APP_SERIAL_NUMBER=$REACT_APP_SERIAL_NUMBER" >> .env
-    echo "REACT_APP_MUSIC_ENDPOINT=$REACT_APP_MUSIC_ENDPOINT" >> .env
+    echo "REACT_APP_AMAZON_MUSIC_BASE_URL=$REACT_APP_AMAZON_MUSIC_BASE_URL" > .env
+    echo "REACT_APP_AMAZON_API_BASE_URL=$REACT_APP_AMAZON_API_BASE_URL" >> .env
 fi

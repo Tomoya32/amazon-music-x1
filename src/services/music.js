@@ -2,7 +2,7 @@ import axios from 'axios'
 import config from '../config'
 
 const client = axios.create({
-  baseURL: config.music.endpoint
+  baseURL: config.music.base_url
 })
 
 const API = {
