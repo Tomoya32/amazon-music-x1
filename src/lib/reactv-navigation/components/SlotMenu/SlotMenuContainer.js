@@ -172,7 +172,7 @@ class MenuWrapper extends React.Component {
   }
 
   render () {
-    const {onLeft, onRight, onUp, onDown, passRef, style = {}, ...rest,} = this.props
+    const {onLeft, onRight, onUp, onDown, passRef, style = {}, ...rest} = this.props
     const referer = (r) => {
       this._ref = r
       if (typeof passRef === 'function') passRef(r)
