@@ -32,6 +32,7 @@
   height: 610px;
   width: 1240px;
   overflow: hidden;
+  padding-left: 40px;
 }
 
 .Home-scrollable > div.ListMenu {

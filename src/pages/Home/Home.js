@@ -26,8 +26,15 @@ const calculateStyle = (currentState, newState, ref) => {
   }
 }
 
-const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, updateMenu}) => {
+const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, onSubmit, updateMenu, showModal, closeModal}) => {
+  if (showModal && !isFocused('modal')) { changeFocus('modal')() }
   return (
+    <div>
+        {showModal && <Modal className='amazon-unlimited-modal' menuid='modal' showModal={showModal} focused={isFocused('modal')}
+        onEnter={() => {
+          closeModal()
+          changeFocus('home:main')()
+      }}/>}
       <div className="Home-scrollable">
         {itemsData && itemsData.length &&
         <ListMenu data={itemsData} renderItem={renderMenu(pathKey)} menuid={'home:main'}
@@ -35,6 +42,7 @@ const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, updateMenu
           slots={2}
           calculateStyle={calculateStyle}/>}
       </div>
+    </div>
   )
 }
 

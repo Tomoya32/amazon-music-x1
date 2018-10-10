@@ -11,17 +11,13 @@
   color: #252d41;
 }
 
-.CloseModalButton.focused {
-  background-color: red;
-}
-
 .ReactModal__Content {
   opacity: 0.90;
   position:fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  width: 30%;
-  height:16%;
+  top: 350px !important;
+  left: 600px !important;
+  width: 450px;
+  height:160px;
   margin-top: -9em; /*set to a negative number 1/2 of your height*/
   margin-left: -13em; /*set to a negative number 1/2 of your width*/
   border: 1px solid #ccc;

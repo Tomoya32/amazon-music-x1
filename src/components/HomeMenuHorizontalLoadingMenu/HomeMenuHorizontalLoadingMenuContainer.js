@@ -74,7 +74,8 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
 
   render () {
     if (this.props.itemDescription) {
-      if (this.props.itemDescription.ref== "#_obj0") {
+      const { ref, itemLabel }= this.props.itemDescription;
+      if (ref== "#_obj0" && itemLabel.startsWith('Try')) {
         // If the data is for 'Try Amazon Unlimited Music', manipulate API response to populate HomeMenuCard
         let summary = {
           image: ["#_obj0"],
