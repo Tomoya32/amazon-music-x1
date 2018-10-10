@@ -1,0 +1,16 @@
+$primary-color: white;
+@import 'loaders.css/src/animations/line-scale-pulse-out-rapid.scss';
+
+.loader-hidden {
+  display: none;
+}
+.loader-active {
+  display: block;
+}
+
+.page-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40%;
+}
