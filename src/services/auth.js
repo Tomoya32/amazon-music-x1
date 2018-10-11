@@ -20,11 +20,12 @@ const client = axios.create({
 })
 
 export const getCode = () => {
-  return client.post('create/codepair', qs.stringify({
-    response_type: 'device_code',
-    client_id: CONFIG.linking.client_id,
-    scope: CONFIG.linking.scope,
-  }))
+  // return client.post('create/codepair', qs.stringify({
+  //   response_type: 'device_code',
+  //   client_id: CONFIG.linking.client_id,
+  //   scope: CONFIG.linking.scope,
+  // }))
+  return client.post('create/codepair')
     .then(({data}) => data)
 }
 
