@@ -3,6 +3,7 @@ import './TrackInfo.css'
 import Space from '../../lib/reactv-redux/SpaceRedux'
 import {Buttonizer} from '../../lib/reactv-navigation'
 import cx from 'classnames'
+import PlayerControls from '../PlayerControls'
 
 
 const NextTrackButton = Buttonizer(({focused, children}) => (
@@ -20,6 +21,8 @@ const TrackInfo = ({title, artist, album, image, onNext, onShuffleNext, isFocuse
         <NextTrackButton menuid="nextTrack" onEnter={onNext} focused={isFocused('nextTrack')} onDown={changeFocus('shuffleNextTrack')}>Next</NextTrackButton>
         <br />
         <NextTrackButton menuid="shuffleNextTrack" onEnter={onNext} focused={isFocused('shuffleNextTrack')} onUp={changeFocus('nextTrack')}>Shuffle Next</NextTrackButton>
+        <PlayerControls menuid='playback:playercontrols' focused={isFocused('playback:playercontrols')}
+          defaultFocus={'playback:playercontrols:pause'} />
       </div>
     </div>
   </div>

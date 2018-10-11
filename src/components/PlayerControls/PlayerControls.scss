@@ -11,9 +11,9 @@ $control-width: 40px * $num-controls;
 
 :local(.PlayerControls) {
   width: 100%;
-  position: absolute;
+  // position: absolute;
   left: 0;
-  top: 5px;
+  // top: 5px;
   text-align: center;
   .controls {
     display: inline-block;

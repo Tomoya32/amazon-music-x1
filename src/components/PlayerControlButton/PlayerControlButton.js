@@ -1,6 +1,6 @@
 import React from 'react'
 import css from './PlayerControlButton.scss'
-import buttonComposer from '../../lib/reactv-navigation/components/Button'
+import buttonComposer from '../../lib/reactv-navigation/components/Buttonizer/Buttonizer'
 import cx from 'classnames'
 
 const PlayerControlButton = ({focused, style, children, className, disabled}) => (

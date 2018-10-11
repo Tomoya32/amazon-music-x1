@@ -141,20 +141,7 @@ export const cancelPoller = () => {
   poller.cancel()
 }
 
-const playerWrapper =(Wrapped) => {
-  return class extends React.Component {
-    render() {
-      return (
-        <div>
-          <Wrapped {...this.props} />
-          <Player />
-        </div>
-      )
-    }
-  }
-}
-
-export const authWrapper =(c) => playerWrapper(authorizeWrapper(c))
+export const authWrapper =(c) => authorizeWrapper(c)
 export const authorizeWrapper = connectedRouterRedirect({
   redirectPath: '/linking',
   authenticatedSelector: state => state.auth.access_token !== null,
@@ -167,4 +154,3 @@ export const userIsNotAuthenticated = connectedRouterRedirect({
   authenticatedSelector: state => state.auth.access_token === null,
   wrapperDisplayName: 'UserIsNotAuthenticated'
 })
-

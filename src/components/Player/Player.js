@@ -1,10 +1,41 @@
 import React, { Component } from 'react'
-import './Player.css'
+import './Player.scss'
 import $badger from '../../lib/badger'
-import config from '../../config'
+import debugWrapper from 'debug'
+import { logError } from '../../lib/logger'
+import gt from 'lodash/get'
+import config from '../../lib/config'
+import mainConfig from '../../config'
 import {isNumeric} from '../../lib/utils'
 import ReactHLS from 'react-hls';
 
+const debug = debugWrapper('app:player')
+
+const properties = [
+  'autoplay',
+  'buffered',
+  'controller',
+  'controls',
+  'controlsList',
+  'crossOrigin',
+  'currentSrc',
+  'currentTime',
+  'defaultMuted',
+  'defaultPlaybackRate',
+  'duration',
+  'ended',
+  'error',
+  'initialTime',
+  'loop',
+  'mediaGroup',
+  'muted',
+  'networkState',
+  'paused',
+  'playbackRate',
+  'readyState',
+  'seekable',
+  'src'
+]
 
 export default class Player extends Component {
 
@@ -13,13 +44,23 @@ export default class Player extends Component {
     disableOnEnded: true
   }
 
+  componentDidMount () {
+    if (config.showPlaybackDebug) {
+      setInterval(() => {
+        this.captureProperties()
+      }, 3000)
+      this._lastTimeUpdate = 0
+    }
+    this.monitorTimeSpentPlaying()
+  }
 
   componentWillUnmount () {
     this.stopMonitoringPlayback()
+    clearInterval(this._timeSpentPlayingInterval)
   }
 
   monitorPlayback () {
-    if (!isNaN(config.player.heartbeat_frequency)) {
+    if (!isNaN(mainConfig.player.heartbeat_frequency)) {
       clearInterval(this._heartbeat)
       this._heartbeat = setInterval(() => {
         if (this.player) {
@@ -36,12 +77,13 @@ export default class Player extends Component {
           } else {
             $badger.userActionMetricsHandler('AbNormalPlaybackHeartbeat', {message: 'No Player Object'})
           }
+          debug(`No player to monitor playback with`)
         }
-      }, config.player.heartbeat_frequency)
+      }, mainConfig.player.heartbeat_frequency)
     } else {
       const {playerUrl} = this.props
       $badger.userActionMetricsHandler('HeartbeatsDisabled', {
-        heartbeatFrequency: config.player.heartbeat_frequency,
+        heartbeatFrequency: mainConfig.player.heartbeat_frequency,
         playerUrl
       })
     }
@@ -49,6 +91,27 @@ export default class Player extends Component {
 
   stopMonitoringPlayback () {
     clearInterval(this._heartbeat)
+  }
+
+  monitorTimeSpentPlaying () {
+    clearInterval(this._timeSpentPlayingInterval)
+    this._timeSpentPlayingInterval = setInterval(() => {
+      // const {recommendation} = this.props
+      // if (this.player) recommendation.recordAction(NPROneSDK.Action.START, this.player.currentTime)
+    }, 1000 * 60 * 5)
+  }
+
+  captureProperties () {
+    const {setProperties} = this.props
+    if (this.player) {
+      const atts = properties.reduce((mem, item) => {
+        mem[item] = gt(this.player, item)
+        return mem
+      }, {})
+      debug('set properties')
+      setProperties(atts)
+      return atts
+    }
   }
 
   pause () {
@@ -61,11 +124,12 @@ export default class Player extends Component {
     event.persist()
     const { onEnded} = this.props
     onEnded()
+    // recommendationEnded()
   }
 
   errorHandler (e, code = 301) {
     const {playerUrl, errorHandler} = this.props
-    console.error('Error playing %s %s', playerUrl, e.message, e)
+    debug('Playback Error on stream %s', playerUrl, e)
     $badger.errorMetricsHandler('PlaybackError', false, code, {
       message: e ? e.message : 'no message passed',
       url: playerUrl
@@ -83,7 +147,7 @@ export default class Player extends Component {
           this.errorHandler(new Error('Stream has never seemed to play'), 302)
         }
       }
-    }, config.player.timeout_check_frequency)
+    }, mainConfig.player.timeout_check_frequency)
   }
 
   componentDidUpdate (prevProps) {
@@ -91,8 +155,14 @@ export default class Player extends Component {
     const oldPlayerUrl = prevProps.playerUrl
     if (playerUrl !== oldPlayerUrl) {
       this._lastTimeUpdate = 0
+      debug(`New player URL ${playerUrl} old Player Url: ${oldPlayerUrl}`)
+      debug(`user player state: ${userPlayState} - player state: ${this.player.paused ? 'paused' : 'play'}`)
+
+      clearInterval(this._timeSpentPlayingInterval)
+      this.monitorTimeSpentPlaying()
       if (userPlayState === 'playing') {
         setTimeout(() => {
+          debug('player check...')
           const {userPlayState} = this.props
           if (userPlayState === 'playing' &&  this.player && this.player.paused) {
             this.player.play()
@@ -105,6 +175,8 @@ export default class Player extends Component {
     if (userPlayState === 'playing' && prevProps.userPlayState === 'paused') {
       this.checkIfPlayed()
     }
+    // Time updates for jumping back and forth
+    // debug('player update', prevProps.updateCurrentTime, updateCurrentTime)
 
     if (this.player && prevProps.updateCurrentTime !== updateCurrentTime && isNumeric(updateCurrentTime)) {
       // Validations
@@ -124,8 +196,10 @@ export default class Player extends Component {
 
     const pausedState = this.player.paused ? 'paused' : 'playing'
     if (this.player && pausedState !== userPlayState) {
+      debug(`Player - userPlayState ${userPlayState}  playerState: ${playerState} player is ${pausedState} playerUrl: `)
       if (userPlayState === 'playing' && this.player.paused && playerUrl === oldPlayerUrl) {
         try {
+          debug('Calling play on player')
           this.player.play()
         } catch (e) {
           console.error(`Error calling play ${e.message}`)
@@ -138,7 +212,8 @@ export default class Player extends Component {
 
   onTimeUpdate (time) {
     const {playerState, updatePlayerState} = this.props
-    if (!config.player.disable_time_updates && (time > this._lastTimeUpdate && (time - this._lastTimeUpdate) > 1) || time < this._lastTimeUpdate) {
+    if (!mainConfig.player.disable_time_updates && (time > this._lastTimeUpdate && (time - this._lastTimeUpdate) > 1) || time < this._lastTimeUpdate) {
+      // if (time > 2 && time < 5) this.props.setRecommendationPlayed()
       if (this.player) {
         if (playerState === 'paused' && !this.player.paused) updatePlayerState('playing')
         else if (playerState === 'playing' && this.player.paused) updatePlayerState('paused')

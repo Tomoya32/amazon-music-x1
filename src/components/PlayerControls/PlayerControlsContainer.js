@@ -1,19 +1,17 @@
 import React, { Component } from 'react'
 import PlayerControls from './PlayerControls'
-import NamedMenu from '../../lib/reactv-navigation/components/NamedMenu'
+import Space from '../../lib/reactv-redux/SpaceRedux'
 import gt from 'lodash/get'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { push, replace} from '../../store/reducers/navigation'
+import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
-import { setCurrentTime, setPlayState } from '../../store/reducers/player'
-import { getNextRecommendation, thumbsUp } from '../../store/reducers/nprone'
+import { setCurrentTime, setPlayState } from '../../store/modules/player'
+// import { getNextRecommendation, thumbsUp } from '../../store/reducers/nprone'
 import $badger from '../../lib/badger'
-import { setSingleFocus } from '../../store/reducers/menus'
-import { toggleInfo } from '../../store/reducers/podcast'
+// import { toggleInfo } from '../../store/reducers/podcast'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import debugWrapper from 'debug'
-import NPROneSDK from 'npr-one-sdk'
 
 const Keys = new KeyEvents()
 
@@ -22,24 +20,24 @@ const debug = debugWrapper('app:player_controls_container')
 const mapStateToProps = (state, ownProps) => ({
   playerState: state.player.state,
   currentTime: state.player.currentTime,
-  currentPath: state.routing.locationBeforeTransitions ? state.routing.locationBeforeTransitions.pathname : '',
-  currentSection: state.explore ? state.explore.currentSection : 'catch_up',
-  infoShowing: state.podcast.showInfo,
-  recommendation: state.npr.recommendation,
-  skippable: gt(state, 'npr.recommendation.attributes.skippable', false),
-  thumbedUp: state.npr.thumbedUp,
-  fetchingRecommendation: state.npr.fetchingRecommendation
+  currentPath: state.router.location ? state.router.location.pathname : '',
+  // currentSection: state.explore ? state.explore.currentSection : 'catch_up',
+  // infoShowing: state.podcast.showInfo,
+  // recommendation: state.npr.recommendation,
+  // skippable: gt(state, 'npr.recommendation.attributes.skippable', false),
+  // thumbedUp: state.npr.thumbedUp,
+  // fetchingRecommendation: state.npr.fetchingRecommendation
 })
 
 const mapDispatchToProps = (dispatch) => {
   const creators = bindActionCreators({
     setCurrentTime,
     setPlayState,
-    getNextRecommendation,
-    setSingleFocus,
+    // getNextRecommendation,
+    // setSingleFocus,
     push, replace,
-    toggleInfo,
-    thumbsUp
+    // toggleInfo,
+    // thumbsUp
   }, dispatch)
   creators.explore = () => dispatch(push('/explore'))
   return creators
@@ -96,9 +94,9 @@ class PlayerControlsContainer extends Component {
     $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, {skippable, currentTime})
     if (skippable && !fetchingRecommendation) {
       // if (this.props.currentPath.indexOf('recommendation') > -1) this.props.replace('/')
-      recommendation.recordAction(NPROneSDK.Action.SKIP, currentTime || 1)
+      // recommendation.recordAction(NPROneSDK.Action.SKIP, currentTime || 1)
       debug('getting next recommendation')
-      getNextRecommendation()
+      // getNextRecommendation()
     }
   }
 
@@ -116,4 +114,4 @@ class PlayerControlsContainer extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(NamedMenu(withRouter(PlayerControlsContainer)))
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Space(withRouter(PlayerControlsContainer)))

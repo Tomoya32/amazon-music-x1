@@ -20,8 +20,9 @@ import Player from './Player'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { displayError } from '../../store/modules/errormodal'
+import debugWrapper from 'debug'
 
-const debug = console.info
+const debug = debugWrapper('app:player_container')
 
 const mapDispatchToProps = {
   playerCurrentSrc,
@@ -78,6 +79,7 @@ class PlayerWrapper extends Component {
     if (!this.props.playerUrl) {
       return null
     } else {
+      debug('playing rec....')
       return <Player {...this.props} disableTimeUpdates={false}
         errorHandler={this.errorHandler.bind(this)} />
     }
