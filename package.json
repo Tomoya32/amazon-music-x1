@@ -47,6 +47,8 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "loaders.css": "^0.1.2",
+    "react-loaders": "^3.0.1",
     "standard": "^11.0.1"
   },
   "browserslist": [

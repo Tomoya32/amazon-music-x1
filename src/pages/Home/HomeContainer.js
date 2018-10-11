@@ -12,7 +12,7 @@ import {
 import { updateMenu } from '../../lib/reactv-redux/MenusReducer'
 import topnav from '../../components/MainMenu/topnav'
 import { closeModal } from '../../store/modules/modal'
-import PageLoading from '../../components/PageLoading';
+import PageLoading from '../../components/PageLoading'
 
 const mapStateToProps = (state) => ({
   showModal: state.modal.showModal,
@@ -29,17 +29,12 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {updateMenu, closeModal}
 
 class HomeContainer extends React.Component {
+
   render() {
-    const { display } = this.props;
-
-    if (!display) {
-      return <PageLoading />;
-    }
-
     if(this.props.catalog) {
       return (<Home catalog={this.props.catalog} pathKey={this.props.pathKey} topnav={topnav} focused menuid={'homespace'} onFocusItem='topnav' {...this.props} entryFocus='home:main'/>)
     } else {
-      return null
+      return (<PageLoading />)
     }
   }
 }

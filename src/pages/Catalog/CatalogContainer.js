@@ -11,6 +11,7 @@ import {
   getItemDescriptionsSelectors,
   getNavigationNodeSummariesSelector
 } from '../../lib/selectors/node_selectors'
+import PageLoading from '../../components/PageLoading'
 
 const mapStateToProps = (state,ownProps) => ({
   highlightedTrack: state.menus[`catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`],

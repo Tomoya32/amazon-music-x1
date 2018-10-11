@@ -8,6 +8,7 @@ import Playback from './Playback'
 import { playerCurrentSrc } from '../../store/modules/player'
 import gt from 'lodash/get'
 import {getPlayable, getTrackInstance, getPlayableNode, getTrackPointers} from './selectors'
+import PageLoading from '../../components/PageLoading'
 
 const debug = console.info
 
@@ -83,7 +84,7 @@ class PlaybackContainer extends Component {
                 onShuffleNext={this.handleTransition('shufffleTrackPointer')}
                 onNext={this.handleTransition('nextTrackPointer')}/>)
     } else {
-      return (<div>Loading</div>)
+      return (<PageLoading />)
     }
   }
 }
