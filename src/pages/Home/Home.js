@@ -30,7 +30,7 @@ const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, onSubmit, 
   if (showModal && !isFocused('modal')) { changeFocus('modal')() }
   return (
     <div>
-        {showModal && <Modal className='amazon-unlimited-modal' menuid='modal' showModal={showModal} focused={isFocused('modal')}
+      {showModal && <Modal className='amazon-unlimited-modal' menuid='modal' onFocusItem='action' focused={isFocused('modal')}
         onEnter={() => {
           closeModal()
           changeFocus('home:main')()
