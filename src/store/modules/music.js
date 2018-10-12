@@ -6,7 +6,7 @@ export const ADD_CHILD_NODE = 'MUSIC/ADD_CHILD_NODE'
 export function loadChildNode(path) {
   return {
     type: LOAD_CHILD_NODE,
-    path
+    path,
   }
 }
 export function addChildNode(node, path, resolvePath) {
@@ -18,14 +18,16 @@ export function addChildNode(node, path, resolvePath) {
 const initialState = {
   currentParent: null,
   nodes: {},
-  pathResolvers: {}
+  pathResolvers: {},
+  errorMsg: {}
 }
 
-const addNode = (state, {node, path, resolvePath}) => {
+const addNode = (state, {node, path, resolvePath, payload}) => {
   const newState = Object.assign({}, state)
   const key = path || node.result
   newState.nodes[key] = node
   newState.pathResolvers[path] = resolvePath
+  newState.errorMsg = payload
  // Object.assign(newState.itemDescriptions, {...node.itemDescriptions})
   return newState
 }

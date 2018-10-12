@@ -18,10 +18,11 @@ function * loadNavigationNode (action) {
     yield put(addChildNode(payload.data, action.path, responsePath))
     // yield put({type: ADD_CHILD_NODE, payload: payload.data, path: action.path})
   } catch (e) {
-    console.warn(`Error loading Node for route ${action.payload} ${e.message}, ${e.status}`, e.data)
     if (e.status === 401 || e.status === 403) {
       yield put({type: CLEAR_AUTH_DATA})
     }
+    if (e.status === 409)
+      console.warn(`Error loading Node for route ${action.payload} ${e.message}, ${e.status}`, e.data)
     if (e.data) {
       yield put({type: ADD_CHILD_NODE, payload: e.data, path: action.path})
     }

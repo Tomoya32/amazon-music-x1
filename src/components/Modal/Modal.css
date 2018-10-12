@@ -3,12 +3,24 @@
   text-align: center;
 }
 
-.CloseModalButton {
+.CloseModalButton.focused, .ActionModalButton.focused {
   background-color: #68eaff;
+}
+.CloseModalButton {
+  background-color: #7688c396;
   width: 80px;
   height: 20px;
-  margin: 0 auto;
+  margin: 10px auto 0;
   color: #252d41;
+  padding: 5px;
+}
+
+.ActionModalButton {
+  background-color: #7688c396;
+  height: 20px;
+  margin: 10px;
+  color: #252d41;
+  padding: 5px;
 }
 
 .ReactModal__Content {
@@ -17,7 +29,7 @@
   top: 350px !important;
   left: 600px !important;
   width: 450px;
-  height:160px;
+  height:195px;
   margin-top: -9em; /*set to a negative number 1/2 of your height*/
   margin-left: -13em; /*set to a negative number 1/2 of your width*/
   border: 1px solid #ccc;
