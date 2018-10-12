@@ -62,7 +62,7 @@ class PlayerControls extends Component {
   }
 
   componentDidUpdate (prevProps) {
-    if (this.props.playerState !== prevProps.playerState &&
+    if (this.props.playerControlsState !== prevProps.playerControlsState &&
       this.state.currentTip === 'pause') {
       this.displayToolTip('pause')
     }
@@ -85,7 +85,7 @@ class PlayerControls extends Component {
     const tooltipStyle = Object.assign({}, this.state.tooltipStyle, tips[button].style, {display: tips[button].display})
 
     let text = tips[button].text
-    if (button === 'pause' && this.props.playerState === 'paused') text = 'Play'
+    if (button === 'pause' && this.props.playerControlsState === 'paused') text = 'Play'
 
     // this.setState({
     //   tooltipStyle, toolTipText: text, currentTip: button
@@ -103,7 +103,7 @@ class PlayerControls extends Component {
     const {
       isFocused,
       changeFocus,
-      playerState,
+      playerControlsState,
       togglePlayState,
       skip,
       jumpBack,
@@ -120,10 +120,10 @@ class PlayerControls extends Component {
     const {getMenuId} = this.context
     const type = gt(recommendation, 'attributes.type', 'audio')
     const playPauseIconClass = cx({
-      'pause-on': playerState !== 'paused' && isFocused(getMenuId('pause')),
-      'pause-off': playerState !== 'paused' && !isFocused(getMenuId('pause')),
-      'play-on': playerState === 'paused' && isFocused(getMenuId('pause')),
-      'play-off': playerState === 'paused' && !isFocused(getMenuId('pause')),
+      'pause-on': playerControlsState !== 'paused' && isFocused(getMenuId('pause')),
+      'pause-off': playerControlsState !== 'paused' && !isFocused(getMenuId('pause')),
+      'play-on': playerControlsState === 'paused' && isFocused(getMenuId('pause')),
+      'play-off': playerControlsState === 'paused' && !isFocused(getMenuId('pause')),
       largeButton: true
     })
 

@@ -83,7 +83,7 @@ export function setCurrentTime (payload) {
   }
 }
 
-export function setPlayState (payload) {
+export function setPlayerState (payload) {
   return {
     type: PLAYER_UPDATE_PLAYSTATE,
     payload
@@ -110,7 +110,7 @@ export function updatePlayTime (payload) {
   }
 }
 
-export function updatePlayerState (payload) {
+export function setPlayerControlsState (payload) {
   return {
     type: PLAYER_STATE, payload
   }
@@ -136,10 +136,10 @@ export function playerGotDuration (payload) {
 const ACTION_HANDLERS = {
   [PLAYER_TIME]: (state, action) => Object.assign({}, state, {currentTime: action.payload}),
   [PLAYER_ERROR]: (state, action) => Object.assign({}, state, {currentError: action.payload}),
-  [PLAYER_STATE]: (state, action) => Object.assign({}, state, {state: action.payload}),
+  [PLAYER_STATE]: (state, action) => Object.assign({}, state, {playerControlsState: action.payload}),
   [PLAYER_ON_CAN_PLAY]: (state, action) => Object.assign({}, state, ...pick(action.payload, [''])),
   [PLAYER_UPDATE_CURRENTTIME]: (state, action) => Object.assign({}, state, {updateCurrentTime: action.payload}),
-  [PLAYER_UPDATE_PLAYSTATE]: (state, action) => Object.assign({}, state, {userPlayState: action.payload}),
+  [PLAYER_UPDATE_PLAYSTATE]: (state, action) => Object.assign({}, state, {playerState: action.payload}),
   [PLAYER_CURRENT_SRC]: (state, action) => Object.assign({}, state, {currentUrl: action.payload, ...audioDefaults}),
   [PLAYER_READY_STATE]: (state, action) => Object.assign({}, state, {readyState: action.payload}),
   [PLAYER_LOAD_START]: (state, action) => Object.assign({}, state, {loadStarted: true}),
@@ -154,10 +154,10 @@ const ACTION_HANDLERS = {
 }
 
 const audioDefaults = {
+  playerControlsState: 'paused',
   currentTime: 0,
   currentError: null,
   updateCurrentTime: null,
-  state: 'paused',
   duration: 0,
   readyState: 0,
   loadStarted: false,
@@ -170,7 +170,7 @@ const audioDefaults = {
 }
 
 const initialState = {
-  userPlayState: 'playing',
+  playerState: 'playing',
   disableOnEnded: true,
   badStateMessage: 'No message sent'
 }

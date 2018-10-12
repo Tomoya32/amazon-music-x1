@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
-import { setCurrentTime, setPlayState } from '../../store/modules/player'
+import { setCurrentTime, setPlayerState } from '../../store/modules/player'
 // import { getNextRecommendation, thumbsUp } from '../../store/reducers/nprone'
 import $badger from '../../lib/badger'
 // import { toggleInfo } from '../../store/reducers/podcast'
@@ -15,10 +15,11 @@ import debugWrapper from 'debug'
 
 const Keys = new KeyEvents()
 
-const debug = debugWrapper('app:player_controls_container')
+// const debug = debugWrapper('app:player_controls_container')
+const debug = console.info
 
 const mapStateToProps = (state, ownProps) => ({
-  playerState: state.player.state,
+  playerControlsState: state.player.playerControlsState,
   currentTime: state.player.currentTime,
   currentPath: state.router.location ? state.router.location.pathname : '',
   // currentSection: state.explore ? state.explore.currentSection : 'catch_up',
@@ -32,21 +33,21 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => {
   const creators = bindActionCreators({
     setCurrentTime,
-    setPlayState,
+    setPlayerState,
     // getNextRecommendation,
     // setSingleFocus,
     push, replace,
     // toggleInfo,
     // thumbsUp
   }, dispatch)
-  creators.explore = () => dispatch(push('/explore'))
+  // creators.explore = () => dispatch(push('/explore'))
   return creators
 }
 
-const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-  ...ownProps, ...stateProps, ...dispatchProps,
-  explore () { dispatchProps.push(`explore/${stateProps.currentSection}`) }
-})
+// const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+//   ...ownProps, ...stateProps, ...dispatchProps,
+//   explore () { dispatchProps.push(`explore/${stateProps.currentSection}`) }
+// })
 
 class PlayerControlsContainer extends Component {
   componentDidMount () {
@@ -72,32 +73,28 @@ class PlayerControlsContainer extends Component {
     setCurrentTime(jumpTime)
   }
 
+  // TODO: add to my favorite function
+
   pause () {
     $badger.userActionMetricsHandler('PlayerControlsPaused')
-    this.props.setPlayState('paused')
+    this.props.setPlayerState('paused')
   }
 
   play () {
     $badger.userActionMetricsHandler('PlayerControlsPlaying')
-    this.props.setPlayState('playing')
+    this.props.setPlayerState('playing')
   }
 
   togglePlayState () {
-    const newState = this.props.playerState === 'playing' ? 'paused' : 'playing'
-    $badger.userActionMetricsHandler(`PlayerControlsTogglePlayState`, {from: this.props.playerState, to: newState})
-    this.props.setPlayState(newState)
+    const newState = this.props.playerControlsState === 'playing' ? 'paused' : 'playing'
+    $badger.userActionMetricsHandler(`PlayerControlsTogglePlayState`, {from: this.props.playerControlsState, to: newState})
+    this.props.setPlayerState(newState)
   }
 
   skip () {
-    const {skippable, recommendation, getNextRecommendation, currentTime, fetchingRecommendation} = this.props
-    debug('attempting to skip ', skippable, fetchingRecommendation)
-    $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, {skippable, currentTime})
-    if (skippable && !fetchingRecommendation) {
-      // if (this.props.currentPath.indexOf('recommendation') > -1) this.props.replace('/')
-      // recommendation.recordAction(NPROneSDK.Action.SKIP, currentTime || 1)
-      debug('getting next recommendation')
-      // getNextRecommendation()
-    }
+    const {currentTime, handleTransition} = this.props
+    debug('attempting to skip ')
+    $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, {currentTime})
   }
 
   render () {
@@ -114,4 +111,4 @@ class PlayerControlsContainer extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Space(withRouter(PlayerControlsContainer)))
+export default connect(mapStateToProps, mapDispatchToProps)(Space(withRouter(PlayerControlsContainer)))

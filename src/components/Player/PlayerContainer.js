@@ -1,11 +1,11 @@
 import { connect } from 'react-redux'
 import {
-  updatePlayerState,
+  setPlayerControlsState,
   updatePlayTime,
   playerError,
   onCanPlay,
   setCurrentTime,
-  setPlayState,
+  setPlayerState,
   playerGotDuration,
   onReadyStateChange,
   onEnded,
@@ -20,18 +20,19 @@ import Player from './Player'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { displayError } from '../../store/modules/errormodal'
-import debugWrapper from 'debug'
+// import debugWrapper from 'debug'
 
-const debug = debugWrapper('app:player_container')
+// const debug = debugWrapper('app:player_container')
+const debug = console.info
 
 const mapDispatchToProps = {
   playerCurrentSrc,
-  updatePlayerState,
+  setPlayerControlsState,
   updatePlayTime,
   playerError,
   onCanPlay,
   setCurrentTime,
-  setPlayState,
+  setPlayerState,
   onReadyStateChange,
   onEnded,
   onLoadStart,
@@ -47,8 +48,8 @@ const mapStateToProps = (state) => ({
   playerTime: state.player.currentTime,
   playerUrl: state.player.currentUrl,
   updateCurrentTime: state.player.updateCurrentTime,
-  userPlayState: state.player.userPlayState,
-  playerState: state.player.state,
+  playerState: state.player.playerState,
+  playerControlsState: state.player.playerControlsState,
   playerClearing: state.player.clearing,
   disablePlayer: state.player.disablePlayer
 })
@@ -56,7 +57,7 @@ const mapStateToProps = (state) => ({
 class PlayerWrapper extends Component {
   shouldComponentUpdate (nextProps) {
     return (nextProps.playerUrl !== this.props.playerUrl ||
-      nextProps.userPlayState !== this.props.playerState ||
+      nextProps.playerState !== this.props.playerControlsState ||
       nextProps.updateCurrentTime !== this.props.updateCurrentTime)
   }
 
@@ -88,8 +89,8 @@ class PlayerWrapper extends Component {
 
 PlayerWrapper.propTypes = {
   recommendation: PropTypes.object,
+  playerControlsState: PropTypes.string,
   playerState: PropTypes.string,
-  userPlayState: PropTypes.string,
   recommendationEnded: PropTypes.func,
   getNextRecommendation: PropTypes.func,
   recommendationError: PropTypes.func,

@@ -20,9 +20,10 @@ const TrackInfo = ({title, artist, album, image, onNext, onShuffleNext, isFocuse
         {album && album.name && (<h3>{album.name}</h3>)}
         <NextTrackButton menuid="nextTrack" onEnter={onNext} focused={isFocused('nextTrack')} onDown={changeFocus('shuffleNextTrack')}>Next</NextTrackButton>
         <br />
-        <NextTrackButton menuid="shuffleNextTrack" onEnter={onNext} focused={isFocused('shuffleNextTrack')} onUp={changeFocus('nextTrack')}>Shuffle Next</NextTrackButton>
+        <NextTrackButton menuid="shuffleNextTrack" onEnter={onNext} focused={isFocused('shuffleNextTrack')} onUp={changeFocus('nextTrack')}
+        onDown={changeFocus('playback:playercontrols')}>Shuffle Next</NextTrackButton>
         <PlayerControls menuid='playback:playercontrols' focused={isFocused('playback:playercontrols')}
-          defaultFocus={'playback:playercontrols:pause'} />
+          defaultFocus={'playback:playercontrols:pause'} onFarRight={changeFocus('shuffleNextTrack')}/>
       </div>
     </div>
   </div>
