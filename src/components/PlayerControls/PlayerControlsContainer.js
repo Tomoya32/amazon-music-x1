@@ -82,7 +82,6 @@ class PlayerControlsContainer extends Component {
     const newState = this.props.playerControlsState === 'playing' ? 'paused' : 'playing'
     // this will update playerState based on state of playerControlsState
     $badger.userActionMetricsHandler(`PlayerControlsTogglePlayState`, {from: this.props.playerControlsState, to: newState})
-    console.log('STATE - setting playerState: ',newState)
     this.props.setPlayerState(newState)
   }
 

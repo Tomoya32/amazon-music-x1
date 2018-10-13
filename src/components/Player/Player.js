@@ -28,7 +28,7 @@ export default class Player extends Component {
   }
 
   monitorPlayback () {
-    // triggered by onPlay event
+    // triggered by onPlay
     if (!isNaN(config.player.heartbeat_frequency)) {
       clearInterval(this._heartbeat)
       this._heartbeat = setInterval(() => {
@@ -99,7 +99,7 @@ export default class Player extends Component {
 
   componentDidUpdate (prevProps) {
 
-    const {updateCurrentTime, updatePlayTime, playerControlsState, playerState, playerUrl, setPlayerControlsState, setCurrentTime} = this.props
+    const {updateCurrentTime, updatePlayTime, playerControlsState, playerState, playerUrl, setCurrentTime} = this.props
     const oldPlayerUrl = prevProps.playerUrl
 
     if (playerState === 'playing' && prevProps.playerState === 'paused') {
@@ -107,7 +107,7 @@ export default class Player extends Component {
     }
 
     if (this.player && prevProps.updateCurrentTime !== updateCurrentTime && isNumeric(updateCurrentTime)) {
-      // TODO: make this restart song instead of skip back 15 seconds
+      // restarts song
       // Validations
       try {
         this.player.currentTime = updateCurrentTime
@@ -144,13 +144,11 @@ export default class Player extends Component {
       if (this.player) {
         if (playerControlsState === 'paused' && !this.player.paused) setPlayerControlsState('playing')
         else if (playerControlsState === 'playing' && this.player.paused) {
-          console.log('STATE - setting playerControlsState ', 'paused')
           // this shouldn't be called after pressing pause!
           setPlayerControlsState('paused')
         }
       }
       if (time > 0) {
-        console.log(`dispatching updatePlayTime with time `,time)
         this._lastTimeUpdate = time
         this.props.updatePlayTime(time)
       } else {
@@ -170,7 +168,6 @@ export default class Player extends Component {
       onLoadEnd,
       disableTimeUpdates,
     } = this.props
-    console.log(`STATE - render player in state ${playerState}`)
 
     return (
       <div ref={(div) => this._wrapperDiv = div} className={'playerWrapper'}>
