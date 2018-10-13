@@ -173,9 +173,9 @@ export default class Player extends Component {
     console.log(`STATE - render player in state ${playerState}`)
 
     return (
-      <div ref={(div) => this._wrapperDiv = div}>
+      <div ref={(div) => this._wrapperDiv = div} className={'playerWrapper'}>
         <ReactHLS url={playerUrl}
-          controls={true}
+          controls={false}
           autoplay={playerState === 'playing'}
           disableInitOnUpdate={true}
           preload={true}
