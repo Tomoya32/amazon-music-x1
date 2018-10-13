@@ -97,7 +97,7 @@ export default class Player extends Component {
   }
 
   componentDidUpdate (prevProps) {
-    const {updateCurrentTime, updatePlayTime, playerControlsState, playerState, playerUrl, setPlayerControlsState} = this.props
+    const {updateCurrentTime, updatePlayTime, playerControlsState, playerState, playerUrl, setPlayerControlsState, setCurrentTime} = this.props
     const oldPlayerUrl = prevProps.playerUrl
 
     if (playerState === 'playing' && prevProps.playerState === 'paused') {
@@ -107,17 +107,15 @@ export default class Player extends Component {
     if (this.player && prevProps.updateCurrentTime !== updateCurrentTime && isNumeric(updateCurrentTime)) {
       // TODO: make this restart song instead of skip back 15 seconds
       // Validations
-      let updateTime = this.props.updateCurrentTime
-      if (updateTime > this.player.duration) updateTime = this.player.duration
-      if (updateTime < 0) updateTime = 0
       try {
-        this.player.currentTime = updateTime
+        this.player.currentTime = updateCurrentTime
         updatePlayTime(this.player.currentTime)
       } catch (e) {
         console.error(e)
         $badger.errorMetricsHandler('UpdatePlayerTimeError', false, 300, {message: e ? e.message : 'no message'})
         updatePlayTime(this.player.currentTime)
       }
+      setCurrentTime(null)
     }
 
     const pausedState = this.player.paused ? 'paused' : 'playing'

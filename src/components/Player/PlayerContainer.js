@@ -58,7 +58,7 @@ class PlayerWrapper extends Component {
   shouldComponentUpdate (nextProps) {
     return (nextProps.playerUrl !== this.props.playerUrl ||
       nextProps.playerState !== this.props.playerControlsState ||
-      nextProps.updateCurrentTime !== this.props.updateCurrentTime)
+      nextProps.updateCurrentTime === 0)
   }
 
   errorHandler (e) {

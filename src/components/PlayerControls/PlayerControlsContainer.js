@@ -7,9 +7,9 @@ import { bindActionCreators } from 'redux'
 import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
 import { setCurrentTime, setPlayerState } from '../../store/modules/player'
-// import { getNextRecommendation, thumbsUp } from '../../store/reducers/nprone'
+// import { thumbsDown, thumbsUp } from '../../store/modules/amazon'
 import $badger from '../../lib/badger'
-// import { toggleInfo } from '../../store/reducers/podcast'
+// import { toggleInfo } from '../../store/modules/player'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import debugWrapper from 'debug'
 
@@ -20,34 +20,24 @@ const debug = console.info
 
 const mapStateToProps = (state, ownProps) => ({
   playerControlsState: state.player.playerControlsState,
-  currentTime: state.player.currentTime,
+  playerTime: state.player.currentTime,
   currentPath: state.router.location ? state.router.location.pathname : '',
-  // currentSection: state.explore ? state.explore.currentSection : 'catch_up',
-  // infoShowing: state.podcast.showInfo,
-  // recommendation: state.npr.recommendation,
-  // skippable: gt(state, 'npr.recommendation.attributes.skippable', false),
-  // thumbedUp: state.npr.thumbedUp,
-  // fetchingRecommendation: state.npr.fetchingRecommendation
+  // infoShowing: state.amazon.showInfo,
+  // skippable: gt(state, 'amazon.playable.attributes.skippable', false),
+  // thumbedUp: state.amazon.thumbedUp,
 })
 
 const mapDispatchToProps = (dispatch) => {
   const creators = bindActionCreators({
     setCurrentTime,
     setPlayerState,
-    // getNextRecommendation,
-    // setSingleFocus,
     push, replace,
     // toggleInfo,
-    // thumbsUp
+    // thumbsDown, // stations only
+    // thumbsUp // stations only
   }, dispatch)
-  // creators.explore = () => dispatch(push('/explore'))
   return creators
 }
-
-// const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-//   ...ownProps, ...stateProps, ...dispatchProps,
-//   explore () { dispatchProps.push(`explore/${stateProps.currentSection}`) }
-// })
 
 class PlayerControlsContainer extends Component {
   componentDidMount () {
@@ -60,20 +50,23 @@ class PlayerControlsContainer extends Component {
     this.playevent.unsubscribe()
   }
 
-  jumpBack () {
-    if (this.props.fetchingRecommendation) {
-      debug('not jumping during recommendation fetch....')
-      return
-    }
-    const {currentTime, setCurrentTime} = this.props
-    const jumpAmount = 15
-    const jumpTime = (currentTime > jumpAmount) ? currentTime - jumpAmount : 0
-    console.info('Jump Back ', currentTime, jumpAmount, jumpTime)
-    $badger.userActionMetricsHandler(`PlayerJumpBack`, {currentTime, jumpAmount, jumpTime})
-    setCurrentTime(jumpTime)
-  }
+  // TODO: buttons
+  /*
+      thumbsDown
+      **restart**
+      previous
+      **play/pause**
+      **skip**
+      shuffle
+      thumbsUp
+  */
 
-  // TODO: add to my favorite function
+  restart () {
+    const {setCurrentTime} = this.props
+    const restartFrom = 0
+    $badger.userActionMetricsHandler(`PlayerControlsRestart`, {restartFrom})
+    setCurrentTime(restartFrom)
+  }
 
   pause () {
     $badger.userActionMetricsHandler('PlayerControlsPaused')
@@ -87,25 +80,25 @@ class PlayerControlsContainer extends Component {
 
   togglePlayState () {
     const newState = this.props.playerControlsState === 'playing' ? 'paused' : 'playing'
+    // this will update playerState based on state of playerControlsState
     $badger.userActionMetricsHandler(`PlayerControlsTogglePlayState`, {from: this.props.playerControlsState, to: newState})
     console.log('STATE - setting playerState: ',newState)
     this.props.setPlayerState(newState)
   }
 
   skip () {
-    const {currentTime, handleTransition} = this.props
-    debug('attempting to skip ')
-    $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, {currentTime})
+    const {playerTime, handleTransition} = this.props
+    $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, {playerTime})
   }
 
   render () {
     return (
       <PlayerControls
+        restart={this.restart.bind(this)}
         pause={this.pause.bind(this)}
         play={this.play.bind(this)}
         togglePlayState={this.togglePlayState.bind(this)}
         skip={this.skip.bind(this)}
-        jumpBack={this.jumpBack.bind(this)}
         {...this.props}
       />
     )

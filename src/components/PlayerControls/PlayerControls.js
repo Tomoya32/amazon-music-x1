@@ -106,15 +106,18 @@ class PlayerControls extends Component {
       playerControlsState,
       togglePlayState,
       skip,
-      jumpBack,
+      restart,
       onUp,
       onDown,
       onLeft,
+      onRight,
       onFarRight,
       toggleInfo,
       infoShowing,
       recommendation,
+      thumbedDown,
       thumbedUp,
+      thumbsDown,
       thumbsUp
     } = this.props
     const {getMenuId} = this.context
@@ -142,40 +145,48 @@ class PlayerControls extends Component {
       visibility: showTooltip ? 'visible' : 'hidden'
     }
 
-    const classForInteresting = cx('regularButton', {
-      'interesting-on': (isFocused(getMenuId('fav')) && !thumbedUp),
-      'interesting-off': (!isFocused(getMenuId('fav')) && !thumbedUp),
-      'interesting-set-on': (isFocused(getMenuId('fav')) && thumbedUp),
-      'interesting-set-off': (!isFocused(getMenuId('fav')) && thumbedUp)
+    const classForDislike = cx('regularButton', {
+      'interesting-on': (isFocused(getMenuId('thumbsDown')) && !thumbedDown),
+      'interesting-off': (!isFocused(getMenuId('thumbsDown')) && !thumbedDown),
+      'interesting-set-on': (isFocused(getMenuId('thumbsDown')) && thumbedDown),
+      'interesting-set-off': (!isFocused(getMenuId('thumbsDown')) && thumbedDown)
+    })
+
+    const classForLike = cx('regularButton', {
+      'interesting-on': (isFocused(getMenuId('thumbsUp')) && !thumbedUp),
+      'interesting-off': (!isFocused(getMenuId('thumbsUp')) && !thumbedUp),
+      'interesting-set-on': (isFocused(getMenuId('thumbsUp')) && thumbedUp),
+      'interesting-set-off': (!isFocused(getMenuId('thumbsUp')) && thumbedUp)
     })
 
     return (
       <div className={style.PlayerControls}>
         <div className='controls'>
-          <Button mid={getMenuId('fav')}
-            focused={isFocused(getMenuId('fav'))}
+          <Button mid={getMenuId('thumbsDown')}
+            focused={isFocused(getMenuId('thumbsDown'))}
             disabled={type !== 'audio'}
-            onClick={thumbsUp}
+            onClick={thumbsDown}
             onUp={onFarRight} onDown={onDown}
-            onFocus={() => this.displayToolTip('fav')}
-            onBlur={() => this.hideToolTip('fav')}
-            className={classForInteresting}
-            onLeft={onLeft} onRight={changeFocus(getMenuId('jump'))}>
+            onFocus={() => this.displayToolTip('thumbsDown')}
+            onBlur={() => this.hideToolTip('thumbsDown')}
+            className={classForDislike}
+            onLeft={onLeft}
+            onRight={changeFocus(getMenuId('restart'))}>
             &nbsp;
           </Button>
-          <Button mid={getMenuId('jump')}
+          <Button mid={getMenuId('restart')}
             className={cx('regularButton', {
-              'back15-off': !isFocused(getMenuId('jump')),
-              'back15-on': isFocused(getMenuId('jump'))
+              'back15-off': !isFocused(getMenuId('restart')),
+              'back15-on': isFocused(getMenuId('restart'))
             })}
-            focused={isFocused(getMenuId('jump'))}
+            focused={isFocused(getMenuId('restart'))}
             disabled={type !== 'audio'}
-            onClick={jumpBack}
-            onFocus={() => this.displayToolTip('jump')}
-            onBlur={() => this.hideToolTip('jump')}
+            onClick={restart}
+            onFocus={() => this.displayToolTip('restart')}
+            onBlur={() => this.hideToolTip('restart')}
             onUp={onFarRight}
             onDown={onDown}
-            onLeft={changeFocus(getMenuId('fav'))}
+            onLeft={changeFocus(getMenuId('thumbsDown'))}
             onRight={changeFocus(getMenuId('pause'))}>
             &nbsp;
           </Button>
@@ -185,7 +196,7 @@ class PlayerControls extends Component {
             onFocus={() => this.displayToolTip('pause')}
             onBlur={() => this.hideToolTip('pause')}
             onLeft={() => {
-              if (type === 'audio') changeFocus(getMenuId('jump'))()
+              if (type === 'audio') changeFocus(getMenuId('restart'))()
             }}
             onRight={() => {
               if (type === 'audio') changeFocus(getMenuId('next'))()
@@ -205,7 +216,7 @@ class PlayerControls extends Component {
             onFocus={() => this.displayToolTip('next')}
             onBlur={() => this.hideToolTip('next')}
             onLeft={changeFocus(getMenuId('pause'))}
-            onRight={changeFocus(getMenuId('info'))}
+            onRight={changeFocus(getMenuId('thumbsUp'))}
             onUp={onFarRight}
             className={cx('regularButton', {
               'forward-off': !isFocused(getMenuId('next')),
@@ -214,6 +225,7 @@ class PlayerControls extends Component {
             onClick={skip}>
             &nbsp;
           </Button>
+          {/*
           <Button mid={getMenuId('info')}
             className={infoIcon}
             onFocus={() => this.displayToolTip('info')}
@@ -225,6 +237,19 @@ class PlayerControls extends Component {
             onUp={onFarRight}
             onClick={toggleInfo}>
           </Button>
+          */}
+          <Button mid={getMenuId('thumbsUp')}
+            focused={isFocused(getMenuId('thumbsUp'))}
+            disabled={type !== 'audio'}
+            onClick={thumbsUp}
+            onUp={onFarRight} onDown={onDown}
+            onFocus={() => this.displayToolTip('thumbsUp')}
+            onBlur={() => this.hideToolTip('thumbsUp')}
+            className={classForLike}
+            onLeft={changeFocus(getMenuId('next'))}
+            onRight={onRight}>
+            &nbsp;
+          </Button>
           <div style={tooltipStyle} className='tooltip'>{this.state.toolTipText}</div>
         </div>
       </div>
@@ -235,7 +260,7 @@ class PlayerControls extends Component {
 PlayerControls.propTypes = {
   togglePlayState: PropTypes.func.isRequired,
   skip: PropTypes.func.isRequired,
-  jumpBack: PropTypes.func.isRequired
+  restart: PropTypes.func.isRequired
 }
 PlayerControls.contextTypes = {
   getMenuId: PropTypes.func
