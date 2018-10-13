@@ -7,7 +7,8 @@ import gt from 'lodash/get'
 import playerConfig from '../../lib/config'
 import config from '../../config'
 import {isNumeric} from '../../lib/utils'
-import ReactHLS from 'react-hls';
+// import ReactHLS from 'react-hls';
+import ReactHLS from '../ReactHLS/react-hls';
 
 const debug = debugWrapper('app:player')
 
@@ -97,6 +98,7 @@ export default class Player extends Component {
   }
 
   componentDidUpdate (prevProps) {
+
     const {updateCurrentTime, updatePlayTime, playerControlsState, playerState, playerUrl, setPlayerControlsState, setCurrentTime} = this.props
     const oldPlayerUrl = prevProps.playerUrl
 
@@ -169,11 +171,13 @@ export default class Player extends Component {
       disableTimeUpdates,
     } = this.props
     console.log(`STATE - render player in state ${playerState}`)
+
     return (
       <div ref={(div) => this._wrapperDiv = div}>
         <ReactHLS url={playerUrl}
           controls={true}
           autoplay={playerState === 'playing'}
+          disableInitOnUpdate={true}
           preload={true}
           ref={element => {
             this.player = element ? element.refs.video : element
