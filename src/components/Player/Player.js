@@ -11,32 +11,6 @@ import ReactHLS from 'react-hls';
 
 const debug = debugWrapper('app:player')
 
-const properties = [
-  'autoplay',
-  'buffered',
-  'controller',
-  'controls',
-  'controlsList',
-  'crossOrigin',
-  'currentSrc',
-  'currentTime',
-  'defaultMuted',
-  'defaultPlaybackRate',
-  'duration',
-  'ended',
-  'error',
-  'initialTime',
-  'loop',
-  'mediaGroup',
-  'muted',
-  'networkState',
-  'paused',
-  'playbackRate',
-  'readyState',
-  'seekable',
-  'src'
-]
-
 export default class Player extends Component {
 
   static defaultProps = {
@@ -46,22 +20,14 @@ export default class Player extends Component {
 
   componentDidMount () {
     this._lastTimeUpdate = 0
-    if (playerConfig.showPlaybackDebug) {
-      setInterval(() => {
-        this.captureProperties()
-      }, 3000)
-      this._lastTimeUpdate = 0
-    }
-    this.monitorTimeSpentPlaying()
   }
 
   componentWillUnmount () {
     this.stopMonitoringPlayback()
-    clearInterval(this._timeSpentPlayingInterval)
   }
 
   monitorPlayback () {
-    // debugger
+    // triggered by onPlay event
     if (!isNaN(config.player.heartbeat_frequency)) {
       clearInterval(this._heartbeat)
       this._heartbeat = setInterval(() => {
@@ -92,50 +58,21 @@ export default class Player extends Component {
   }
 
   stopMonitoringPlayback () {
-    // debugger
     clearInterval(this._heartbeat)
   }
 
-  monitorTimeSpentPlaying () {
-    // TODO:  how can i do this?
-    clearInterval(this._timeSpentPlayingInterval)
-    this._timeSpentPlayingInterval = setInterval(() => {
-      // const {recommendation} = this.props
-      // if (this.player) recommendation.recordAction(NPROneSDK.Action.START, this.player.currentTime)
-    }, 1000 * 60 * 5)
-  }
-
-  captureProperties () {
-    // debugger
-    const {setProperties} = this.props
-    if (this.player) {
-      const atts = properties.reduce((mem, item) => {
-        mem[item] = gt(this.player, item)
-        return mem
-      }, {})
-      debug('set properties')
-      setProperties(atts)
-      return atts
-    }
-  }
-
   pause () {
-    // debugger
-    this.resetTracking()
     if (this.player.paused) this.player.play()
     else this.player.pause()
   }
 
   onEnded (event) {
-    // debugger
     event.persist()
     const { onEnded} = this.props
     onEnded()
-    // recommendationEnded()
   }
 
   errorHandler (e, code = 301) {
-    // debugger
     const {playerUrl, errorHandler} = this.props
     debug('Playback Error on stream %s', playerUrl, e)
     $badger.errorMetricsHandler('PlaybackError', false, code, {
@@ -148,11 +85,11 @@ export default class Player extends Component {
   }
 
   checkIfPlayed () {
-    // debugger
     clearTimeout(this.__checktimeout)
     this.__checktimeout = setTimeout(() => {
       if (this.player) {
         if (this.player.currentTime < 1) {
+          // this could also be triggered by autoplaying the song and immediately pausing it
           this.errorHandler(new Error('Stream has never seemed to play'), 302)
         }
       }
@@ -162,40 +99,18 @@ export default class Player extends Component {
   componentDidUpdate (prevProps) {
     const {updateCurrentTime, updatePlayTime, playerControlsState, playerState, playerUrl, setPlayerControlsState} = this.props
     const oldPlayerUrl = prevProps.playerUrl
-    if (playerUrl !== oldPlayerUrl) { this._lastTimeUpdate = 0 }
-    /*
-    if (playerUrl !== oldPlayerUrl) {
-      this._lastTimeUpdate = 0
-      debug(`New player URL ${playerUrl} old Player Url: ${oldPlayerUrl}`)
-      debug(`user player state: ${playerState} - player state: ${this.player.paused ? 'paused' : 'play'}`)
-
-      clearInterval(this._timeSpentPlayingInterval)
-      this.monitorTimeSpentPlaying()
-      if (playerState === 'playing') {
-        setTimeout(() => {
-          debug('player check...')
-          const {playerState} = this.props
-          if (playerState === 'playing' &&  this.player && this.player.paused) {
-            this.player.play()
-          }
-        }, 1000)
-        this.checkIfPlayed()
-      }
-    }
 
     if (playerState === 'playing' && prevProps.playerState === 'paused') {
       this.checkIfPlayed()
     }
-    // Time updates for jumping back and forth
-    // debug('player update', prevProps.updateCurrentTime, updateCurrentTime)
 
     if (this.player && prevProps.updateCurrentTime !== updateCurrentTime && isNumeric(updateCurrentTime)) {
+      // TODO: make this restart song instead of skip back 15 seconds
       // Validations
       let updateTime = this.props.updateCurrentTime
       if (updateTime > this.player.duration) updateTime = this.player.duration
       if (updateTime < 0) updateTime = 0
       try {
-        // debug('Updating player time', updateTime, this.props.updateCurrentTime)
         this.player.currentTime = updateTime
         updatePlayTime(this.player.currentTime)
       } catch (e) {
@@ -206,10 +121,8 @@ export default class Player extends Component {
     }
 
     const pausedState = this.player.paused ? 'paused' : 'playing'
-    // (this.player && pausedState !== playerState): true
-    // why is playerState = 'paused'?
-    // // debugger
     if (this.player && pausedState !== playerState) {
+      // will play or pause the song
       debug(`Player - playerState ${playerState}  playerControlsState: ${playerControlsState} player is ${pausedState} playerUrl: `)
       if (playerState === 'playing' && this.player.paused && playerUrl === oldPlayerUrl) {
         try {
@@ -222,7 +135,6 @@ export default class Player extends Component {
         this.player.pause()
       }
     }
-    */
   }
 
   onTimeUpdate (time) {
@@ -231,10 +143,18 @@ export default class Player extends Component {
     if (!disable_time_updates && (time > this._lastTimeUpdate && (time - this._lastTimeUpdate) > 1) || time < this._lastTimeUpdate) {
       if (this.player) {
         if (playerControlsState === 'paused' && !this.player.paused) setPlayerControlsState('playing')
-        else if (playerControlsState === 'playing' && this.player.paused) setPlayerControlsState('paused')
+        else if (playerControlsState === 'playing' && this.player.paused) {
+          console.log('STATE - setting playerControlsState ', 'paused')
+          // this shouldn't be called after pressing pause!
+          setPlayerControlsState('paused')
+        }
       }
-      this._lastTimeUpdate = time
-      this.props.updatePlayTime(time)
+      if (time > 0) {
+        console.log(`dispatching updatePlayTime with time `,time)
+        this._lastTimeUpdate = time
+        this.props.updatePlayTime(time)
+      } else {
+      }
     }
   }
 
@@ -250,69 +170,57 @@ export default class Player extends Component {
       onLoadEnd,
       disableTimeUpdates,
     } = this.props
-
+    console.log(`STATE - render player in state ${playerState}`)
     return (
       <div ref={(div) => this._wrapperDiv = div}>
         <ReactHLS url={playerUrl}
           controls={true}
           autoplay={playerState === 'playing'}
-          preload='metadata'
+          preload={true}
           ref={element => {
             this.player = element ? element.refs.video : element
-            // console.log('paused?',this.player.paused)
-            // if (element) { // debugger }
           }}
           videoProps={{
-            /*
             onError: event => {
-              // debugger
               event.persist()
               const e = event.target.error
               this.errorHandler(e)
-            },*/
+            },
             onTimeUpdate: event => {
               event.persist() // Not sure what I was doing wrong but this was required on some events or React would get mad
               if (!disableTimeUpdates) this.onTimeUpdate(event.target.currentTime)
-            },/*
+            },
             onLoadStart: (event) => {
-              // debugger
               $badger.userActionMetricsHandler('PlayerOnLoadStart')
               event.persist()
               onReadyStateChange(event.target.readyState)
               onLoadStart()
             },
             onLoadedData: (event) => {
-              // debugger
               $badger.userActionMetricsHandler('PlayerOnLoadedData')
               event.persist()
               onReadyStateChange(event.target.readyState)
               onLoadEnd()
             },
             onCanPlay: (event) => {
-              // debugger
               $badger.userActionMetricsHandler('PlayerOnCanPlay')
               event.persist()
               onReadyStateChange(event.target.readyState)
-              // TODO: nCanPlay()
+              // add this if needed: onCanPlay()
             },
             onLoadedMetadata: event => {
-              // debugger
               $badger.userActionMetricsHandler('PlayerOnLoadedMetadata')
               event.persist()
               onReadyStateChange(event.target.readyState)
               gotDuration(event.target.duration)
             },
-            */
             onPause: (event) => {
-              // debugger
-              // this.stopMonitoringPlayback()
               $badger.userActionMetricsHandler('PlayerOnPause')
               $badger.userActionMetricsHandler('PausedPlaybackHeartbeat', {playerTime: event.target.currentTime})
               event.persist()
               setPlayerControlsState('paused')
             },
             onPlay: (event) => {
-              // debugger
               this.monitorPlayback()
               $badger.userActionMetricsHandler('PlayerOnPlay')
               $badger.userActionMetricsHandler('NormalPlaybackHeartbeat', {playerTime: event.target.currentTime})
