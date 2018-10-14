@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
-import { setCurrentTime, setPlayerState } from '../../store/modules/player'
+import { setCurrentTime, setPlayerState, updateInitOnUpdate } from '../../store/modules/player'
 // import { thumbsDown, thumbsUp } from '../../store/modules/amazon'
 import $badger from '../../lib/badger'
 // import { toggleInfo } from '../../store/modules/player'
@@ -29,6 +29,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => {
   const creators = bindActionCreators({
+    updateInitOnUpdate,
     setCurrentTime,
     setPlayerState,
     push, replace,

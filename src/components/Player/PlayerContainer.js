@@ -1,5 +1,7 @@
 import { connect } from 'react-redux'
 import {
+  updateInitOnUpdate,
+  disableInitOnUpdate,
   setPlayerControlsState,
   updatePlayTime,
   playerError,
@@ -26,6 +28,7 @@ import { displayError } from '../../store/modules/errormodal'
 const debug = console.info
 
 const mapDispatchToProps = {
+  updateInitOnUpdate,
   playerCurrentSrc,
   setPlayerControlsState,
   updatePlayTime,
@@ -44,6 +47,7 @@ const mapDispatchToProps = {
 }
 
 const mapStateToProps = (state) => ({
+  disableInitOnUpdate: state.player.disableInitOnUpdate,
   currentError: state.player.currentError,
   playerTime: state.player.currentTime,
   playerUrl: state.player.currentUrl,
@@ -56,7 +60,9 @@ const mapStateToProps = (state) => ({
 
 class PlayerWrapper extends Component {
   shouldComponentUpdate (nextProps) {
+    if (nextProps.disableInitOnUpdate !== this.props.disableInitOnUpdate) debugger
     return (nextProps.playerUrl !== this.props.playerUrl ||
+      nextProps.disableInitOnUpdate !== this.props.disableInitOnUpdate ||
       nextProps.playerState !== this.props.playerControlsState ||
       nextProps.updateCurrentTime === 0)
   }

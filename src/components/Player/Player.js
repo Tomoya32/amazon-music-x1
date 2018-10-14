@@ -99,8 +99,29 @@ export default class Player extends Component {
 
   componentDidUpdate (prevProps) {
 
-    const {updateCurrentTime, updatePlayTime, playerControlsState, playerState, playerUrl, setCurrentTime} = this.props
+    const {updateCurrentTime, updatePlayTime, playerControlsState, playerState, playerUrl, setCurrentTime, updateInitOnUpdate, disableInitOnUpdate} = this.props
     const oldPlayerUrl = prevProps.playerUrl
+    if (playerUrl !== oldPlayerUrl) {
+      // this._lastTimeUpdate = 0
+      if (disableInitOnUpdate) {
+        debugger
+        updateInitOnUpdate(false)
+      }
+      // if (playerState === 'playing') {
+      // setTimeout(() => {
+      //   const {playerState} = this.props
+      //   if (playerState === 'playing' &&  this.player && this.player.paused) {
+      //     this.player.play()
+      //   }
+      // }, 1000)
+      // this.checkIfPlayed()
+      // }
+    } else {
+      if (!disableInitOnUpdate) {
+        debugger
+        updateInitOnUpdate(true)
+      }
+    }
 
     if (playerState === 'playing' && prevProps.playerState === 'paused') {
       this.checkIfPlayed()
@@ -158,6 +179,7 @@ export default class Player extends Component {
 
   render () {
     const {
+      disableInitOnUpdate,
       setPlayerControlsState,
       gotDuration,
       onCanPlay,
@@ -168,13 +190,13 @@ export default class Player extends Component {
       onLoadEnd,
       disableTimeUpdates,
     } = this.props
-
+    debugger
     return (
       <div ref={(div) => this._wrapperDiv = div} className={'playerWrapper'}>
         <ReactHLS url={playerUrl}
           controls={false}
           autoplay={playerState === 'playing'}
-          disableInitOnUpdate={true}
+          disableInitOnUpdate={disableInitOnUpdate}
           preload={true}
           ref={element => {
             this.player = element ? element.refs.video : element

@@ -1,5 +1,6 @@
 import pick from 'lodash/pick'
 
+export const PLAYER_DISABLE_INIT = 'player/PLAYER_DISABLE_INITIALIZE'
 export const PLAYER_ERROR = 'player/PLAYER_ERROR'
 export const PLAYER_STATE = 'player/PLAYER_STATE'
 export const PLAYER_TIME = 'player/PLAYER_TIME'
@@ -17,6 +18,13 @@ export const PLAYER_SET_PROPERTIES = 'player/PLAYER_SET_PROPERTIES'
 export const PLAYER_ENDED = 'player/PLAYER_ENDED'
 export const PLAYER_DISABLE = 'player/PLAYER_DISABLE'
 export const PLAYER_BAD_STATE = 'player/PLAYER_BAD_STATE'
+
+export function updateInitOnUpdate(payload) {
+  return {
+    type: PLAYER_DISABLE_INIT,
+    payload
+  }
+}
 
 export function setPlayerDuration(payload) {
   return {
@@ -134,6 +142,7 @@ export function playerGotDuration (payload) {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
+  [PLAYER_DISABLE_INIT]: (state, action) => Object.assign({}, state, {disableInitOnUpdate: action.payload}),
   [PLAYER_TIME]: (state, action) => Object.assign({}, state, {currentTime: action.payload}),
   [PLAYER_ERROR]: (state, action) => Object.assign({}, state, {currentError: action.payload}),
   [PLAYER_STATE]: (state, action) => Object.assign({}, state, {playerControlsState: action.payload}),
@@ -170,6 +179,7 @@ const audioDefaults = {
 }
 
 const initialState = {
+  disableInitOnUpdate: true,
   playerState: 'playing',
   disableOnEnded: true,
   badStateMessage: 'No message sent'
