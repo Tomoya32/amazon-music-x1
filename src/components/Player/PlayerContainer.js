@@ -1,7 +1,6 @@
 import { connect } from 'react-redux'
 import {
   updateInitOnUpdate,
-  disableInitOnUpdate,
   setPlayerControlsState,
   updatePlayTime,
   playerError,
@@ -47,7 +46,6 @@ const mapDispatchToProps = {
 }
 
 const mapStateToProps = (state) => ({
-  disableInitOnUpdate: state.player.disableInitOnUpdate,
   currentError: state.player.currentError,
   playerTime: state.player.currentTime,
   playerUrl: state.player.currentUrl,
@@ -59,12 +57,21 @@ const mapStateToProps = (state) => ({
 })
 
 class PlayerWrapper extends Component {
+  constructor(p) {
+    super(p);
+    this.disableInitOnUpdate = true;
+  }
+
+
   shouldComponentUpdate (nextProps) {
-    if (nextProps.disableInitOnUpdate !== this.props.disableInitOnUpdate) debugger
-    return (nextProps.playerUrl !== this.props.playerUrl ||
-      nextProps.disableInitOnUpdate !== this.props.disableInitOnUpdate ||
-      nextProps.playerState !== this.props.playerControlsState ||
-      nextProps.updateCurrentTime === 0)
+    const newUrl = (nextProps.playerUrl !== this.props.playerUrl);
+    if (newUrl) this.disableInitOnUpdate = false;
+    else this.disableInitOnUpdate = true;
+    const playerMismatch = (nextProps.playerState !== this.props.playerControlsState);
+    const restart = (nextProps.updateCurrentTime === 0);
+    const shouldUpdate = (newUrl || playerMismatch || restart);
+    // if (shouldUpdate) { debugger }
+    return shouldUpdate
   }
 
   errorHandler (e) {
@@ -87,7 +94,7 @@ class PlayerWrapper extends Component {
       return null
     } else {
       debug('playing rec....')
-      return <Player {...this.props} disableTimeUpdates={false}
+      return <Player {...this.props} disableTimeUpdates={false} disableInitOnUpdate={this.disableInitOnUpdate}
         errorHandler={this.errorHandler.bind(this)} />
     }
   }
