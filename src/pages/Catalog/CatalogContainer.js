@@ -13,6 +13,7 @@ import {
   getNavigationNodeSummariesSelector
 } from '../../lib/selectors/node_selectors'
 import PageLoading from '../../components/PageLoading'
+import {calculateOffsetHeight} from '../../lib/reactv-redux/SlotMenuRedux'
 
 const mapStateToProps = (state,ownProps) => ({
   menuid: `catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`,
@@ -43,6 +44,32 @@ class CatalogContainer extends Component {
   componentWillUnmount () {
     if (this._unsubBack) this._unsubBack.unsubscribe()
     this._unsubBack = null
+  }
+
+  calculateStyle (currentState, newState, ref) {
+    // if (newState.index > currentState.index && newState.slotIndex === currentState.slotIndex) {
+    if (newState.index > currentState.index) {
+      return {transform: `translateY(-${calculateOffsetHeight(ref, newState.index, newState.slotIndex)}px)`}
+    } else if (newState.index < currentState.index && currentState.slotIndex === 0) {
+      return {transform: `translateY(-${calculateOffsetHeight(ref, newState.index, newState.slotIndex)}px)`}
+    } else {
+      return null
+    }
+  }
+
+  getNewStyle ({highlightedTrack: {index: oldIndex, slotIndex: oldSlotIndex, style}},{highlightedTrack: {index, slotIndex}}, extendBy) {
+    const change = {index, slotIndex}
+    const newStyle = this.calculateStyle({
+      index: oldIndex,
+      slotIndex: oldSlotIndex
+    }, {index: index + extendBy, slotIndex}, this._ref)
+    if (newStyle !== null) {
+      const updatedStyle = Object.assign({}, style || {}, newStyle)
+      change.style = updatedStyle
+    }
+    if (newStyle === null) console.info('change', change)
+
+    return change
   }
 
   componentDidUpdate(prevProps) {
@@ -83,14 +110,13 @@ class CatalogContainer extends Component {
             const newState = Object.assign({}, this.props.catalog, {itemsData: currData})
             const index = currIdx + prevData.length;
             // updates redux store with correct index after prepending data to list:
-            // what should my style be below?
-            debugger
+            const newStyle = this.getNewStyle(prevProps, this.props, prevData.length)
             updateMenuState(this.props.menuid,{
               index,
               slotIndex: highlightedTrack.slotIndex,
               maxSlot: currData.length,
               max: currData.length,
-              // style: style // do I need style here?
+              style: newStyle.style
             })
             // will the above execute, render Catalog, execute componentDidUpdate, then allow this.setState?
             this.setState({ catalog: newState })
