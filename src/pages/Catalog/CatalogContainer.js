@@ -70,16 +70,17 @@ class CatalogContainer extends Component {
       if (prevProps.highlightedTrack && highlightedTrack) {
         const prevIdx = prevProps.highlightedTrack.index;
         const currIdx = highlightedTrack.index;
-        // debugger
           if (prevIdx > currIdx) { // going up
             if (currIdx <= addLastAt && itemsCount < longestList) { // 25% UP
               // add last section
               prevData.push(...newData)
               const newState = Object.assign({}, this.props.catalog, {itemsData: prevData})
-              // updateMenuState(this.props.menuid,{
-              //   index: currIdx + dataLength,
-              //   slotIndex: 0
-              // })
+              updateMenuState(this.props.menuid,{
+                index: currIdx + dataLength,
+                slotIndex: 2,
+                maxSlot: longestList,
+                max: longestList
+              })
               // will the above execute, render Catalog, execute componentDidUpdate, then allow this.setState?
               this.setState({ catalog: newState })
             }
@@ -114,7 +115,6 @@ class CatalogContainer extends Component {
   }
 
   render () {
-    // debugger
     if (typeof(this.state.catalog) === 'object') {
       let thumbnail, currentIndex;
       if (this.props.highlightedTrack) {
