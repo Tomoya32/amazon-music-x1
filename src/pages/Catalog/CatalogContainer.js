@@ -122,7 +122,9 @@ class CatalogContainer extends Component {
         const { itemsData } = this.state.catalog;
         if (itemsData.length) thumbnail = itemsData[currentIndex].image
       }
+      const referer = (r) => { this._ref = r }
       return <Catalog {...this.state.catalog}
+        passRef={referer}
         thumbnail={thumbnail}
         kid={this.props.location.pathname + this.props.location.hash}
         onSelect={this.handleSelection.bind(this)} />
