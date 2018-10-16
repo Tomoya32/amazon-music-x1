@@ -93,11 +93,19 @@ class MenuWrapper extends React.Component {
       return {
         redux_list_menu_focused: false
       }
-    } else if (nextProps.focused && prevState.redux_list_menu_focused && nextProps.onFocusIndex > prevState.index + 1) {
-      return {
-        index: nextProps.onFocusIndex,
-        slotIndex: nextProps.onFocusSlotIndex,
-        style: nextProps.style
+    } else if (nextProps.focused && prevState.redux_list_menu_focused) {
+      if (nextProps.onFocusIndex > prevState.index + 1) {
+        return {
+          index: nextProps.onFocusIndex,
+          slotIndex: nextProps.onFocusSlotIndex,
+          style: nextProps.style
+        }
+      } else if (nextProps.onFocusIndex < prevState.index - 1) {
+        return {
+          index: nextProps.onFocusIndex,
+          slotIndex: nextProps.onFocusSlotIndex,
+          style: nextProps.style
+        }
       }
     }
     return null
