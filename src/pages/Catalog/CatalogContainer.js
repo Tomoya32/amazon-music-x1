@@ -29,13 +29,15 @@ const mapDispatchToProps = {loadChildNode, replace, back, updateMenuState}
 const keys = new KeyEvents()
 
 class CatalogContainer extends Component {
+  // TODO:  This component needs to be connected to the redux store and load that data as the user scrolls
   constructor (p) {
     super(p)
-    this.state = {};
+    this.state = { firstNitems: 100 };
     this.handleSelection = (dest) => {
       handleItemSelection.call(this, dest, this.props.location.pathname.replace(/^\/list\/?/,''))
     }
-    this.firstNitems = 20;
+    this.firstNitems = this.state.firstNitems;
+    this.update_state = false;
   }
   componentDidMount () {
     this._unsubBack = keys.subscribeTo('Back', () => this.handleBack())
@@ -57,18 +59,33 @@ class CatalogContainer extends Component {
   }
 
   getNewStyle ({highlightedTrack: {index: oldIndex, slotIndex: oldSlotIndex, style}},{highlightedTrack: {index, slotIndex}}, extendBy) {
-    const change = {index, slotIndex}
-    const newStyle = this.calculateStyle({
+    const newStyle = {index, slotIndex}
+    const calStyle = this.calculateStyle({
       index: oldIndex,
       slotIndex: oldSlotIndex
     }, {index: index + extendBy, slotIndex}, this._ref)
-    if (newStyle !== null) {
-      const updatedStyle = Object.assign({}, style || {}, newStyle)
-      change.style = updatedStyle
+    if (calStyle !== null) {
+      const updatedStyle = Object.assign({}, style || {}, calStyle)
+      newStyle.style = updatedStyle
     }
-    if (newStyle === null) console.info('change', change)
+    if (calStyle === null) console.info('newStyle: ', newStyle)
 
-    return change
+    return newStyle
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    // this is a special case for an incomplete infinite list.
+    const { catalog } = props;
+    const dataLength = state.firstNitems; // this will be ~100
+    if (catalog && !state.catalog) {
+      let newData = catalog.itemsData.slice(0,dataLength);
+      if (props.highlightedTrack && props.highlightedTrack.index >= state.firstNitems) {
+        newData = newData.concat(newData)
+      }
+      const newState = Object.assign({}, catalog, {itemsData: newData})
+      return { catalog: newState }
+    }
+    return null
   }
 
   componentDidUpdate(prevProps) {
@@ -77,82 +94,76 @@ class CatalogContainer extends Component {
     const longestList = this.firstNitems*2;
     const dataLength = this.firstNitems; // this will be ~100
 
+    let recentData; // presented data based on state and list index
+
     if (catalog && !this.state.catalog) {
-      // should probably do this with getDerivedStateFromProps
-      const newData = catalog.itemsData.slice(0,dataLength);
-      const newState = Object.assign({}, catalog, {itemsData: newData})
-      this.setState({ catalog: newState })
+      recentData = catalog.itemsData.slice(0,dataLength);
+      this.update_state = true;
     }
 
     if (this.state.catalog && prevProps.highlightedTrack && highlightedTrack) {
-      const currData = this.state.catalog.itemsData.slice(0);
+      const currData = this.state.catalog.itemsData.slice(0); // data in state
       const listLength = currData.length;
 
       // these are just proxies for the list nodes containing preceeding and proceeding data
       const prevData = catalog.itemsData.slice(-dataLength);
       const nextData = catalog.itemsData.slice(dataLength,dataLength*2);
 
-      // when to make adjustsment to the list
+      // when to make adjustments to the infinite list
       const addLastAt = 0; // this will be ~0
       const rmAllAt = Math.floor(this.firstNitems / 2); // this will be ~50
       const addNextAt = Math.floor(this.firstNitems * 0.75); // this will be ~96
 
-      // TODO:  do I have to  make some of these checks?
-      // TODO: dispatch 'reactv-redux/UPDATE_MENU_STATE' with updateMenuState when deleting data
-      const prevTrack = prevProps.highlightedTrack;
-      const prevIdx = prevTrack.index;
+      const prevIdx = prevProps.highlightedTrack.index;
       const currIdx = highlightedTrack.index;
-        if (prevIdx > currIdx) { // going up
-          if (currIdx == addLastAt && prevData.length) { // 25% UP
-            // add last section
-            currData.unshift(...prevData)
-            const newState = Object.assign({}, this.props.catalog, {itemsData: currData})
-            // updates redux store with correct index after prepending data to list:
-            const newStyle = this.getNewStyle(prevProps, this.props, prevData.length)
-            updateMenuState(menuid,{
-              index: currIdx + prevData.length, // adjust for prependata shifting current item
-              slotIndex: highlightedTrack.slotIndex, // no change
-              maxSlot: currData.length-1, // adjust for more data
-              max: currData.length-1, // adjust for more data
-              style: newStyle.style  // adjust for prependata shifting current item
-            })
-            this.setState({ catalog: newState })
-          } else if (currIdx == rmAllAt && listLength == longestList) { // 50% UP
-            // remove next section
-            const recentData = this.state.catalog.itemsData.slice(0,this.firstNitems); // first bit of state.catalog data
-            const newState = Object.assign({}, this.props.catalog, {itemsData: recentData})
-            updateMenuState(menuid,{
-              maxSlot: recentData.length-1, // adjust for less data
-              max: recentData.length-1, // adjust for less data
-            })
-            this.setState({ catalog: newState })
-          }
-        } else if (currIdx > prevIdx) { // going down
-          if (currIdx == this.firstNitems + rmAllAt) { // 50% DOWN
-            // remove last section
-            const recentData = this.state.catalog.itemsData.slice(this.firstNitems); // last bit of state.catalog data
-            const newState = Object.assign({}, this.props.catalog, {itemsData: recentData})
-            const newStyle = this.getNewStyle(prevProps, this.props, -prevData.length)
-            updateMenuState(menuid,{
-              index: currIdx - prevData.length, // adjust for cropping data from beginning, shifting current item
-              slotIndex: highlightedTrack.slotIndex, // no change
-              maxSlot: recentData.length-1, // adjust for less data
-              max: recentData.length-1, // adjust for less data
-              style: newStyle.style  // adjust for prependata shifting current item
-            })
-            this.setState({ catalog: newState })
-          } else if (currIdx == addNextAt && nextData.length) { // 75% DOWN
-            // add next section
-            currData.push(...nextData)
-            const newState = Object.assign({}, this.props.catalog, {itemsData: currData})
-            updateMenuState(menuid,{
-              maxSlot: currData.length-1, // adjust for less data
-              max: currData.length-1, // adjust for less data
-            })
-            this.setState({ catalog: newState })
-          }
+      if (prevIdx > currIdx) { // going up
+        if (currIdx == addLastAt && prevData.length) { // prepend data
+          recentData = prevData.slice(0).concat(currData);
+          // update redux store with correct index after prepending data to list:
+          const newStyle = this.getNewStyle(prevProps, this.props, prevData.length)
+          updateMenuState(menuid,{
+            index: currIdx + prevData.length, // adjust for prependata shifting current item
+            slotIndex: highlightedTrack.slotIndex, // no change
+            maxSlot: recentData.length-1, // adjust for more data
+            max: recentData.length-1, // adjust for more data
+            style: newStyle.style  // adjust for prependata shifting current item
+          })
+          this.update_state = true;
+        } else if (currIdx == rmAllAt && listLength == longestList) { // remove next section
+          recentData = currData.slice(0,this.firstNitems); // first bit of state.catalog data
+          updateMenuState(menuid,{
+            maxSlot: recentData.length-1, // adjust for less data
+            max: recentData.length-1, // adjust for less data
+          })
+          this.update_state = true;
         }
+      } else if (currIdx > prevIdx) { // going down
+        if (currIdx == this.firstNitems + rmAllAt) { // remove last section
+          recentData = currData.slice(this.firstNitems); // last bit of state.catalog data
+          const newStyle = this.getNewStyle(prevProps, this.props, -prevData.length)
+          updateMenuState(menuid,{
+            index: currIdx - prevData.length, // adjust for cropping data from beginning, shifting current item
+            slotIndex: highlightedTrack.slotIndex, // no change
+            maxSlot: recentData.length-1, // adjust for less data
+            max: recentData.length-1, // adjust for less data
+            style: newStyle.style  // adjust for prependata shifting current item
+          })
+          this.update_state = true;
+        } else if (currIdx == addNextAt && nextData.length) { // add next section
+          recentData = currData.concat(nextData);
+          updateMenuState(menuid,{
+            maxSlot: recentData.length-1, // adjust for less data
+            max: recentData.length-1, // adjust for less data
+          })
+          this.update_state = true;
+        }
+      }
+    }
 
+    if (this.update_state) {
+      const newState = Object.assign({}, catalog, {itemsData: recentData})
+      this.setState({ catalog: newState })
+      this.update_state = false;
     }
   }
 
@@ -167,6 +178,7 @@ class CatalogContainer extends Component {
       if (this.props.highlightedTrack) {
         currentIndex = this.props.highlightedTrack.index;
         const { itemsData } = this.state.catalog;
+        // if (itemsData.length && !itemsData[currentIndex]) debugger
         if (itemsData.length) thumbnail = itemsData[currentIndex].image
       }
       const referer = (r) => { this._ref = r }
