@@ -16,6 +16,16 @@ import PropTypes from 'prop-types'
     static propTypes = {
       menuid: PropTypes.string.isRequired
     }
+    static childContextTypes = {
+      menuid: PropTypes.string,
+      getMenuId: PropTypes.func
+    }
+    getChildContext () {
+      return {
+        menuid: this.props.menuid,
+        getMenuId: (param) => `${this.props.menuid}:${param}`
+      }
+    }
 
     onChange (focus) {
       console.info('on change', this.props.menuid, focus)

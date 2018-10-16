@@ -1,11 +1,12 @@
 import { connect } from 'react-redux'
 import {
-  updatePlayerState,
+  updateInitOnUpdate,
+  setPlayerControlsState,
   updatePlayTime,
   playerError,
   onCanPlay,
   setCurrentTime,
-  setPlayState,
+  setPlayerState,
   playerGotDuration,
   onReadyStateChange,
   onEnded,
@@ -20,17 +21,20 @@ import Player from './Player'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { displayError } from '../../store/modules/errormodal'
+// import debugWrapper from 'debug'
 
+// const debug = debugWrapper('app:player_container')
 const debug = console.info
 
 const mapDispatchToProps = {
+  updateInitOnUpdate,
   playerCurrentSrc,
-  updatePlayerState,
+  setPlayerControlsState,
   updatePlayTime,
   playerError,
   onCanPlay,
   setCurrentTime,
-  setPlayState,
+  setPlayerState,
   onReadyStateChange,
   onEnded,
   onLoadStart,
@@ -46,17 +50,28 @@ const mapStateToProps = (state) => ({
   playerTime: state.player.currentTime,
   playerUrl: state.player.currentUrl,
   updateCurrentTime: state.player.updateCurrentTime,
-  userPlayState: state.player.userPlayState,
-  playerState: state.player.state,
+  playerState: state.player.playerState,
+  playerControlsState: state.player.playerControlsState,
   playerClearing: state.player.clearing,
   disablePlayer: state.player.disablePlayer
 })
 
 class PlayerWrapper extends Component {
+  constructor(p) {
+    super(p);
+    this.disableInitOnUpdate = true;
+  }
+
+
   shouldComponentUpdate (nextProps) {
-    return (nextProps.playerUrl !== this.props.playerUrl ||
-      nextProps.userPlayState !== this.props.playerState ||
-      nextProps.updateCurrentTime !== this.props.updateCurrentTime)
+    const newUrl = (nextProps.playerUrl !== this.props.playerUrl);
+    if (newUrl) this.disableInitOnUpdate = false;
+    else this.disableInitOnUpdate = true;
+    const playerMismatch = (nextProps.playerState !== this.props.playerControlsState);
+    const restart = (nextProps.updateCurrentTime === 0);
+    const shouldUpdate = (newUrl || playerMismatch || restart);
+    // if (shouldUpdate) { debugger }
+    return shouldUpdate
   }
 
   errorHandler (e) {
@@ -78,7 +93,8 @@ class PlayerWrapper extends Component {
     if (!this.props.playerUrl) {
       return null
     } else {
-      return <Player {...this.props} disableTimeUpdates={false}
+      debug('playing rec....')
+      return <Player {...this.props} disableTimeUpdates={false} disableInitOnUpdate={this.disableInitOnUpdate}
         errorHandler={this.errorHandler.bind(this)} />
     }
   }
@@ -86,8 +102,8 @@ class PlayerWrapper extends Component {
 
 PlayerWrapper.propTypes = {
   recommendation: PropTypes.object,
+  playerControlsState: PropTypes.string,
   playerState: PropTypes.string,
-  userPlayState: PropTypes.string,
   recommendationEnded: PropTypes.func,
   getNextRecommendation: PropTypes.func,
   recommendationError: PropTypes.func,

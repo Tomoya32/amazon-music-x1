@@ -1,6 +1,7 @@
 const CONFIG = {
   linking: {
     base_url: process.env.REACT_APP_AMAZON_API_BASE_URL || 'https://api.amazon.com',
+    client_id: process.env.REACT_APP_AMAZON_MUSIC_CLIENT_ID,
     scope: 'amazon_music:access'
   },
   player: {

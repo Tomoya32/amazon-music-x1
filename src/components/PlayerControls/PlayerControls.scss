@@ -1,0 +1,114 @@
+$time-width: 300px;
+$num-controls: 3;
+$control-width: 40px * $num-controls;
+@import '../../styles/resize';
+//@import '../../styles/spritesmith-generated/sprite.scss';
+@mixin sprite($sprite) {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-image: url('../../assets/images/button/' + $sprite);
+}
+
+:local(.PlayerControls) {
+  width: 100%;
+  // position: absolute;
+  left: 0;
+  // top: 5px;
+  text-align: center;
+  .controls {
+    display: inline-block;
+    margin: 0 auto;
+    height: 115px;
+    width: 500px;
+    text-align: center;
+    position: relative;
+    > div {
+      float: left;
+      margin-right: 16px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+    .regularButton {
+      height: 70px;
+      width: 70px;
+      margin-top: 20px;
+    }
+    .largeButton {
+      height: 115px;
+      width: 115px;
+      margin-top: 0;
+    }
+    .info-on {
+      @include sprite('info-on.png')
+    }
+    .info-off {
+      @include sprite('info-off.png')
+    }
+    .back15-on {
+      @include sprite('back15-on.png')
+    }
+    .back15-off {
+      @include sprite('back15-off.png')
+    }
+    .play-on {
+      @include sprite('play-on.png')
+    }
+    .play-off {
+      @include sprite('play-off.png')
+    }
+    .pause-on {
+      @include sprite('pause-on.png')
+    }
+    .pause-off {
+      @include sprite('pause-off.png')
+    }
+    .forward-on {
+      @include sprite('forward-on.png')
+    }
+    .forward-off {
+      @include sprite('forward-off.png')
+    }
+    .interesting-on {
+      @include sprite('interestingSet-on.png')
+    }
+    .interesting-off {
+      @include sprite('interestingSet-off.png')
+    }
+    .interesting-set-on {
+      @include sprite('interesting-on.png')
+    }
+    .interesting-set-off {
+      @include sprite('interesting-off.png')
+    }
+    .x-on {
+      @include sprite('x-on.png')
+    }
+    .x-off {
+      @include sprite('x-off.png')
+    }
+    .tooltip {
+      background-color: white;
+      color: black;
+      font-size: 12px;
+      padding: 6px 12px;
+      position: relative;
+      width: 100px;
+    }
+    .tooltip:after {
+      bottom: 100%;
+      left: 50%;
+
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      border-color: rgba(255, 255, 255, 0);
+      border-bottom-color: #ffffff;
+      border-width: 8px;
+      margin-left: -8px;
+    }
+  }
+}
