@@ -1,0 +1,8 @@
+$side-margins: 100px;
+.playerWrapper {
+  position: absolute;
+  top: $side-margins;
+  left: $side-margins;
+  height: 720px - (2 * $side-margins);
+  width: 1280px - (2 * $side-margins)
+}

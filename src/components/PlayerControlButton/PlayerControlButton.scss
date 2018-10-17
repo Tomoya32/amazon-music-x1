@@ -1,0 +1,7 @@
+@import '../../styles/resize.scss';
+
+:local(.PlayerControlButton) {
+  &.disabled {
+    opacity: 0.4
+  }
+}

@@ -1,5 +1,6 @@
 import pick from 'lodash/pick'
 
+export const PLAYER_DISABLE_INIT = 'player/PLAYER_DISABLE_INITIALIZE'
 export const PLAYER_ERROR = 'player/PLAYER_ERROR'
 export const PLAYER_STATE = 'player/PLAYER_STATE'
 export const PLAYER_TIME = 'player/PLAYER_TIME'
@@ -17,6 +18,13 @@ export const PLAYER_SET_PROPERTIES = 'player/PLAYER_SET_PROPERTIES'
 export const PLAYER_ENDED = 'player/PLAYER_ENDED'
 export const PLAYER_DISABLE = 'player/PLAYER_DISABLE'
 export const PLAYER_BAD_STATE = 'player/PLAYER_BAD_STATE'
+
+export function updateInitOnUpdate(payload) {
+  return {
+    type: PLAYER_DISABLE_INIT,
+    payload
+  }
+}
 
 export function setPlayerDuration(payload) {
   return {
@@ -83,7 +91,7 @@ export function setCurrentTime (payload) {
   }
 }
 
-export function setPlayState (payload) {
+export function setPlayerState (payload) {
   return {
     type: PLAYER_UPDATE_PLAYSTATE,
     payload
@@ -110,7 +118,7 @@ export function updatePlayTime (payload) {
   }
 }
 
-export function updatePlayerState (payload) {
+export function setPlayerControlsState (payload) {
   return {
     type: PLAYER_STATE, payload
   }
@@ -134,12 +142,13 @@ export function playerGotDuration (payload) {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
+  [PLAYER_DISABLE_INIT]: (state, action) => Object.assign({}, state, {disableInitOnUpdate: action.payload}),
   [PLAYER_TIME]: (state, action) => Object.assign({}, state, {currentTime: action.payload}),
   [PLAYER_ERROR]: (state, action) => Object.assign({}, state, {currentError: action.payload}),
-  [PLAYER_STATE]: (state, action) => Object.assign({}, state, {state: action.payload}),
+  [PLAYER_STATE]: (state, action) => Object.assign({}, state, {playerControlsState: action.payload}),
   [PLAYER_ON_CAN_PLAY]: (state, action) => Object.assign({}, state, ...pick(action.payload, [''])),
   [PLAYER_UPDATE_CURRENTTIME]: (state, action) => Object.assign({}, state, {updateCurrentTime: action.payload}),
-  [PLAYER_UPDATE_PLAYSTATE]: (state, action) => Object.assign({}, state, {userPlayState: action.payload}),
+  [PLAYER_UPDATE_PLAYSTATE]: (state, action) => Object.assign({}, state, {playerState: action.payload}),
   [PLAYER_CURRENT_SRC]: (state, action) => Object.assign({}, state, {currentUrl: action.payload, ...audioDefaults}),
   [PLAYER_READY_STATE]: (state, action) => Object.assign({}, state, {readyState: action.payload}),
   [PLAYER_LOAD_START]: (state, action) => Object.assign({}, state, {loadStarted: true}),
@@ -154,10 +163,10 @@ const ACTION_HANDLERS = {
 }
 
 const audioDefaults = {
+  playerControlsState: 'paused',
   currentTime: 0,
   currentError: null,
   updateCurrentTime: null,
-  state: 'paused',
   duration: 0,
   readyState: 0,
   loadStarted: false,
@@ -170,7 +179,8 @@ const audioDefaults = {
 }
 
 const initialState = {
-  userPlayState: 'playing',
+  disableInitOnUpdate: true,
+  playerState: 'playing',
   disableOnEnded: true,
   badStateMessage: 'No message sent'
 }

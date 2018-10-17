@@ -17,10 +17,8 @@ const API = {
     path = path.replace(/\/?$/, '/');
     console.info('requesting ', path, method)
     return client[method.toLowerCase()](path)
-      .then(response => {
-        return response
-      })
-      .catch(request =>{
+      .then(response => response)
+      .catch(request => {
         const {response} = request
         const e = new Error(response.statusText)
         Object.assign(e, {data: response.data, status: response.status})
@@ -34,6 +32,7 @@ const API = {
   loadNavigationNode: (path = '/') => {
     return API.request(path, 'get')
   },
+
 
   setToken: (token) => {
     console.info('Setting access token  to ', token)

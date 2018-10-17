@@ -5,7 +5,7 @@ const SpaceComposer = (InnerComponent) => {
     constructor (p) {
       super(p)
       this.state = {
-        currentFocus: null,
+        currentFocus: 'playback:playercontrols:pause',
       }
     }
 

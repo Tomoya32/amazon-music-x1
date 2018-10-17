@@ -20,6 +20,11 @@ const client = axios.create({
 })
 
 export const getCode = () => {
+  // return client.post('create/codepair', qs.stringify({
+  //   response_type: 'device_code',
+  //   client_id: CONFIG.linking.client_id,
+  //   scope: CONFIG.linking.scope,
+  // }))
   return client.post('create/codepair')
     .then(({data}) => data)
 }
@@ -141,23 +146,12 @@ export const cancelPoller = () => {
   poller.cancel()
 }
 
-const playerWrapper =(Wrapped) => {
-  return class extends React.Component {
-    render() {
-      return (
-        <div>
-          <Wrapped {...this.props} />
-          <Player />
-        </div>
-      )
-    }
-  }
-}
-
-export const authWrapper =(c) => playerWrapper(authorizeWrapper(c))
+export const authWrapper =(c) => authorizeWrapper(c)
 export const authorizeWrapper = connectedRouterRedirect({
   redirectPath: '/linking',
-  authenticatedSelector: state => state.auth.access_token !== null,
+  authenticatedSelector: state => {
+    return state.auth.access_token !== null
+  },
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 const locationHelper = locationHelperBuilder({})
@@ -167,4 +161,3 @@ export const userIsNotAuthenticated = connectedRouterRedirect({
   authenticatedSelector: state => state.auth.access_token === null,
   wrapperDisplayName: 'UserIsNotAuthenticated'
 })
-
