@@ -1,5 +1,5 @@
 import { call, put, takeLatest, takeEvery, select } from 'redux-saga/effects'
-import API from '../../services/music'
+import API from '../../services/service'
 import config from '../../config'
 import {
   addChildNode, LOAD_CHILD_NODE, ADD_CHILD_NODE
@@ -28,6 +28,7 @@ function * loadNavigationNode (action) {
     }
   }
 }
+
 
 function * trackAccessToken (action) {
   try {

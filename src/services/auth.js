@@ -149,7 +149,9 @@ export const cancelPoller = () => {
 export const authWrapper =(c) => authorizeWrapper(c)
 export const authorizeWrapper = connectedRouterRedirect({
   redirectPath: '/linking',
-  authenticatedSelector: state => state.auth.access_token !== null,
+  authenticatedSelector: state => {
+    return state.auth.access_token !== null
+  },
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 const locationHelper = locationHelperBuilder({})

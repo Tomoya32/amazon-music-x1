@@ -1,5 +1,5 @@
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
-import API from '../../services/music'
+import API from '../../services/service'
 import {LOAD_TRACK, ADD_TRACK} from '../modules/tracks'
 import {setPlayable} from '../modules/playable'
 import {loadChildNode} from '../modules/music'

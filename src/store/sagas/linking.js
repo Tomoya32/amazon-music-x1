@@ -16,7 +16,7 @@ import {
   LINKING_ERROR,
   LINKING_CANCELED,
 } from '../modules/linking'
-import API from '../../services/music'
+import API from '../../services/service'
 
 function * getAuthDeviceCode (action) {
   try {

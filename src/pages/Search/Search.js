@@ -5,6 +5,7 @@ import MainMenu, { MenuComposer } from '../../components/MainMenu'
 import Space from '../../lib/reactv-redux/SpaceRedux'
 import AtoZMenu from '../../components/AtoZMenu'
 import {alphabet} from '../../components/AtoZMenu/AtoZContainer'
+import topnav from '../../components/MainMenu/topnav'
 import './Search.css'
 
 const Search = ({changeFocus, isFocused, term, results, onLetter, updateMenu}) => {

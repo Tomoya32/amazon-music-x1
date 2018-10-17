@@ -29,6 +29,8 @@ class SearchContainer extends PureComponent {
     }
   }
 
+  onSubmit (value) { this.props.history.push(value.path) }
+
   onLetter (letter) {
     if (letter === String.fromCharCode(parseInt(2423, 16))) {
       this.props.addLetterToSearchTerm(' ')
