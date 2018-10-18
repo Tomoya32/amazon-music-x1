@@ -2,6 +2,7 @@ export const LOAD_CURRENT_NODE = 'MUSIC/LOAD_CURRENT_NODE'
 export const PUSH_CURRENT_NAVIGATION_NODE = 'MUSIC/PUSH_CURRENT_NAVIGATION_NODE'
 export const LOAD_CHILD_NODE = 'MUSIC/LOAD_CHILD_NODE'
 export const ADD_CHILD_NODE = 'MUSIC/ADD_CHILD_NODE'
+export const UPDATE_CURRENT_NODE = 'MUSIC/UPDATE_CURRENT_NODE'
 
 export function loadChildNode(path) {
   return {
@@ -15,7 +16,14 @@ export function addChildNode(node, path, resolvePath) {
     node, path, resolvePath
   }
 }
+export function updateCurrentNode(path) {
+  return {
+    type: UPDATE_CURRENT_NODE,
+    path
+  }
+}
 const initialState = {
+  currentNode: null,
   currentParent: null,
   nodes: {},
   pathResolvers: {},
@@ -39,6 +47,10 @@ export default function musicReducer(state = initialState, action) {
       return Object.assign(newState, { currentParent: action.payload.result })
     case ADD_CHILD_NODE:
       return addNode(state, action)
+    case UPDATE_CURRENT_NODE:
+      const altState = Object.assign({}, state)
+      altState.currentNode = action.path
+      return altState
     default:
       return state
   }

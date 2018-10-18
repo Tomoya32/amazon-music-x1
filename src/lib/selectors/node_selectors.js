@@ -5,6 +5,9 @@ import {mergePath} from '../utils'
 import up from 'url-parse'
 
 const getKey = state => {
+  const { currentNode } = state.music;
+  if (currentNode) return currentNode
+  // TODO: make sure currentNode is null when refreshiing a page, or else it will always load this node
   const {pathname} = state.router.location
   let key = pathname.replace(/^\/(list|music)\/*/, '/')
   return ((key === '' || key === '/') && /^\/?music(\/|$)/.test(pathname))
@@ -43,6 +46,7 @@ export const getPlayableSelector = createSelector([getPlayables], (playables) =>
 export const getItemDescriptionsSelectors = createSelector([getItemDescriptions], (items) => items)
 export const getNavigationNodeSummariesSelector = createSelector([getNavigationNodeSummaries], (items) => items)
 export const getNavigationNodeSummarySelector = createSelector([getNavigationNodeSummary], summary => summary)
+export const getNavigationNodeDescriptionsSelector = createSelector([getNavigationNodeDescriptions], desc => desc)
 
 
 
