@@ -63,8 +63,8 @@ class CatalogContainer extends Component {
   }
   componentDidMount () {
     this._unsubBack = keys.subscribeTo('Back', () => this.handleBack())
-    const { currentNode, updateAllNodes } = this.props;
-    this.props.updateCurrentNode(null);
+    const { currentNode, updateCurrentNode, updateAllNodes } = this.props;
+    updateCurrentNode(null);
     if (!currentNode) {
       const { pathname } = this.props.location;
       let path = getPath(pathname) // sanitize path
@@ -122,126 +122,106 @@ class CatalogContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { menuid, highlightedTrack, prevCatalog, catalog, nextCatalog, updateMenuState, page, currentNode, location: { pathname }, updateAllNodes, prevNode, nextNode } = this.props;
+    const { menuid, highlightedTrack, prevCatalog, catalog, nextCatalog, updateMenuState, page, currentNode, location: { pathname }, loadChildNode, updateCurrentNode, updateAllNodes, prevNode, nextNode } = this.props;
     if (catalog) {
-    const longestList = this.firstNitems*2;
-    const dataLength = this.firstNitems; // this will be ~100
+      let recentData, menuState; // presented data based on state and list index
+      const longestList = this.firstNitems*2;
+      const dataLength = this.firstNitems; // this will be ~100
+      const prevPage = (catalog.prevPage) ? getPath(pathname,catalog.prevPage) : null;
+      const nextPage = (catalog.nextPage) ? getPath(pathname,catalog.nextPage) : null;
 
-    // if (currentNode && catalog && (currentNode !== prevProps.currentNode || (catalog.prevPage && !prevNode) || (catalog.nextPage && !nextNode))) {
-    if (currentNode && (currentNode !== prevProps.currentNode || (catalog.prevPage && !prevNode) || (catalog.nextPage && !nextNode))) {
-      // update neighbor nodes
+      if (currentNode && (currentNode !== prevProps.currentNode || (catalog.prevPage && !prevNode) || (catalog.nextPage && !nextNode))) {
+        // update neighbor nodes if pages exist
+        updateAllNodes({
+          prevNode: prevPage, // update prevNode
+          currentNode: currentNode, // no change
+          nextNode: nextPage // update nextNode
+        })
+      }
 
-      const prevPage = (catalog && catalog.prevPage) ? getPath(pathname,catalog.prevPage) : null;
-      const nextPage = (catalog && catalog.nextPage) ? getPath(pathname,catalog.nextPage) : null;
-      console.log(nextPage)
-      updateAllNodes({
-        prevNode: prevPage, // update prevNode
-        currentNode: currentNode, // no change
-        nextNode: nextPage // update nextNode
-      })
-    }
+      if (!this.state.catalog || this.state.catalog.prevPage !== catalog.prevPage) {
+        // Update local state if new page or not yet updated with props.
+        // May not need with getDerivedStateFromProps already there
+        recentData = catalog.itemsData.slice(0,dataLength);
+        const newState = Object.assign({}, catalog, {itemsData: recentData})
+        this.setState({ catalog: newState })
+      }
 
-    let recentData, menuState, path; // presented data based on state and list index
-    if (catalog && (!this.state.catalog || this.state.catalog.prevPage !== catalog.prevPage)) {
-      // update local state
+      if (this.state.catalog && prevProps.highlightedTrack && highlightedTrack && (prevPage || nextPage)) {
+        // only modify list if there is a prevPage or nextPage & while scrolling
+        const currData = this.state.catalog.itemsData.slice(0); // data in state
+        const listLength = currData.length;
 
-      recentData = catalog.itemsData.slice(0,dataLength);
-      const newState = Object.assign({}, catalog, {itemsData: recentData})
-      this.setState({ catalog: newState })
-      this.update_state = false;
-    }
+        // when to make adjustments to the infinite list
+        const addPrevAt = 0;
+        const loadPrevAt = Math.floor(this.firstNitems * 0.25);
+        const rmAllAt = Math.floor(this.firstNitems * 0.50);
+        const loadNextAt = Math.floor(this.firstNitems * 0.75);
+        const addNextAt = Math.floor(this.firstNitems * 0.95);
 
-    const { prevPage, nextPage } = catalog;
-    if (catalog && this.state.catalog && prevProps.highlightedTrack && highlightedTrack && (prevPage || nextPage)) {
-      // considering altering the list based on index scroll position
-      const currData = this.state.catalog.itemsData.slice(0); // data in state
-      const listLength = currData.length;
-
-      // when to make adjustments to the infinite list
-      const addPrevAt = Math.floor(this.firstNitems * 0.05); // this will be ~0
-      const loadPrevAt = Math.floor(this.firstNitems * 0.25); // this will be ~96
-      const rmAllAt = Math.floor(this.firstNitems * 0.50); // this will be ~50
-      const loadNextAt = Math.floor(this.firstNitems * 0.75); // this will be ~96
-      const addNextAt = Math.floor(this.firstNitems * 0.95); // this will be ~96
-
-      const prevIdx = prevProps.highlightedTrack.index;
-      const currIdx = highlightedTrack.index;
-      if (currIdx == prevIdx - 1) { // going up
-        if (prevPage) path = getPath(pathname,prevPage) // sanitize path
-        if (currIdx <= loadPrevAt && prevPage && !prevCatalog) { // load prev section
-          console.log('loading prev section...')
-          this.props.loadChildNode(path)
-          this.update_state = false;
-        } else if (currIdx == addPrevAt && prevPage && prevCatalog) { // prepend data
-          const prevData = Object.values(prevCatalog.itemsData).slice(0,this.firstNitems);
-          recentData = prevData.concat(currData.slice(0,this.firstNitems));
-          console.log('adding prev section...')
-          // update redux store with correct index after prepending data to list:
-          const newStyle = this.getNewStyle(prevProps, this.props, prevData.length)
-          menuState = {
-            index: currIdx + prevData.length, // adjust for prependata shifting current item
-            slotIndex: highlightedTrack.slotIndex, // no change
-            maxSlot: recentData.length-1, // adjust for more data
-            max: recentData.length-1, // adjust for more data
-            style: newStyle.style  // adjust for prependata shifting current item
-          }
-          this.update_state = true;
-        } else if (currIdx == rmAllAt && this.state.catalog.itemsData.length > this.firstNitems) { // remove next section
-          // TODO: destroy store data as you go
-            console.log('removing next section...')
-            this.props.updateCurrentNode(path);
+        const prevIdx = prevProps.highlightedTrack.index;
+        const currIdx = highlightedTrack.index;
+        if (currIdx == prevIdx - 1) { // scrolling up
+          if (currIdx <= loadPrevAt && prevPage && !prevCatalog) { // load prev section
+            loadChildNode(prevPage)
+          } else if (currIdx == addPrevAt && prevPage && prevCatalog) { // add prev section
+            const prevData = Object.values(prevCatalog.itemsData).slice(0,this.firstNitems);
+            recentData = prevData.concat(currData.slice(0,this.firstNitems));
+            // update redux store with correct index after prepending data to list:
+            const newStyle = this.getNewStyle(prevProps, this.props, prevData.length)
             menuState = {
+              index: currIdx + prevData.length, // adjust for prependata shifting current item
+              slotIndex: highlightedTrack.slotIndex, // no change
+              maxSlot: recentData.length-1, // adjust for more data
+              max: recentData.length-1, // adjust for more data
+              style: newStyle.style  // adjust for prependata shifting current item
+            }
+            this.update_state = true;
+          } else if (currIdx == rmAllAt && listLength > this.firstNitems) { // remove next section
+            // TODO: destroy store data as you go
+              updateCurrentNode(prevPage);
+              menuState = {
+                maxSlot: dataLength-1, // adjust for less data
+                max: dataLength-1, // adjust for less data
+              }
+              updateMenuState(menuid,menuState)
+              this.update_state = false; // will already be updated by updateCurrentNode
+          }
+        } else if (currIdx == prevIdx + 1) { // going down
+          if (currIdx == this.firstNitems + rmAllAt && nextPage) { // remove prev section
+            // TODO: destroy store data as you go
+            updateCurrentNode(nextPage);
+            const newStyle = this.getNewStyle(prevProps, this.props, -dataLength)
+            menuState = {
+              index: currIdx - dataLength, // adjust for cropping data from beginning, shifting current item
+              slotIndex: highlightedTrack.slotIndex, // no change
               maxSlot: dataLength-1, // adjust for less data
               max: dataLength-1, // adjust for less data
+              style: newStyle.style  // adjust for prependata shifting current item
             }
             updateMenuState(menuid,menuState)
             this.update_state = false; // will already be updated by updateCurrentNode
-        }
-      } else if (currIdx == prevIdx + 1) { // going down
-        if (nextPage) path = getPath(pathname,nextPage) // sanitize path
-        // const nextCatalog = this.props.nodes[nextNode]
-        if (currIdx == this.firstNitems + rmAllAt && nextPage) { // remove prev section
-          // TODO: destroy store data as you go
-          console.log('removing prev section...')
-          this.props.updateCurrentNode(path);
-          const newStyle = this.getNewStyle(prevProps, this.props, -dataLength)
-          menuState = {
-            index: currIdx - dataLength, // adjust for cropping data from beginning, shifting current item
-            slotIndex: highlightedTrack.slotIndex, // no change
-            maxSlot: dataLength-1, // adjust for less data
-            max: dataLength-1, // adjust for less data
-            style: newStyle.style  // adjust for prependata shifting current item
+          } else if (currIdx == loadNextAt && nextPage && !nextCatalog) { // load next section
+            loadChildNode(nextPage)
+          } else if (currIdx == addNextAt && nextPage && nextCatalog && this.state.catalog.itemsData.length <= this.firstNitems) { // add next section
+            const nextData = Object.values(nextCatalog.itemsData).slice(0,this.firstNitems);
+            recentData = currData.slice(0,this.firstNitems).concat(nextData);
+            menuState = {
+              maxSlot: recentData.length-1, // adjust for more data
+              max: recentData.length-1, // adjust for more data
+            };
+            this.update_state = true;
           }
-          updateMenuState(menuid,menuState)
-          this.update_state = false; // will already be updated by updateCurrentNode
-        } else if (currIdx == loadNextAt && nextPage && !nextCatalog) { // load next section
-          console.log('loading next section...')
-          this.props.loadChildNode(path)
-          this.update_state = false;
-        } else if (currIdx == addNextAt && nextPage && nextCatalog && this.state.catalog.itemsData.length <= this.firstNitems) { // add next section
-          console.log('adding next section...')
-          const nextData = Object.values(nextCatalog.itemsData).slice(0,this.firstNitems);
-          recentData = currData.slice(0,this.firstNitems).concat(nextData);
-          menuState = {
-            maxSlot: recentData.length-1, // adjust for more data
-            max: recentData.length-1, // adjust for more data
-          };
-          this.update_state = true;
         }
       }
+
+      if (this.update_state) {
+        updateMenuState(menuid,menuState)
+        const newState = Object.assign({}, catalog, {itemsData: recentData})
+        this.setState({ catalog: newState })
+        this.update_state = false;
+      }
     }
-
-    if (this.update_state) {
-      updateMenuState(menuid,menuState)
-      const newState = Object.assign({}, catalog, {itemsData: recentData})
-      this.setState({ catalog: newState })
-      this.update_state = false;
-    }
-  }
-  }
-
-  updateState() {
-
   }
 
   handleBack () {
