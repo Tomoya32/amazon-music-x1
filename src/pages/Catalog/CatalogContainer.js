@@ -1,13 +1,17 @@
 import React, { Component } from 'react'
 import Catalog from './Catalog'
 import { connect } from 'react-redux'
-import { loadChildNode, updateCurrentNode } from '../../store/modules/music'
+import { loadChildNode, updateCurrentNode, updateAllNodes } from '../../store/modules/music'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import { replace, back } from '../../store/modules/nav'
 import {  handleItemSelection } from '../../lib/utils'
 import { updateMenuState } from '../../lib/reactv-redux/ReacTVReduxReducer'
 import {
+  getPrevPageSelector,
+  getNextPageSelector,
+  getPrevCatalogData,
   getCatalogData,
+  getNextCatalogData,
   getPlayableSelector,
   getItemDescriptionsSelectors,
   getNavigationNodeSummariesSelector
@@ -16,37 +20,45 @@ import PageLoading from '../../components/PageLoading'
 import {calculateOffsetHeight} from '../../lib/reactv-redux/SlotMenuRedux'
 
 const getPath = (pathname,page) => {
-  // TODO: parse pathname and page into
-  // '/catalog/stations' + '/page=X' + '/#prime_stations',
-  // given a relative page and any current location
-  let route = page.match(/\/?page=[0-9]*/);
-  route = (route) ? route[0] : '';
-  let key = pathname.replace(/^\/list\/*/, '/').replace(/\/page=[0-9]*/,route)
-  if (key.trim() !== '' && !key.match(/\/?page=[0-9]*/)) key = `${key}/${page}`
-  console.log(`pathname: ${pathname}, page: ${page}, key: ${key}`)
-  return key.trim() === '' ? '/' : key
+  let page_p = '';
+  let pathname_p = pathname.replace(/^\/list\/*/, '/');
+  if (page) {
+    pathname_p = pathname_p.replace(/\/?page=[0-9]*\/?/,'')
+    page_p = page.replace(/\.\./,'');
+    if (page_p.charAt(0) !== '/') page_p = '/' + page_p
+  }
+  console.log(`pathname: ${pathname}, page: ${page}`)
+  let key = pathname_p + page_p;
+  console.log(`path: ${key}`)
+  return key
 }
 
-// TODO: add a selector for prevCatalog and nextCatalog
-const mapStateToProps = (state,ownProps) => ({
-  menuid: `catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`,
-  highlightedTrack: state.menus[`catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`],
-  catalog: getCatalogData(state),
-  itemDescriptions: getItemDescriptionsSelectors(state),
-  playables: getPlayableSelector(state),
-  currentNode: state.music.currentNode,
-  nodes: state.music.nodes, // use selector for prevCatalog and nextCatalog
-  navigationNodeSummaries: getNavigationNodeSummariesSelector(state)
-})
+const mapStateToProps = (state,ownProps) => {
+  const { prevNode, nextNode, currentNode } = state.music;
+  return ({
+    menuid: `catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`,
+    highlightedTrack: state.menus[`catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`],
+    prevNode,
+    nextNode,
+    prevCatalog: (state.music.nodes[prevNode]) ? getCatalogData(state,prevNode) : null,
+    catalog: getCatalogData(state,currentNode),
+    nextCatalog: (state.music.nodes[nextNode]) ? getCatalogData(state,nextNode) : null,
+    itemDescriptions: getItemDescriptionsSelectors(state),
+    playables: getPlayableSelector(state),
+    currentNode: state.music.currentNode,
+    nodes: state.music.nodes, // use selector for prevCatalog and nextCatalog
+    navigationNodeSummaries: getNavigationNodeSummariesSelector(state)
+  })
+}
 
-const mapDispatchToProps = {loadChildNode, replace, back, updateMenuState, updateCurrentNode}
+const mapDispatchToProps = {loadChildNode, replace, back, updateMenuState, updateCurrentNode, updateAllNodes}
 
 const keys = new KeyEvents()
 
 class CatalogContainer extends Component {
   constructor (p) {
     super(p)
-    this.state = { firstNitems: 7 };
+    this.state = { firstNitems: 100 };
     this.handleSelection = (dest) => {
       handleItemSelection.call(this, dest, this.props.location.pathname.replace(/^\/list\/?/,''))
     }
@@ -55,6 +67,14 @@ class CatalogContainer extends Component {
   }
   componentDidMount () {
     this._unsubBack = keys.subscribeTo('Back', () => this.handleBack())
+    const { currentNode } = this.props;
+    this.props.updateCurrentNode(null);
+    if (!currentNode) {
+      const { pathname } = this.props.location;
+      let path = getPath(pathname) // sanitize path
+      path = (path !== '/') ? path : null
+      if (path) this.props.updateCurrentNode(path);
+    }
   }
 
   componentWillUnmount () {
@@ -102,21 +122,38 @@ class CatalogContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { menuid, highlightedTrack, catalog, updateMenuState, page, currentNode, location: { pathname } } = this.props;
-
+    const { menuid, highlightedTrack, prevCatalog, catalog, nextCatalog, updateMenuState, page, currentNode, location: { pathname }, updateAllNodes, prevNode, nextNode } = this.props;
+    if (catalog) {
     const longestList = this.firstNitems*2;
     const dataLength = this.firstNitems; // this will be ~100
 
+    // if (currentNode && catalog && (currentNode !== prevProps.currentNode || (catalog.prevPage && !prevNode) || (catalog.nextPage && !nextNode))) {
+    if (currentNode && (currentNode !== prevProps.currentNode || (catalog.prevPage && !prevNode) || (catalog.nextPage && !nextNode))) {
+      // update neighbor nodes
+
+      const prevPage = (catalog && catalog.prevPage) ? getPath(pathname,catalog.prevPage) : null;
+      const nextPage = (catalog && catalog.nextPage) ? getPath(pathname,catalog.nextPage) : null;
+      console.log(nextPage)
+      updateAllNodes({
+        prevNode: prevPage, // update prevNode
+        currentNode: currentNode, // no change
+        nextNode: nextPage // update nextNode
+      })
+    }
+
     let recentData, menuState, path; // presented data based on state and list index
     if (catalog && (!this.state.catalog || this.state.catalog.prevPage !== catalog.prevPage)) {
+      // update local state
+
       recentData = catalog.itemsData.slice(0,dataLength);
       const newState = Object.assign({}, catalog, {itemsData: recentData})
       this.setState({ catalog: newState })
       this.update_state = false;
     }
 
-    if (catalog && this.state.catalog && prevProps.highlightedTrack && highlightedTrack) {
-      const { prevPage, nextPage } = this.props.catalog;
+    const { prevPage, nextPage } = catalog;
+    if (catalog && this.state.catalog && prevProps.highlightedTrack && highlightedTrack && (prevPage || nextPage)) {
+      // considering altering the list based on index scroll position
       const currData = this.state.catalog.itemsData.slice(0); // data in state
       const listLength = currData.length;
 
@@ -130,17 +167,13 @@ class CatalogContainer extends Component {
       const prevIdx = prevProps.highlightedTrack.index;
       const currIdx = highlightedTrack.index;
       if (currIdx == prevIdx - 1) { // going up
-        let prevNode;
-        if (prevPage) {
-          path = getPath(pathname,prevPage) // sanitize path
-          prevNode = this.props.nodes[path];
-        }
-        if (currIdx <= loadPrevAt && prevPage && !prevNode) { // load prev section
+        if (prevPage) path = getPath(pathname,prevPage) // sanitize path
+        if (currIdx <= loadPrevAt && prevPage && !prevCatalog) { // load prev section
           console.log('loading prev section...')
           this.props.loadChildNode(path)
           this.update_state = false;
-        } else if (currIdx == addPrevAt && prevPage && prevNode) { // prepend data
-          const prevData = Object.values(prevNode.itemDescriptions).slice(0,this.firstNitems);
+        } else if (currIdx == addPrevAt && prevPage && prevCatalog) { // prepend data
+          const prevData = Object.values(prevCatalog.itemsData).slice(0,this.firstNitems);
           recentData = prevData.concat(currData.slice(0,this.firstNitems));
           console.log('adding prev section...')
           // update redux store with correct index after prepending data to list:
@@ -165,8 +198,8 @@ class CatalogContainer extends Component {
             this.update_state = false; // will already be updated by updateCurrentNode
         }
       } else if (currIdx == prevIdx + 1) { // going down
-        path = getPath(pathname,nextPage) // sanitize path
-        const nextNode = this.props.nodes[path];
+        if (nextPage) path = getPath(pathname,nextPage) // sanitize path
+        // const nextCatalog = this.props.nodes[nextNode]
         if (currIdx == this.firstNitems + rmAllAt && nextPage) { // remove prev section
           // TODO: destroy store data as you go
           console.log('removing prev section...')
@@ -181,13 +214,13 @@ class CatalogContainer extends Component {
           }
           updateMenuState(menuid,menuState)
           this.update_state = false; // will already be updated by updateCurrentNode
-        } else if (currIdx == loadNextAt && nextPage && !nextNode) { // load next section
+        } else if (currIdx == loadNextAt && nextPage && !nextCatalog) { // load next section
           console.log('loading next section...')
           this.props.loadChildNode(path)
           this.update_state = false;
-        } else if (currIdx == addNextAt && nextPage && nextNode && this.state.catalog.itemsData.length <= this.firstNitems) { // add next section
+        } else if (currIdx == addNextAt && nextPage && nextCatalog && this.state.catalog.itemsData.length <= this.firstNitems) { // add next section
           console.log('adding next section...')
-          const nextData = Object.values(nextNode.itemDescriptions).slice(0,this.firstNitems);
+          const nextData = Object.values(nextCatalog.itemsData).slice(0,this.firstNitems);
           recentData = currData.slice(0,this.firstNitems).concat(nextData);
           menuState = {
             maxSlot: recentData.length-1, // adjust for more data
@@ -204,6 +237,7 @@ class CatalogContainer extends Component {
       this.setState({ catalog: newState })
       this.update_state = false;
     }
+  }
   }
 
   updateState() {

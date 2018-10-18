@@ -5,28 +5,31 @@ import {mergePath} from '../utils'
 import up from 'url-parse'
 
 const getKey = state => {
-  const { currentNode } = state.music;
-  if (currentNode) return currentNode
-  // TODO: make sure currentNode is null when refreshiing a page, or else it will always load this node
   const {pathname} = state.router.location
   let key = pathname.replace(/^\/(list|music)\/*/, '/')
   return ((key === '' || key === '/') && /^\/?music(\/|$)/.test(pathname))
     ? config.music.browse_node : key === '' ? '/' : key
 }
 
-const getNodeSegment = (state, item) => {
-  const key = getKey(state)
+const getNodeSegment = (state, item, path) => {
+  let key;
+  if (path) key = path
+  else key = getKey(state) // based on location
   const node = state.music.nodes[key]
   if (!node) return node
   else return node[item]
 }
 const getNodes = state => state.music.nodes
 
-const getItemDescriptions = state => getNodeSegment(state, 'itemDescriptions')
-const getNavigationNodeDescriptions = state => getNodeSegment(state, 'navigationNodeDescriptions')
-const getNavigationNodeSummaries = state => getNodeSegment(state, 'navigationNodeSummaries')
-const getPlayables = state => getNodeSegment(state, 'playables')
-const getResult = state => getNodeSegment(state, 'result')
+const getItemDescriptions = (state,path) => {
+  // what is path?
+  // if (state.music.prevNode) debugger
+  return getNodeSegment(state, 'itemDescriptions', path)
+}
+const getNavigationNodeDescriptions = (state,path) => getNodeSegment(state, 'navigationNodeDescriptions', path)
+const getNavigationNodeSummaries = (state,path) => getNodeSegment(state, 'navigationNodeSummaries', path)
+const getPlayables = (state,path) => getNodeSegment(state, 'playables', path)
+const getResult = (state,path) => getNodeSegment(state, 'result', path)
 const getHash = state => state.router.location.hash
 const getNavigationNodeDescription = (state, {navigationNode}) => {
   const node = getNavigationNodeDescriptions(state)
@@ -41,6 +44,9 @@ const getNavigationNodeSummary= (state, props) => {
 }
 
 
+// TODO: add these selectors
+export const getPrevPageSelector = createSelector([getNavigationNodeDescription], node => node.prevPage)
+export const getNextPageSelector = createSelector([getNavigationNodeDescription], node => node.nextPage)
 export const getNavigationNodeSelector = createSelector([getNavigationNodeDescription], node => node)
 export const getPlayableSelector = createSelector([getPlayables], (playables) => playables)
 export const getItemDescriptionsSelectors = createSelector([getItemDescriptions], (items) => items)
@@ -90,13 +96,28 @@ export const getChildData = createSelector(
   }
 )
 
-export const getCatalogData = createSelector(
+export const getPrevCatalogData = createSelector(
   [getItemDescriptions, getNavigationNodeDescriptions, getNavigationNodeSummaries, getResult, getHash],
   (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
     return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
   }
 )
 
+export const getCatalogData = createSelector(
+  [getItemDescriptions, getNavigationNodeDescriptions, getNavigationNodeSummaries, getResult, getHash],
+  (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
+    // what are the inputs?
+    // if (navigationNodeDescriptions) debugger
+    return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
+  }
+)
+
+export const getNextCatalogData = createSelector(
+  [getItemDescriptions, getNavigationNodeDescriptions, getNavigationNodeSummaries, getResult, getHash],
+  (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
+    return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
+  }
+)
 
 export const getChildItemDescriptionsSelector = createSelector(
   [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
