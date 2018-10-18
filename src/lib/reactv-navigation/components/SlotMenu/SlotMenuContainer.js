@@ -95,9 +95,8 @@ class MenuWrapper extends React.Component {
       }
     } else if ((nextProps.focused && prevState.redux_list_menu_focused) && (
         (nextProps.onFocusIndex > prevState.index + 1) ||
-        (nextProps.onFocusIndex < prevState.index - 1))) {
           // adding indices to beginning: i=0 --> i=100
-          // or
+        (nextProps.onFocusIndex < prevState.index - 1))) {
           // removing indices from beginning: i=149 --> 50
       return {
         index: nextProps.onFocusIndex,

@@ -21,11 +21,7 @@ const getNodeSegment = (state, item, path) => {
 }
 const getNodes = state => state.music.nodes
 
-const getItemDescriptions = (state,path) => {
-  // what is path?
-  // if (state.music.prevNode) debugger
-  return getNodeSegment(state, 'itemDescriptions', path)
-}
+const getItemDescriptions = (state,path) => getNodeSegment(state, 'itemDescriptions', path)
 const getNavigationNodeDescriptions = (state,path) => getNodeSegment(state, 'navigationNodeDescriptions', path)
 const getNavigationNodeSummaries = (state,path) => getNodeSegment(state, 'navigationNodeSummaries', path)
 const getPlayables = (state,path) => getNodeSegment(state, 'playables', path)
@@ -44,15 +40,11 @@ const getNavigationNodeSummary= (state, props) => {
 }
 
 
-// TODO: add these selectors
-export const getPrevPageSelector = createSelector([getNavigationNodeDescription], node => node.prevPage)
-export const getNextPageSelector = createSelector([getNavigationNodeDescription], node => node.nextPage)
 export const getNavigationNodeSelector = createSelector([getNavigationNodeDescription], node => node)
 export const getPlayableSelector = createSelector([getPlayables], (playables) => playables)
 export const getItemDescriptionsSelectors = createSelector([getItemDescriptions], (items) => items)
 export const getNavigationNodeSummariesSelector = createSelector([getNavigationNodeSummaries], (items) => items)
 export const getNavigationNodeSummarySelector = createSelector([getNavigationNodeSummary], summary => summary)
-export const getNavigationNodeDescriptionsSelector = createSelector([getNavigationNodeDescriptions], desc => desc)
 
 
 
@@ -96,23 +88,7 @@ export const getChildData = createSelector(
   }
 )
 
-export const getPrevCatalogData = createSelector(
-  [getItemDescriptions, getNavigationNodeDescriptions, getNavigationNodeSummaries, getResult, getHash],
-  (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
-    return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
-  }
-)
-
 export const getCatalogData = createSelector(
-  [getItemDescriptions, getNavigationNodeDescriptions, getNavigationNodeSummaries, getResult, getHash],
-  (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
-    // what are the inputs?
-    // if (navigationNodeDescriptions) debugger
-    return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
-  }
-)
-
-export const getNextCatalogData = createSelector(
   [getItemDescriptions, getNavigationNodeDescriptions, getNavigationNodeSummaries, getResult, getHash],
   (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
     return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)

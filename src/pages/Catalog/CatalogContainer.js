@@ -7,11 +7,7 @@ import { replace, back } from '../../store/modules/nav'
 import {  handleItemSelection } from '../../lib/utils'
 import { updateMenuState } from '../../lib/reactv-redux/ReacTVReduxReducer'
 import {
-  getPrevPageSelector,
-  getNextPageSelector,
-  getPrevCatalogData,
   getCatalogData,
-  getNextCatalogData,
   getPlayableSelector,
   getItemDescriptionsSelectors,
   getNavigationNodeSummariesSelector
@@ -37,16 +33,16 @@ const mapStateToProps = (state,ownProps) => {
   const { prevNode, nextNode, currentNode } = state.music;
   return ({
     menuid: `catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`,
-    highlightedTrack: state.menus[`catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`],
+    currentNode: state.music.currentNode,
     prevNode,
     nextNode,
     prevCatalog: (state.music.nodes[prevNode]) ? getCatalogData(state,prevNode) : null,
-    catalog: getCatalogData(state,currentNode),
     nextCatalog: (state.music.nodes[nextNode]) ? getCatalogData(state,nextNode) : null,
+    nodes: state.music.nodes, // use selector for prevCatalog and nextCatalog
+    highlightedTrack: state.menus[`catalogmenu:${ownProps.location.pathname}${ownProps.location.hash}`],
+    catalog: getCatalogData(state,currentNode),
     itemDescriptions: getItemDescriptionsSelectors(state),
     playables: getPlayableSelector(state),
-    currentNode: state.music.currentNode,
-    nodes: state.music.nodes, // use selector for prevCatalog and nextCatalog
     navigationNodeSummaries: getNavigationNodeSummariesSelector(state)
   })
 }
@@ -67,13 +63,17 @@ class CatalogContainer extends Component {
   }
   componentDidMount () {
     this._unsubBack = keys.subscribeTo('Back', () => this.handleBack())
-    const { currentNode } = this.props;
+    const { currentNode, updateAllNodes } = this.props;
     this.props.updateCurrentNode(null);
     if (!currentNode) {
       const { pathname } = this.props.location;
       let path = getPath(pathname) // sanitize path
       path = (path !== '/') ? path : null
-      if (path) this.props.updateCurrentNode(path);
+      if (path) updateAllNodes({
+        prevNode: null,
+        currentNode: path,
+        nextNode: null // update nextNode
+      })
     }
   }
 
@@ -254,7 +254,6 @@ class CatalogContainer extends Component {
       if (this.props.highlightedTrack) {
         currentIndex = this.props.highlightedTrack.index;
         const { itemsData } = this.state.catalog;
-        // if (itemsData.length && !itemsData[currentIndex]) debugger
         if (itemsData.length) thumbnail = itemsData[currentIndex].image
       }
       const referer = (r) => { this._ref = r }
