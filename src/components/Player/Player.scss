@@ -1,5 +1,6 @@
 $side-margins: 100px;
 .playerWrapper {
+  display: none;
   position: absolute;
   top: $side-margins;
   left: $side-margins;
