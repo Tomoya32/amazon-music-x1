@@ -9,23 +9,12 @@ const itemRender = (current, type, element) => {
   return element;
 };
 
-const textItemRender = (current, type, element) => {
-  if (type === 'prev') {
-    return 'Prev';
-  }
-  if (type === 'next') {
-    return 'Next';
-  }
-  return element;
-};
-
 class RCPagination extends React.Component {
 
   render() {
     return (
       <div>
         <Pagination total={100} itemRender={itemRender} />
-        <Pagination total={100} itemRender={textItemRender} />
       </div>
     );
   }

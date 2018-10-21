@@ -16,8 +16,8 @@ const calculateStyle = (currentState, newState, ref) => {
   }
 }
 
-const PlaylistMenu = ({menuid, data, focused, onClick}) => (
-  <ListMenu menuid={menuid} className='PlaylistMenu' data={data} renderItem={PlaylistMenuItem} focused={focused} onClick={onClick} slots={8} calculateStyle={calculateStyle}/>
+const PlaylistMenu = ({menuid, data, focused, onClick, passRef}) => (
+  <ListMenu menuid={menuid} className='PlaylistMenu' data={data} renderItem={PlaylistMenuItem} focused={focused} onClick={onClick} slots={8} calculateStyle={calculateStyle} passRef={passRef}/>
 )
 
 PlaylistMenu.propTypes = {
