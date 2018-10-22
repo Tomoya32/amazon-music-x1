@@ -2,7 +2,6 @@ FROM node:9 as builder
 RUN mkdir /amazonmusic-x1
 WORKDIR /amazonmusic-x1
 COPY . /amazonmusic-x1
-#
 
 ARG REACT_APP_AMAZON_MUSIC_BASE_URL
 ARG REACT_APP_AMAZON_API_BASE_URL
