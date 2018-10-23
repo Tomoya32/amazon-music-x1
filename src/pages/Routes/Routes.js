@@ -18,7 +18,7 @@ const Routes = () => (
     <Route path="/list/:node*" component={authWrapper(Catalog)} />
     <Route path="/playback/:track*" component={authWrapper(Playback)} />
     <Route exact path="/mymusic" component={authWrapper(Music)} />
-    <Route exact path="/search" component={authWrapper(Search)} />
+    <Route path="/search" component={authWrapper(Search)} />
     <Route exact path="/linking" component={userIsNotAuthenticated(Linking)} />
   </main>
 )

@@ -1,3 +1,5 @@
+import { startsWith } from 'lodash'
+
 export const LOAD_CURRENT_NODE = 'MUSIC/LOAD_CURRENT_NODE'
 export const PUSH_CURRENT_NAVIGATION_NODE = 'MUSIC/PUSH_CURRENT_NAVIGATION_NODE'
 export const LOAD_CHILD_NODE = 'MUSIC/LOAD_CHILD_NODE'
@@ -59,7 +61,6 @@ const addNode = (state, {node, path, resolvePath, payload}) => {
   newState.nodes[key] = node
   newState.pathResolvers[path] = resolvePath
   newState.errorMsg = payload
- // Object.assign(newState.itemDescriptions, {...node.itemDescriptions})
   return newState
 }
 

@@ -7,6 +7,7 @@ export const AMZN_RESET_SEARCH= 'search/AMZN_RESET_SEARCH'
 export const resetSearch = () => {
   return {type: AMZN_RESET_SEARCH}
 }
+
 export const searchResults = (payload) => {
   return {
     type: AMZN_SEARCH_RESULTS,
@@ -33,17 +34,8 @@ export const removeLetterFromSearchTerm = () => {
   }
 }
 
-export const addLetterToSearchTerm = letter => (dispatch, getState) => {
+export const addLetterToSearchTerm = letter => (dispatch) => {
   dispatch(addSingleLetter(letter))
-  search(getState().search.term)(dispatch)
-}
-export const search = term => dispatch => {
-  return null
-  // return doSearch(term)
-  //   .then((items = []) => {
-  //     items = filterRecommendationList(items)
-  //     dispatch(searchResults(items))
-  //   })
 }
 
 const ACTION_HANDLERS = {
@@ -51,7 +43,7 @@ const ACTION_HANDLERS = {
   [AMZN_ADD_LETTER_TO_SEARCHTERM]: (state, action) => Object.assign({}, state, {term: state.term + action.letter}),
   [AMZN_REMOVE_LETTER_FROM_SEARCHTERM]: (state, action) => Object.assign({}, state, {term: state.term.slice(0, -1)}),
   [AMZN_SET_SEARCHTERM]: (state, action) => Object.assign({}, state, {term: action.term}),
-  [AMZN_RESET_SEARCH]: (state, action) => Object.assign({}, state, {results: [], term: ''})
+  [AMZN_RESET_SEARCH]: (state, action) => Object.assign({}, state, {results: [], term: ''}),
 }
 
 const initialState = {

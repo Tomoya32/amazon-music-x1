@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import Search from './Search'
 import { addLetterToSearchTerm, removeLetterFromSearchTerm } from '../../store/modules/search'
+import { loadChildNode } from '../../store/modules/music'
 import { connect } from 'react-redux'
 import { push, replace } from '../../store/modules/nav'
 import { uuid } from '../../lib/utils'
@@ -14,24 +15,32 @@ const mapDispatchToProps = {
   push,
   replace,
   updateMenu,
+  loadChildNode,
 }
-const mapStateToProps = ({search: {term, results}, navigation: {menus}}) => ({term, results, menus})
+const mapStateToProps = (state) => ({
+  term: state.search.term,
+  results: state.search.results,
+  menus: state.navigation.meuns,
+  pathname: state.router.location.pathname,
+})
 
 class SearchContainer extends PureComponent {
-  constructor (p) {
+  constructor(p) {
     super(p)
     this.key = 'WHAT_IS_THIS_MAGIC?'
   }
 
-  componentWillUpdate (nextProps) {
+  componentWillUpdate(nextProps) {
     if (nextProps.results !== this.props.results) {
       this.key = uuid()
     }
   }
 
-  onSubmit (value) { this.props.history.push(value.path) }
+  onSubmit(value) { 
+    this.props.history.push(value.path)
+  }
 
-  onLetter (letter) {
+  onLetter(letter) {
     if (letter === String.fromCharCode(parseInt(2423, 16))) {
       this.props.addLetterToSearchTerm(' ')
     } else if (letter === 'del') {
@@ -39,9 +48,10 @@ class SearchContainer extends PureComponent {
     } else {
       this.props.addLetterToSearchTerm(letter)
     }
+    this.props.loadChildNode('/search/?keywords=<' + this.props.term + '>')
   }
 
-  render () {
+  render() {
     return (<Search
       menuid='search'
       onFocusItem='topnav' focused

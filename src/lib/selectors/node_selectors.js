@@ -5,8 +5,14 @@ import {mergePath} from '../utils'
 import up from 'url-parse'
 
 const getKey = state => {
-  const {pathname} = state.router.location
+  const {pathname, search} = state.router.location
   let key = pathname.replace(/^\/(list|music)\/*/, '/')
+  if (key === '/search/widescreen_catalog/') {
+    if ( getSearchterm(state) )
+      key = '/search/?keywords=<' + getSearchterm(state) + '>'
+    else
+      key = pathname.replace(/^\/(list|search)\/*/, '/')
+    }
   return ((key === '' || key === '/') && /^\/?music(\/|$)/.test(pathname))
     ? config.music.browse_node : key === '' ? '/' : key
 }
@@ -20,6 +26,8 @@ const getNodeSegment = (state, item, path) => {
   else return node[item]
 }
 const getNodes = state => state.music.nodes
+const getSearchNode = state => state.music.searchNode
+const getSearchterm = state => state.search.term
 
 const getItemDescriptions = (state,path) => getNodeSegment(state, 'itemDescriptions', path)
 const getNavigationNodeDescriptions = (state,path) => getNodeSegment(state, 'navigationNodeDescriptions', path)
@@ -32,6 +40,7 @@ const getNavigationNodeDescription = (state, {navigationNode}) => {
   return node[navigationNode]
 }
 const getNavigationNodeSummary= (state, props) => {
+  if(!props) return null
   const summary = props.navigationNodeSummary ||  props.itemDescription.navigationNodeSummary
   if(!summary) return null
   const nodes = getNavigationNodeSummaries(state)
@@ -59,14 +68,16 @@ export const getMenuIDsSelector = createSelector([getItemDescriptions], (items) 
   else return
 })
 export const getNavigationDescriptionFromSummarySelector = createSelector([getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
-  if(summary.description.indexOf('#') === 0) {
+  if (!summary) {
+    return null
+  }
+  if (summary.description.indexOf('#') === 0) {
     //TODO: this is not right, we need a path to get this back.....
     return descs[noha(summary.description)]
   }
   else {
     const path = mergePath(key, summary.description)
     const {pathname, hash} = up(path)
-
     if(nodes[pathname]) {
       const node = nodes[pathname]
       const {itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result} = node
@@ -128,8 +139,8 @@ export const getChildItemDescriptionSelector = createSelector(
 )
 
 const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
-  if (!result || !navigationNodeDescriptions) return
-  const currentNavigationNode = hash || result
+  if (!result || !navigationNodeDescriptions) return console.log('=------oosssss--------', result)
+  let currentNavigationNode = hash || result
   let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
   desc.summaryData = navigationNodeSummaries[noha(desc.summary)]
   desc.itemsData = desc.items.map(item => {

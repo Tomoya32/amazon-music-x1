@@ -4,10 +4,11 @@ import config from '../../config'
 import {
   addChildNode, LOAD_CHILD_NODE, ADD_CHILD_NODE
 } from '../modules/music'
+import { searchResults } from '../modules/search'
 import { SET_AUTH_DATA, CLEAR_AUTH_DATA } from '../modules/auth'
 
 const getData = state => state.music.nodes
-
+const getSearchQuery = state => state.search.term
 // Dealing with some circular dependencies here.
 
 function * loadNavigationNode (action) {
@@ -16,7 +17,7 @@ function * loadNavigationNode (action) {
     const {responseURL} = payload.request
     const responsePath = responseURL.replace(config.music.endpoint, '')
     yield put(addChildNode(payload.data, action.path, responsePath))
-    // yield put({type: ADD_CHILD_NODE, payload: payload.data, path: action.path})
+    yield put(searchResults(payload))
   } catch (e) {
     if (e.status === 401 || e.status === 403) {
       yield put({type: CLEAR_AUTH_DATA})
@@ -41,7 +42,7 @@ function * trackAccessToken (action) {
 function * registerPathChange (action) {
   console.info('path change ', action, /^\/?music(\/|$)/.test(action.payload.location.pathname), API.loggedIn())
   try {
-    const {pathname} = action.payload.location
+    const {pathname, search} = action.payload.location
     if (API.loggedIn() && /^\/?list(\/|$)/.test(pathname)) {
       let key = action.payload.location.pathname.replace(/^\/list\/*/, '/')
       key = key.trim() === '' ? '/' : key
@@ -55,6 +56,10 @@ function * registerPathChange (action) {
       if (!path || path.trim() === '') path = config.music.browse_node
       console.info(`Music loading path ${path}`)
       yield(put({type: LOAD_CHILD_NODE, path}))
+    } 
+    else if (API.loggedIn() && /^\/?search(\/|$)/.test(pathname)) { // TODO: Need a mechanism for managing these
+      action.payload.location.pathname = '/search' + config.music.browse_node
+      yield (put({ type: LOAD_CHILD_NODE, path: config.music.browse_node }))
     }
   } catch (e) {
     console.warn(`Error registering for path change ${e.message}`, e)
