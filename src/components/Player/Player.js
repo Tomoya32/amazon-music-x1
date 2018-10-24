@@ -9,10 +9,11 @@ import config from '../../config'
 import {isNumeric} from '../../lib/utils'
 // import ReactHLS from 'react-hls';
 import ReactHLS from '../ReactHLS/react-hls';
-
+import { connect } from 'react-redux'
+// import { getPlayable } from './selectors'
 const debug = debugWrapper('app:player')
 
-export default class Player extends Component {
+class Player extends Component {
 
   static defaultProps = {
     disableTimeUpdates: false,
@@ -106,18 +107,9 @@ export default class Player extends Component {
       this.checkIfPlayed()
     }
 
-    if (this.player && prevProps.updateCurrentTime !== updateCurrentTime && isNumeric(updateCurrentTime)) {
-      // restarts song
-      // Validations
-      try {
-        this.player.currentTime = updateCurrentTime
-        updatePlayTime(this.player.currentTime)
-      } catch (e) {
-        console.error(e)
-        $badger.errorMetricsHandler('UpdatePlayerTimeError', false, 300, {message: e ? e.message : 'no message'})
-        updatePlayTime(this.player.currentTime)
-      }
-      setCurrentTime(null)
+    if (this.props.currentTime == 0) {
+      this.props.updatePlayTime(1)
+      this.player.currentTime=0; 
     }
 
     const pausedState = this.player.paused ? 'paused' : 'playing'
@@ -150,7 +142,11 @@ export default class Player extends Component {
       }
       if (time > 0) {
         this._lastTimeUpdate = time
-        this.props.updatePlayTime(time)
+        if (this.props.currentTime==0){
+          this.props.updatePlayTime(1)
+        }else{
+          this.props.updatePlayTime(time)
+        }
       } else {
       }
     }
@@ -234,3 +230,8 @@ export default class Player extends Component {
     )
   }
 }
+const mapStateToProps = (state) => ({
+  currentTime: state.player.currentTime
+})
+
+export default connect(mapStateToProps)(Player)

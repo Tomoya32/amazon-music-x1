@@ -143,7 +143,7 @@ export function playerGotDuration (payload) {
 // ------------------------------------
 const ACTION_HANDLERS = {
   [PLAYER_DISABLE_INIT]: (state, action) => Object.assign({}, state, {disableInitOnUpdate: action.payload}),
-  [PLAYER_TIME]: (state, action) => Object.assign({}, state, {currentTime: action.payload}),
+  [PLAYER_TIME]: (state, action) => Object.assign({}, state, { currentTime: action.payload, updateCurrentTime: action.payload}),
   [PLAYER_ERROR]: (state, action) => Object.assign({}, state, {currentError: action.payload}),
   [PLAYER_STATE]: (state, action) => Object.assign({}, state, {playerControlsState: action.payload}),
   [PLAYER_ON_CAN_PLAY]: (state, action) => Object.assign({}, state, ...pick(action.payload, [''])),
