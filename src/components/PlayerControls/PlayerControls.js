@@ -67,6 +67,7 @@ class PlayerControls extends Component {
             onBlur={() => this.hideToolTip('pause')}
             onLeft={changeFocus(getMenuId('restart'))}
             onRight={onRight}
+            onDown={onDown}
             onUp={onFarRight}
             onClick={togglePlayState}>
             &nbsp;
