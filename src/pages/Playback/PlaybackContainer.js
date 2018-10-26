@@ -9,7 +9,6 @@ import { playerCurrentSrc, updatePlayTime, setPlayerState } from '../../store/mo
 import gt from 'lodash/get'
 import {getPlayable, getTrackInstance, getPlayableNode, getTrackPointers} from './selectors'
 import PageLoading from '../../components/PageLoading'
-import { bindActionCreators } from 'redux'
 
 const debug = console.info
 
@@ -35,24 +34,13 @@ class PlaybackContainer extends Component {
     }
   }
 
-  backward() {
+  seek(direction) {
     const { currentTime, updatePlayTime, playerState, setPlayerState} = this.props
-    const skiperTime = currentTime - 1
+    const skiperTime = currentTime + 1*direction;
     if (playerState === 'playing') setPlayerState('paused')
     clearTimeout(this.resumeIn)
     this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 300) // Switch this to use internval
     updatePlayTime(skiperTime)
-    // $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, { skiperTime })
-  }
-
-  forward() {
-    const { currentTime, updatePlayTime, playerState, setPlayerState} = this.props
-    const skiperTime = 1 + currentTime
-    if (playerState === 'playing') setPlayerState('paused')
-    clearTimeout(this.resumeIn)
-    this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 300) // Switch this to use internval
-    updatePlayTime(skiperTime)
-    // $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, { skiperTime })
   }
 
   componentDidMount () {
@@ -106,8 +94,7 @@ class PlaybackContainer extends Component {
                 focused={this.state.focused}
                 menuid={'playback-containeer'}
                 onFocusItem='trackInfo'
-                backward={this.backward.bind(this)}
-                forward={this.forward.bind(this)}
+                seek={this.seek.bind(this)}
                 onShuffleNext={this.handleTransition('shufffleTrackPointer')}
                 onNext={this.handleTransition('nextTrackPointer')}/>)
     } else {
