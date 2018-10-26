@@ -12,10 +12,6 @@ const topnav = [
     path: '/music/widescreen_library/',
   },
   {
-    name: 'Playlist',
-    path: '/list/catalog/playlists',
-  },
-  {
     name: 'Search',
     path: '/search',
   },

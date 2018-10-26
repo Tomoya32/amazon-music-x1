@@ -2,7 +2,6 @@ import { connect } from 'react-redux'
 import {
   updateInitOnUpdate,
   setPlayerControlsState,
-  updatePlayTime,
   playerError,
   onCanPlay,
   setCurrentTime,
@@ -30,7 +29,6 @@ const mapDispatchToProps = {
   updateInitOnUpdate,
   playerCurrentSrc,
   setPlayerControlsState,
-  updatePlayTime,
   playerError,
   onCanPlay,
   setCurrentTime,
@@ -47,9 +45,8 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state) => ({
   currentError: state.player.currentError,
-  playerTime: state.player.currentTime,
+  currentTime: state.player.currentTime,
   playerUrl: state.player.currentUrl,
-  updateCurrentTime: state.player.updateCurrentTime,
   playerState: state.player.playerState,
   playerControlsState: state.player.playerControlsState,
   playerClearing: state.player.clearing,
@@ -68,7 +65,7 @@ class PlayerWrapper extends Component {
     if (newUrl) this.disableInitOnUpdate = false;
     else this.disableInitOnUpdate = true;
     const playerMismatch = (nextProps.playerState !== this.props.playerControlsState);
-    const restart = (nextProps.updateCurrentTime === 0);
+    const restart = (nextProps.currentTime === 0 || nextProps.currentTime !== this.props.currentTime);
     const shouldUpdate = (newUrl || playerMismatch || restart);
     // if (shouldUpdate) { debugger }
     return shouldUpdate
@@ -107,7 +104,7 @@ PlayerWrapper.propTypes = {
   recommendationEnded: PropTypes.func,
   getNextRecommendation: PropTypes.func,
   recommendationError: PropTypes.func,
-  playerTime: PropTypes.number,
+  currentTime: PropTypes.number,
   currentError: PropTypes.object,
 }
 

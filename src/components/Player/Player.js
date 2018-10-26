@@ -9,11 +9,9 @@ import config from '../../config'
 import {isNumeric} from '../../lib/utils'
 // import ReactHLS from 'react-hls';
 import ReactHLS from '../ReactHLS/react-hls';
-import { connect } from 'react-redux'
-// import { getPlayable } from './selectors'
 const debug = debugWrapper('app:player')
 
-class Player extends Component {
+export default class Player extends Component {
 
   static defaultProps = {
     disableTimeUpdates: false,
@@ -35,9 +33,9 @@ class Player extends Component {
       this._heartbeat = setInterval(() => {
         if (this.player) {
           if (!this.player.paused) {
-            $badger.userActionMetricsHandler('NormalPlaybackHeartbeat', {playerTime: this.player.currentTime})
+            $badger.userActionMetricsHandler('NormalPlaybackHeartbeat', {currentTime: this.player.currentTime})
           } else {
-            $badger.userActionMetricsHandler('PausedPlaybackHeartbeat', {playerTime: this.player.currentTime})
+            $badger.userActionMetricsHandler('PausedPlaybackHeartbeat', {currentTime: this.player.currentTime})
           }
         } else {
           const players = document.getElementsByName('audio')
@@ -100,16 +98,17 @@ class Player extends Component {
 
   componentDidUpdate (prevProps) {
 
-    const {updateCurrentTime, updatePlayTime, playerControlsState, playerState, playerUrl, setCurrentTime, updateInitOnUpdate} = this.props
+    const {currentTime, playerControlsState, playerState, playerUrl, setCurrentTime, updateInitOnUpdate} = this.props
     const oldPlayerUrl = prevProps.playerUrl
 
     if (playerState === 'playing' && prevProps.playerState === 'paused') {
       this.checkIfPlayed()
     }
 
-    if (this.props.currentTime == 0) {
-      this.props.updatePlayTime(1)
-      this.player.currentTime=0; 
+    if (this.player && prevProps.currentTime !== currentTime && isNumeric(currentTime)) {
+      if (this.props.currentTime == 0) {
+        this.player.currentTime=0;
+      }
     }
 
     const pausedState = this.player.paused ? 'paused' : 'playing'
@@ -141,13 +140,10 @@ class Player extends Component {
         }
       }
       if (time > 0) {
+        console.log('reached this with time: ', time)
+        console.log('currentTime: ',this.props.currentTime)
         this._lastTimeUpdate = time
-        if (this.props.currentTime==0){
-          this.props.updatePlayTime(1)
-        }else{
-          this.props.updatePlayTime(time)
-        }
-      } else {
+        this.props.setCurrentTime(time)
       }
     }
   }
@@ -211,14 +207,14 @@ class Player extends Component {
             },
             onPause: (event) => {
               $badger.userActionMetricsHandler('PlayerOnPause')
-              $badger.userActionMetricsHandler('PausedPlaybackHeartbeat', {playerTime: event.target.currentTime})
+              $badger.userActionMetricsHandler('PausedPlaybackHeartbeat', {currentTime: event.target.currentTime})
               event.persist()
               setPlayerControlsState('paused')
             },
             onPlay: (event) => {
               this.monitorPlayback()
               $badger.userActionMetricsHandler('PlayerOnPlay')
-              $badger.userActionMetricsHandler('NormalPlaybackHeartbeat', {playerTime: event.target.currentTime})
+              $badger.userActionMetricsHandler('NormalPlaybackHeartbeat', {currentTime: event.target.currentTime})
               event.persist()
               setPlayerControlsState('playing')
             },
@@ -230,8 +226,3 @@ class Player extends Component {
     )
   }
 }
-const mapStateToProps = (state) => ({
-  currentTime: state.player.currentTime
-})
-
-export default connect(mapStateToProps)(Player)

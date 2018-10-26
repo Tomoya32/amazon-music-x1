@@ -12,9 +12,9 @@
     height: 38px; /* Account for border height on focus */
 }
 
-.VerticalTextMenuCard:nth-child(n+6) {
+.VerticalTextMenuCard:nth-child(n+5) {
   text-transform: capitalize;
   position: relative;
-  left: 450px;
+  left: 45%;
   font-size: 1em;
 }
