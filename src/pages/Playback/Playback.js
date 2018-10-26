@@ -9,11 +9,16 @@ const ScrubbableProgressBar = Scrubbable(({focused}) => (
   <ProgressBar focused={focused}/>
 ))
 
-const Playback = ({isFocused, menuid, title, artist, album, image, onNext, onShuffleNext, changeFocus, ...props}) => (
+const Playback = ({isFocused, menuid, title, artist, album, image, onNext, onShuffleNext, changeFocus, backward, forward, ...props}) => (
   <div className='Playback Page' style={image ? {backgroundImage: `url(${image.uri})`, backgroundSize: 'cover' } : { backgroundSize: 'cover' }}>
     <TrackInfo title={title} artist={artist} album={album} image={image} onNext={onNext} onShuffleNext={onShuffleNext} focused={isFocused('trackInfo')} menuid='track-info-button' onFocusItem={'playback:playercontrols'} onDown={changeFocus('progressbar')}/>
     <div style={{display: 'block'}}>
-      <ScrubbableProgressBar onUp={changeFocus('trackInfo')} focused={isFocused('progressbar')} menuid='progressbar'/>
+      <ScrubbableProgressBar
+        onLeft={backward}
+        onRight={forward}
+        onUp={changeFocus('trackInfo')}
+        focused={isFocused('progressbar')}
+        menuid='progressbar'/>
     </div>
   </div>
 )

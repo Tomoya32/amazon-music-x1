@@ -5,23 +5,26 @@ import { replace } from 'connected-react-router'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import { back } from '../../store/modules/nav'
 import Playback from './Playback'
-import { playerCurrentSrc } from '../../store/modules/player'
+import { playerCurrentSrc, updatePlayTime, setPlayerState } from '../../store/modules/player'
 import gt from 'lodash/get'
 import {getPlayable, getTrackInstance, getPlayableNode, getTrackPointers} from './selectors'
 import PageLoading from '../../components/PageLoading'
+import { bindActionCreators } from 'redux'
 
 const debug = console.info
 
 const keys = new KeyEvents()
 
 const mapStateToProps = (state) => ({
+  playerState: state.player.playerState,
+  currentTime: state.player.currentTime,
   playable: getPlayable(state),
   trackInstance: getTrackInstance(state),
   enclosing: getPlayableNode(state),
   trackPointers : getTrackPointers(state)
 })
 
-const mapDispatchToProps = {loadTrack, replace, back, playerCurrentSrc}
+const mapDispatchToProps = {loadTrack, replace, back, playerCurrentSrc, updatePlayTime, setPlayerState}
 
 class PlaybackContainer extends Component {
   constructor(s) {
@@ -32,6 +35,26 @@ class PlaybackContainer extends Component {
     }
   }
 
+  backward() {
+    const { currentTime, updatePlayTime, playerState, setPlayerState} = this.props
+    const skiperTime = currentTime - 1
+    if (playerState === 'playing') setPlayerState('paused')
+    clearTimeout(this.resumeIn)
+    this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 300) // Switch this to use internval
+    updatePlayTime(skiperTime)
+    // $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, { skiperTime })
+  }
+
+  forward() {
+    const { currentTime, updatePlayTime, playerState, setPlayerState} = this.props
+    const skiperTime = 1 + currentTime
+    if (playerState === 'playing') setPlayerState('paused')
+    clearTimeout(this.resumeIn)
+    this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 300) // Switch this to use internval
+    updatePlayTime(skiperTime)
+    // $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, { skiperTime })
+  }
+
   componentDidMount () {
     this._unsubBack = keys.subscribeTo('Back', () => this.handleBack())
     debug('Mounted Playback Container')
@@ -40,8 +63,10 @@ class PlaybackContainer extends Component {
     this.setState({focused: true})
   }
 
-  componentDidUpdate () {
-    this.handleTrackPlayback()
+  componentDidUpdate (prevProps) {
+    const src = gt(prevProps.trackInstance, 'trackDefinitionData.audio.uri', null)
+    const newSrc = gt(this.props.trackInstance, 'trackDefinitionData.audio.uri', null)
+    if (src !== newSrc) this.handleTrackPlayback()
   }
 
   componentWillUnmount () {
@@ -81,6 +106,8 @@ class PlaybackContainer extends Component {
                 focused={this.state.focused}
                 menuid={'playback-containeer'}
                 onFocusItem='trackInfo'
+                backward={this.backward.bind(this)}
+                forward={this.forward.bind(this)}
                 onShuffleNext={this.handleTransition('shufffleTrackPointer')}
                 onNext={this.handleTransition('nextTrackPointer')}/>)
     } else {

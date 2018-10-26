@@ -119,6 +119,7 @@ class Player extends Component {
       if (playerState === 'playing' && this.player.paused && playerUrl === oldPlayerUrl) {
         try {
           debug('Calling play on player')
+          this.player.currentTime = this.props.currentTime;
           this.player.play()
         } catch (e) {
           console.error(`Error calling play ${e.message}`)
