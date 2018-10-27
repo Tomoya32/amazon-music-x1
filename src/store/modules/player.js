@@ -3,7 +3,6 @@ import pick from 'lodash/pick'
 export const PLAYER_DISABLE_INIT = 'player/PLAYER_DISABLE_INITIALIZE'
 export const PLAYER_ERROR = 'player/PLAYER_ERROR'
 export const PLAYER_STATE = 'player/PLAYER_STATE'
-export const PLAYER_TIME = 'player/PLAYER_TIME'
 export const PLAYER_ON_CAN_PLAY = 'player/PLAYER_ON_CAN_PLAY'
 export const PLAYER_CURRENT_SRC = 'player/PLAYER_CURRENT_SRC'
 export const PLAYER_UPDATE_CURRENTTIME = 'player/PLAYER_UPDATE_CURRENTTIME'
@@ -112,12 +111,6 @@ export function onCanPlay (payload) {
   }
 }
 
-export function updatePlayTime (payload) {
-  return {
-    type: PLAYER_TIME, payload
-  }
-}
-
 export function setPlayerControlsState (payload) {
   return {
     type: PLAYER_STATE, payload
@@ -143,11 +136,10 @@ export function playerGotDuration (payload) {
 // ------------------------------------
 const ACTION_HANDLERS = {
   [PLAYER_DISABLE_INIT]: (state, action) => Object.assign({}, state, {disableInitOnUpdate: action.payload}),
-  [PLAYER_TIME]: (state, action) => Object.assign({}, state, { currentTime: action.payload, updateCurrentTime: action.payload}),
   [PLAYER_ERROR]: (state, action) => Object.assign({}, state, {currentError: action.payload}),
   [PLAYER_STATE]: (state, action) => Object.assign({}, state, {playerControlsState: action.payload}),
   [PLAYER_ON_CAN_PLAY]: (state, action) => Object.assign({}, state, ...pick(action.payload, [''])),
-  [PLAYER_UPDATE_CURRENTTIME]: (state, action) => Object.assign({}, state, {updateCurrentTime: action.payload}),
+  [PLAYER_UPDATE_CURRENTTIME]: (state, action) => Object.assign({}, state, {currentTime: action.payload}),
   [PLAYER_UPDATE_PLAYSTATE]: (state, action) => Object.assign({}, state, {playerState: action.payload}),
   [PLAYER_CURRENT_SRC]: (state, action) => Object.assign({}, state, {currentUrl: action.payload, ...audioDefaults}),
   [PLAYER_READY_STATE]: (state, action) => Object.assign({}, state, {readyState: action.payload}),
@@ -166,7 +158,6 @@ const audioDefaults = {
   playerControlsState: 'paused',
   currentTime: 0,
   currentError: null,
-  updateCurrentTime: null,
   duration: 0,
   readyState: 0,
   loadStarted: false,

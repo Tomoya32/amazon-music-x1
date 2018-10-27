@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
-import { setCurrentTime, setPlayerState, updatePlayTime, updateInitOnUpdate } from '../../store/modules/player'
+import { setCurrentTime, setPlayerState, updateInitOnUpdate } from '../../store/modules/player'
 // import { thumbsDown, thumbsUp } from '../../store/modules/amazon'
 import $badger from '../../lib/badger'
 // import { toggleInfo } from '../../store/modules/player'
@@ -32,7 +32,6 @@ const mapDispatchToProps = (dispatch) => {
     updateInitOnUpdate,
     setCurrentTime,
     setPlayerState,
-    updatePlayTime,
     push, replace,
     // toggleInfo,
     // thumbsDown, // stations only
@@ -64,10 +63,10 @@ class PlayerControlsContainer extends Component {
   */
 
   restart () {
-    const { updatePlayTime} = this.props
+    const { setCurrentTime } = this.props
     const restartFrom = 0
     $badger.userActionMetricsHandler(`PlayerControlsRestart`, {restartFrom})
-    updatePlayTime(restartFrom)
+    setCurrentTime(restartFrom)
   }
 
   pause () {

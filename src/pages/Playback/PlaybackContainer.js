@@ -17,6 +17,7 @@ const keys = new KeyEvents()
 const mapStateToProps = (state) => ({
   playerState: state.player.playerState,
   currentTime: state.player.currentTime,
+  currentUrl: state.player.currentUrl,
   playable: getPlayable(state),
   trackInstance: getTrackInstance(state),
   enclosing: getPlayableNode(state),
@@ -70,10 +71,10 @@ class PlaybackContainer extends Component {
   }
 
   handleTrackPlayback () {
-    const {trackInstance, playerCurrentSrc} = this.props
+    const {trackInstance, playerCurrentSrc, currentUrl} = this.props
     if (trackInstance) {
       const src = gt(trackInstance, 'trackDefinitionData.audio.uri', null)
-      if (src) playerCurrentSrc(src)
+      if (src && currentUrl !== src) playerCurrentSrc(src)
     }
   }
 
