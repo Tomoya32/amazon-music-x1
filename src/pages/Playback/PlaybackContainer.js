@@ -15,6 +15,7 @@ const debug = console.info
 const keys = new KeyEvents()
 
 const mapStateToProps = (state) => ({
+  duration: state.player.duration,
   playerState: state.player.playerState,
   currentTime: state.player.currentTime,
   currentUrl: state.player.currentUrl,
@@ -36,11 +37,13 @@ class PlaybackContainer extends Component {
   }
 
   seek(direction) {
-    const { currentTime, setCurrentTime, playerState, setPlayerState} = this.props
-    const skiperTime = currentTime + 1*direction;
+    const { currentTime, setCurrentTime, playerState, setPlayerState, duration } = this.props
+    let skiperTime = currentTime + 1*direction;
+    skiperTime = (skiperTime > duration) ? duration : (skiperTime < 0 ? 0.001 : skiperTime)
     if (playerState === 'playing') setPlayerState('paused')
     clearTimeout(this.resumeIn)
-    this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 300) // Switch this to use internval
+    // minimum delay = 500ms to avoid player.play() on first onLeft
+    this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 500)
     setCurrentTime(skiperTime)
   }
 
