@@ -5,7 +5,7 @@ import { replace } from 'connected-react-router'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import { back } from '../../store/modules/nav'
 import Playback from './Playback'
-import { playerCurrentSrc, updatePlayTime, setPlayerState } from '../../store/modules/player'
+import { playerCurrentSrc, setCurrentTime, setPlayerState } from '../../store/modules/player'
 import gt from 'lodash/get'
 import {getPlayable, getTrackInstance, getPlayableNode, getTrackPointers} from './selectors'
 import PageLoading from '../../components/PageLoading'
@@ -24,7 +24,7 @@ const mapStateToProps = (state) => ({
   trackPointers : getTrackPointers(state)
 })
 
-const mapDispatchToProps = {loadTrack, replace, back, playerCurrentSrc, updatePlayTime, setPlayerState}
+const mapDispatchToProps = {loadTrack, replace, back, playerCurrentSrc, setCurrentTime, setPlayerState}
 
 class PlaybackContainer extends Component {
   constructor(s) {
@@ -36,12 +36,12 @@ class PlaybackContainer extends Component {
   }
 
   seek(direction) {
-    const { currentTime, updatePlayTime, playerState, setPlayerState} = this.props
+    const { currentTime, setCurrentTime, playerState, setPlayerState} = this.props
     const skiperTime = currentTime + 1*direction;
     if (playerState === 'playing') setPlayerState('paused')
     clearTimeout(this.resumeIn)
     this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 300) // Switch this to use internval
-    updatePlayTime(skiperTime)
+    setCurrentTime(skiperTime)
   }
 
   componentDidMount () {
