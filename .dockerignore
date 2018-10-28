@@ -1,0 +1,6 @@
+node_modules
+npm-debug.log
+.cache
+.pm2
+.yarn
+logs
