@@ -5,3 +5,5 @@ npm-debug.log
 .yarn
 logs
 package-lock.json
+package.lock
+yarn.lock
