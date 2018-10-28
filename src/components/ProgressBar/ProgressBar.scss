@@ -16,6 +16,9 @@
           height: 100%;
           background: $dark-sky-blue;
       }
+      .focused {
+        background: $focused-bar;
+      }
   }
 
   .playTimeContainer {
@@ -24,6 +27,9 @@
     position: relative;
     width: $screen-width;
     height: 50px;
+    .focused {
+      border-right: 1px solid $focused-bar !important;
+    }
     .innerPlayTimeContainer {
       position: absolute; top:0;left:0;
       border-right: 1px solid $dark-sky-blue;

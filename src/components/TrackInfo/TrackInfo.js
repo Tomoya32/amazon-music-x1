@@ -10,7 +10,7 @@ const NextTrackButton = Buttonizer(({focused, children}) => (
   <div className={cx('NextButton', {focused})}>{children}</div>
 ))
 
-const TrackInfo = ({title, artist, album, image, onNext, onShuffleNext, isFocused, changeFocus}) => (
+const TrackInfo = ({title, artist, album, image, onNext, onShuffleNext, isFocused, changeFocus, onDown}) => (
   <div className='TrackInfo'>
     {image && (<img src={image.uri} alt={title} />)}
     <div className={'TrackDeets'}>
@@ -23,7 +23,7 @@ const TrackInfo = ({title, artist, album, image, onNext, onShuffleNext, isFocuse
         <NextTrackButton menuid="shuffleNextTrack" onEnter={onNext} focused={isFocused('shuffleNextTrack')} onUp={changeFocus('nextTrack')}
         onDown={changeFocus('playback:playercontrols')}>Shuffle Next</NextTrackButton>
         <PlayerControls menuid='playback:playercontrols' focused={isFocused('playback:playercontrols')}
-          defaultFocus={'playback:playercontrols:pause'} onFarRight={changeFocus('shuffleNextTrack')}/>
+          defaultFocus={'playback:playercontrols:pause'} onFarRight={changeFocus('shuffleNextTrack')} onDown={onDown}/>
       </div>
     </div>
   </div>

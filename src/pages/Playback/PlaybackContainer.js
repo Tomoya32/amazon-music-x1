@@ -5,7 +5,7 @@ import { replace } from 'connected-react-router'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import { back } from '../../store/modules/nav'
 import Playback from './Playback'
-import { playerCurrentSrc } from '../../store/modules/player'
+import { playerCurrentSrc, setCurrentTime, setPlayerState } from '../../store/modules/player'
 import gt from 'lodash/get'
 import {getPlayable, getTrackInstance, getPlayableNode, getTrackPointers} from './selectors'
 import PageLoading from '../../components/PageLoading'
@@ -15,6 +15,9 @@ const debug = console.info
 const keys = new KeyEvents()
 
 const mapStateToProps = (state) => ({
+  duration: state.player.duration,
+  playerState: state.player.playerState,
+  currentTime: state.player.currentTime,
   currentUrl: state.player.currentUrl,
   playable: getPlayable(state),
   trackInstance: getTrackInstance(state),
@@ -22,7 +25,7 @@ const mapStateToProps = (state) => ({
   trackPointers : getTrackPointers(state)
 })
 
-const mapDispatchToProps = {loadTrack, replace, back, playerCurrentSrc}
+const mapDispatchToProps = {loadTrack, replace, back, playerCurrentSrc, setCurrentTime, setPlayerState}
 
 class PlaybackContainer extends Component {
   constructor(s) {
@@ -33,6 +36,17 @@ class PlaybackContainer extends Component {
     }
   }
 
+  seek(direction) {
+    const { currentTime, setCurrentTime, playerState, setPlayerState, duration } = this.props
+    let skiperTime = currentTime + 1*direction;
+    skiperTime = (skiperTime > duration) ? duration : (skiperTime < 0 ? 0.001 : skiperTime)
+    if (playerState === 'playing') setPlayerState('paused')
+    clearTimeout(this.resumeIn)
+    // minimum delay = 500ms to avoid player.play() on first onLeft
+    this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 500)
+    setCurrentTime(skiperTime)
+  }
+
   componentDidMount () {
     this._unsubBack = keys.subscribeTo('Back', () => this.handleBack())
     debug('Mounted Playback Container')
@@ -41,8 +55,10 @@ class PlaybackContainer extends Component {
     this.setState({focused: true})
   }
 
-  componentDidUpdate () {
-    this.handleTrackPlayback()
+  componentDidUpdate (prevProps) {
+    const src = gt(prevProps.trackInstance, 'trackDefinitionData.audio.uri', null)
+    const newSrc = gt(this.props.trackInstance, 'trackDefinitionData.audio.uri', null)
+    if (src !== newSrc) this.handleTrackPlayback()
   }
 
   componentWillUnmount () {
@@ -82,6 +98,7 @@ class PlaybackContainer extends Component {
                 focused={this.state.focused}
                 menuid={'playback-containeer'}
                 onFocusItem='trackInfo'
+                seek={this.seek.bind(this)}
                 onShuffleNext={this.handleTransition('shufffleTrackPointer')}
                 onNext={this.handleTransition('nextTrackPointer')}/>)
     } else {
