@@ -5,6 +5,7 @@
   "dependencies": {
     "add-zero": "^1.0.0",
     "axios": "^0.18.0",
+    "eslint": "5.6.0",
     "classnames": "^2.2.6",
     "connected-react-router": "^4.4.1",
     "debug": "^4.0.1",
