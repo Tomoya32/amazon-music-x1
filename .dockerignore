@@ -4,3 +4,4 @@ npm-debug.log
 .pm2
 .yarn
 logs
+package-lock.json
