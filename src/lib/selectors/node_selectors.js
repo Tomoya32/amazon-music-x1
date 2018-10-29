@@ -139,7 +139,7 @@ export const getChildItemDescriptionSelector = createSelector(
 )
 
 const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
-  if (!result || !navigationNodeDescriptions) return console.log('=------oosssss--------', result)
+  if (!result || !navigationNodeDescriptions) return
   let currentNavigationNode = hash || result
   let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
   desc.summaryData = navigationNodeSummaries[noha(desc.summary)]

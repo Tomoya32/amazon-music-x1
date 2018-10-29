@@ -87,6 +87,18 @@ $control-width: 40px * $num-controls;
     .x-off {
       @include sprite('x-off.png')
     }
+    .skip-on {
+      @include sprite('skip_On.svg')
+    }
+    .skip-off {
+      @include sprite('skip_Off.svg')
+    }
+    .previous-on {
+      @include sprite('previous_On.svg')
+    }
+    .previous-off {
+      @include sprite('previous_Off.svg')
+    }
     .tooltip {
       background-color: white;
       color: black;

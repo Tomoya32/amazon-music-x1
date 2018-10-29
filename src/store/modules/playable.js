@@ -11,7 +11,7 @@ export function setPlayable(node, chunk, indexWithinChunk) {
 }
 
 const initialState = {
-  node: null, chunk: null, index: 0
+  node: null, chunk: null, index: 0, indexWithinChunk: 0
 }
 
 

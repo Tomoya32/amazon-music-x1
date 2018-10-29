@@ -6,11 +6,19 @@ import cx from 'classnames'
 import PlayerControls from '../PlayerControls'
 
 
-const NextTrackButton = Buttonizer(({focused, children}) => (
-  <div className={cx('NextButton', {focused})}>{children}</div>
-))
+const NextTrackButton = Buttonizer(({focused, shuffle, children}) => {
+  if (shuffle)
+    return(
+      <div className={cx('NextButton', {focused}, {shuffle})}>{children}</div>
+    ) 
+  else 
+      return(
+        <div className={cx('NextButton', {focused})}>{children}</div>
+      )
+  }
+)
 
-const TrackInfo = ({title, artist, album, image, onNext, onShuffleNext, isFocused, changeFocus, onDown}) => (
+const TrackInfo = ({ title, artist, album, image, shuffle, onNext, onShuffleNext, isFocused, changeFocus, onDown}) => (
   <div className='TrackInfo'>
     {image && (<img src={image.uri} alt={title} />)}
     <div className={'TrackDeets'}>
@@ -20,9 +28,9 @@ const TrackInfo = ({title, artist, album, image, onNext, onShuffleNext, isFocuse
         {album && album.name && (<h3>{album.name}</h3>)}
         <NextTrackButton menuid="nextTrack" onEnter={onNext} focused={isFocused('nextTrack')} onDown={changeFocus('shuffleNextTrack')}>Next</NextTrackButton>
         <br />
-        <NextTrackButton menuid="shuffleNextTrack" onEnter={onNext} focused={isFocused('shuffleNextTrack')} onUp={changeFocus('nextTrack')}
+        <NextTrackButton menuid="shuffleNextTrack" onEnter={onShuffleNext} shuffle={shuffle} focused={isFocused('shuffleNextTrack')} onUp={changeFocus('nextTrack')}
         onDown={changeFocus('playback:playercontrols')}>Shuffle Next</NextTrackButton>
-        <PlayerControls menuid='playback:playercontrols' focused={isFocused('playback:playercontrols')}
+        <PlayerControls menuid='playback:playercontrols' shuffle={shuffle} focused={isFocused('playback:playercontrols')}
           defaultFocus={'playback:playercontrols:pause'} onFarRight={changeFocus('shuffleNextTrack')} onDown={onDown}/>
       </div>
     </div>

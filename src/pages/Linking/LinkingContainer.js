@@ -16,7 +16,6 @@ class LinkingContainer extends Component {
     cancelPoller()
   }
   render () {
-    console.log("OK");
     const {verification_uri, user_code} = this.props
     return (
       <Linking user_code={user_code} verification_uri={verification_uri} />

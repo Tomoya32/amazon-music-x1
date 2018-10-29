@@ -16,8 +16,9 @@ class PlayerControls extends Component {
       changeFocus,
       playerControlsState,
       togglePlayState,
-      skip,
+      forwardSkip,
       restart,
+      backwardSkip,
       onUp,
       onDown,
       onLeft,
@@ -44,6 +45,22 @@ class PlayerControls extends Component {
     return (
       <div className={style.PlayerControls}>
         <div className='controls'>
+          <Button mid={getMenuId('previous')}
+            className={cx('regularButton', {
+              'previous-off': !isFocused(getMenuId('previous')),
+              'previous-on': isFocused(getMenuId('previous'))
+            })}
+            focused={isFocused(getMenuId('previous'))}
+            disabled={false}
+            onClick={backwardSkip}
+            onFocus={() => this.displayToolTip('previous')}
+            onBlur={() => this.hideToolTip('previous')}
+            onUp={onFarRight}
+            onDown={onDown}
+            onLeft={onLeft}
+            onRight={changeFocus(getMenuId('restart'))}>
+            &nbsp;
+          </Button>
           <Button mid={getMenuId('restart')}
             className={cx('regularButton', {
               'back15-off': !isFocused(getMenuId('restart')),
@@ -56,7 +73,7 @@ class PlayerControls extends Component {
             onBlur={() => this.hideToolTip('restart')}
             onUp={onFarRight}
             onDown={onDown}
-            onLeft={onLeft}
+            onLeft={changeFocus(getMenuId('previous'))}
             onRight={changeFocus(getMenuId('pause'))}>
             &nbsp;
           </Button>
@@ -66,10 +83,25 @@ class PlayerControls extends Component {
             onFocus={() => this.displayToolTip('pause')}
             onBlur={() => this.hideToolTip('pause')}
             onLeft={changeFocus(getMenuId('restart'))}
-            onRight={onRight}
+            onRight={changeFocus(getMenuId('skip'))}
             onDown={onDown}
             onUp={onFarRight}
             onClick={togglePlayState}>
+            &nbsp;
+          </Button>
+          <Button mid={getMenuId('skip')}
+            className={cx('regularButton', {
+              'skip-off': !isFocused(getMenuId('skip')),
+              'skip-on': isFocused(getMenuId('skip'))
+            })}
+            focused={isFocused(getMenuId('skip'))}
+            onFocus={() => this.displayToolTip('skip')}
+            onBlur={() => this.hideToolTip('skip')}
+            onLeft={changeFocus(getMenuId('pause'))}
+            onRight={onRight}
+            onDown={onDown}
+            onUp={onFarRight}
+            onClick={forwardSkip}>
             &nbsp;
           </Button>
         </div>

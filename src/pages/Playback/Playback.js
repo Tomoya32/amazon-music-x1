@@ -9,9 +9,9 @@ const ScrubbableProgressBar = Buttonizer(({focused}) => (
   <ProgressBar focused={focused}/>
 ))
 
-const Playback = ({isFocused, menuid, title, artist, album, image, onNext, onShuffleNext, changeFocus, seek, ...props}) => (
+const Playback = ({isFocused, menuid, title, artist, album, shuffle, image, onNext, onShuffleNext, changeFocus, seek, ...props}) => (
   <div className='Playback Page' style={image ? {backgroundImage: `url(${image.uri})`, backgroundSize: 'cover' } : { backgroundSize: 'cover' }}>
-    <TrackInfo title={title} artist={artist} album={album} image={image} onNext={onNext} onShuffleNext={onShuffleNext} focused={isFocused('trackInfo')} menuid='track-info-button' onFocusItem={'playback:playercontrols'} onDown={changeFocus('progressbar')}/>
+    <TrackInfo title={title} artist={artist} shuffle={shuffle} album={album} image={image} onNext={onNext} onShuffleNext={onShuffleNext} focused={isFocused('trackInfo')} menuid='track-info-button' onFocusItem={'playback:playercontrols'} onDown={changeFocus('progressbar')}/>
     <div style={{display: 'block'}}>
       <ScrubbableProgressBar
         onLeft={() => { seek(-1) }}

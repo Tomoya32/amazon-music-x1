@@ -50,9 +50,6 @@ class SearchResult extends Component {
 
   render() {
     const { focused, isFocused, changeFocus } = this.props;
-
-    console.log('--catalog--', this.props.catalog);
-
     if (this.props.catalog) {
       return (
         

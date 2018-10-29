@@ -5,9 +5,12 @@ import { replace } from 'connected-react-router'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import { back } from '../../store/modules/nav'
 import Playback from './Playback'
+
 import { playerCurrentSrc, setCurrentTime, setPlayerState } from '../../store/modules/player'
+import { setPlayable } from '../../store/modules/playable'
+
 import gt from 'lodash/get'
-import {getPlayable, getTrackInstance, getPlayableNode, getTrackPointers} from './selectors'
+import { getPlayable, getTrackInstance, getPlayableNode, getTrackPointers, getTrackContainerChunkDescription} from './selectors'
 import PageLoading from '../../components/PageLoading'
 
 const debug = console.info
@@ -22,17 +25,28 @@ const mapStateToProps = (state) => ({
   playable: getPlayable(state),
   trackInstance: getTrackInstance(state),
   enclosing: getPlayableNode(state),
-  trackPointers : getTrackPointers(state)
+  trackPointers : getTrackPointers(state),
+  location: state.router.location,
+  chunk: getTrackContainerChunkDescription(state),
 })
 
-const mapDispatchToProps = {loadTrack, replace, back, playerCurrentSrc, setCurrentTime, setPlayerState}
+const mapDispatchToProps = {
+  loadTrack,
+  replace,
+  back,
+  playerCurrentSrc,
+  setPlayable,
+  setCurrentTime,
+  setPlayerState
+}
 
 class PlaybackContainer extends Component {
   constructor(s) {
     super(s)
     this._mounted = false
     this.state = {
-      focused: true
+      focused: true,
+      shuffle: false
     }
   }
 
@@ -91,16 +105,20 @@ class PlaybackContainer extends Component {
     }
   }
 
+  shuffleTrackPlayback() {
+    return this.setState({ shuffle: !this.state.shuffle })
+  }
 
   render () {
     if (this.props.trackInstance && this.props.trackInstance.trackDefinitionData) {
       return (<Playback {...this.props.trackInstance.trackDefinitionData}
-                focused={this.state.focused}
-                menuid={'playback-containeer'}
-                onFocusItem='trackInfo'
-                seek={this.seek.bind(this)}
-                onShuffleNext={this.handleTransition('shufffleTrackPointer')}
-                onNext={this.handleTransition('nextTrackPointer')}/>)
+        focused={this.state.focused}
+        menuid={'playback-containeer'}
+        onFocusItem='trackInfo'
+        seek={this.seek.bind(this)}
+        onShuffleNext={() => this.shuffleTrackPlayback()}
+        shuffle = {this.state.shuffle}
+        onNext={this.handleTransition('nextTrackPointer')}/>)
     } else {
       return (<PageLoading />)
     }
