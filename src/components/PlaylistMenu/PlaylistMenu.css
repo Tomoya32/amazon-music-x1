@@ -1,28 +1,5 @@
 .PlaylistMenu {
-    width: 100%;
+    width: 766px;
     height: 100000px;
-}
-.PlaylistMenu > div {
-    display: block;
-    height: 50px; width: 100%;
-    position: relative;
-    margin-bottomn: 10px;
-}
-.PlaylistMenu > div.focused {
-    background: #68eaff;
-    color: #252d41;
-}
-.PlaylistMenu > div > img {
-    position: absolute;
-    top: 5px; left: 40px;
-    height: 40px; width: 40px;
-}
-.PlaylistMenu > div > h2 {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    position: absolute;
-    top: 15px; left: 95px;
-    width: 80%;
-    margin: 0;
+    margin: 112px 0 0 40px;
 }

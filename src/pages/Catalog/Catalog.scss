@@ -1,0 +1,27 @@
+:local(.Catalog) {
+    margin: 0 60px;
+    display: flex;
+    width: 1170px;    
+
+    & > .info {
+        display: flex;
+        flex-direction: column;
+        width: 450px;
+        margin: 45px 0;
+
+        & > .title {
+            font-family: HelveticaNeue;
+            font-size: 32px;
+            color: #ffffff;
+            margin-bottom: 68px;
+        }
+
+        & > .image {
+            width: 350px;
+            min-width: 350px;        
+            height: 350px;
+            min-height: 350px;        
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.5);
+        }
+    }
+}

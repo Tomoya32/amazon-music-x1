@@ -1,9 +1,14 @@
 import React from 'react'
 import cx from 'classnames'
-const PlaylistMenuItem = ({item: {itemLabel, image}, focused}) => (
-  <div className={cx({focused})}>
-    {image && <img src={image.uri} height={50} width={50} alt={itemLabel}/> }
-    <h2>{itemLabel}</h2>
+import css from './PlaylistMenuItem.scss'
+
+const PlaylistMenuItem = ({item: {itemLabel, image, subtitle}, focused}) => (
+  <div className={cx(css.PlaylistMenuItem, {focused})}>
+    {image && <img src={image.uri} height={60} width={60} alt={itemLabel} className='image' /> }
+    <div className='info'>
+      <label className='title'>{itemLabel}</label>
+      <label className='subtitle'>{subtitle}</label>
+    </div>
   </div>
 )
 
