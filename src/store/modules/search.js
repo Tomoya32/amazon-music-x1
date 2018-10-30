@@ -3,11 +3,17 @@ export const AMZN_ADD_LETTER_TO_SEARCHTERM = 'search/AMZN_ADD_LETTER_TO_SEARCHTE
 export const AMZN_REMOVE_LETTER_FROM_SEARCHTERM = 'search/AMZN_REMOVE_LETTER_FROM_SEARCHTERM'
 export const AMZN_SET_SEARCHTERM = 'search/AMZN_SET_SEARCHTERM'
 export const AMZN_RESET_SEARCH= 'search/AMZN_RESET_SEARCH'
+export const LOAD_SEARCH_NODE = 'search/LOAD_SEARCH_NODE'
 
 export const resetSearch = () => {
   return {type: AMZN_RESET_SEARCH}
 }
-
+export function loadSearchNode(path) {
+  return {
+    type: LOAD_SEARCH_NODE,
+    path,
+  }
+}
 export const searchResults = (payload) => {
   return {
     type: AMZN_SEARCH_RESULTS,
