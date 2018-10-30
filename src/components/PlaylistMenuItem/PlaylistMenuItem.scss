@@ -1,0 +1,58 @@
+:local(.PlaylistMenuItem) {
+  // width: 766px;
+  height: 90px;
+  display: flex;
+  padding: 15px 30px;
+  box-sizing: border-box;
+
+  & > .image {
+    width: 60px;
+    height: 60px;
+    margin-right: 25px;
+  }
+
+  & > .info {
+    display: flex;
+    flex-direction: column;
+
+    & > .title {
+      opacity: 0.9;
+      font-family: 'HelveticaNeue';
+      font-size: 28px;
+      color: #ffffff;
+      max-width: 567px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & > .subtitle {
+      opacity: 0.6;
+      font-family: 'HelveticaNeue';
+      font-size: 20px;
+      color: #ffffff;
+      max-width: 567px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }  
+  }
+
+  &.focused {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+    background-image: linear-gradient(to left, #61beeb, #3f86c3);
+    background-color: red;
+
+    & > .info {
+
+      & > .title {
+        color: #000000;
+      }
+
+      & > .subtitle {
+        opacity: 0.55;
+        color: #000000;
+      }  
+    }
+  }
+}

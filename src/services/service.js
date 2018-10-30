@@ -33,6 +33,11 @@ const API = {
     return API.request(path, 'get')
   },
 
+  sendThumbs: (path = '/', body) => {
+    return client.post(path, body)
+    .then(response => response)
+    .catch(error => error)
+  },
 
   setToken: (token) => {
     console.info('Setting access token  to ', token)

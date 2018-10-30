@@ -18,6 +18,7 @@ const debug = console.info
 const keys = new KeyEvents()
 
 const mapStateToProps = (state) => ({
+  modalMessage: state.thumbs.message,
   duration: state.player.duration,
   playerState: state.player.playerState,
   currentTime: state.player.currentTime,
@@ -110,8 +111,11 @@ class PlaybackContainer extends Component {
   }
 
   render () {
+    const { modalMessage } = this.props;
     if (this.props.trackInstance && this.props.trackInstance.trackDefinitionData) {
       return (<Playback {...this.props.trackInstance.trackDefinitionData}
+        showModal={(modalMessage && modalMessage.length)}
+        modalMessage={modalMessage}
         focused={this.state.focused}
         menuid={'playback-containeer'}
         onFocusItem='trackInfo'

@@ -23,7 +23,7 @@
   padding: 5px;
 }
 
-.ReactModal__Content {
+.modalContent {
   opacity: 0.90;
   position:fixed !important;
   top: 350px !important;

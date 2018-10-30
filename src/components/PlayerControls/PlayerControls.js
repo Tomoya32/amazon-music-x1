@@ -12,6 +12,9 @@ class PlayerControls extends Component {
 
   render () {
     const {
+      giveThumbs,
+      showThumbs,
+      thumbRating,
       isFocused,
       changeFocus,
       playerControlsState,
@@ -26,13 +29,26 @@ class PlayerControls extends Component {
       onFarRight,
       toggleInfo,
       infoShowing,
-      recommendation,
-      thumbedDown,
-      thumbedUp,
       thumbsDown,
       thumbsUp
     } = this.props
     const {getMenuId} = this.context
+
+    const thumbedDown = (thumbRating === 'thumbs_down');
+    const classForThumbsDown = cx('regularButton', 'thumbs', {
+      'thumbsDown-on': (isFocused(getMenuId('thumbsDown')) && !thumbedDown),
+      'thumbsDown-off': (!isFocused(getMenuId('thumbsDown')) && !thumbedDown),
+      'thumbsDown-set-on': (isFocused(getMenuId('thumbsDown')) && thumbedDown),
+      'thumbsDown-set-off': (!isFocused(getMenuId('thumbsDown')) && thumbedDown)
+    })
+
+    const thumbedUp = (thumbRating === 'thumbs_up');
+    const classForThumbsUp = cx('regularButton', 'thumbs', {
+      'thumbsUp-on': (isFocused(getMenuId('thumbsUp')) && !thumbedUp),
+      'thumbsUp-off': (!isFocused(getMenuId('thumbsUp')) && !thumbedUp),
+      'thumbsUp-set-on': (isFocused(getMenuId('thumbsUp')) && thumbedUp),
+      'thumbsUp-set-off': (!isFocused(getMenuId('thumbsUp')) && thumbedUp)
+    })
 
     const playPauseIconClass = cx({
       'pause-on': playerControlsState !== 'paused' && isFocused(getMenuId('pause')),
@@ -45,6 +61,16 @@ class PlayerControls extends Component {
     return (
       <div className={style.PlayerControls}>
         <div className='controls'>
+          {showThumbs && <Button mid={getMenuId('thumbsDown')}
+            focused={isFocused(getMenuId('thumbsDown'))}
+            onClick={() => { giveThumbs('thumbs_down') }}
+            onDown={onDown}
+            onFocus={() => this.displayToolTip('thumbsDown')}
+            onBlur={() => this.hideToolTip('thumbsDown')}
+            className={classForThumbsDown}
+            onLeft={onLeft} onRight={changeFocus(getMenuId('previous'))}>
+            &nbsp;
+          </Button>}
           <Button mid={getMenuId('previous')}
             className={cx('regularButton', {
               'previous-off': !isFocused(getMenuId('previous')),
@@ -55,25 +81,8 @@ class PlayerControls extends Component {
             onClick={backwardSkip}
             onFocus={() => this.displayToolTip('previous')}
             onBlur={() => this.hideToolTip('previous')}
-            onUp={onFarRight}
             onDown={onDown}
-            onLeft={onLeft}
-            onRight={changeFocus(getMenuId('restart'))}>
-            &nbsp;
-          </Button>
-          <Button mid={getMenuId('restart')}
-            className={cx('regularButton', {
-              'back15-off': !isFocused(getMenuId('restart')),
-              'back15-on': isFocused(getMenuId('restart'))
-            })}
-            focused={isFocused(getMenuId('restart'))}
-            disabled={false}
-            onClick={restart}
-            onFocus={() => this.displayToolTip('restart')}
-            onBlur={() => this.hideToolTip('restart')}
-            onUp={onFarRight}
-            onDown={onDown}
-            onLeft={changeFocus(getMenuId('previous'))}
+            onLeft={(showThumbs) ? changeFocus(getMenuId('thumbsDown')) : onLeft}
             onRight={changeFocus(getMenuId('pause'))}>
             &nbsp;
           </Button>
@@ -82,10 +91,9 @@ class PlayerControls extends Component {
             focused={isFocused(getMenuId('pause'))}
             onFocus={() => this.displayToolTip('pause')}
             onBlur={() => this.hideToolTip('pause')}
-            onLeft={changeFocus(getMenuId('restart'))}
+            onLeft={changeFocus(getMenuId('previous'))}
             onRight={changeFocus(getMenuId('skip'))}
             onDown={onDown}
-            onUp={onFarRight}
             onClick={togglePlayState}>
             &nbsp;
           </Button>
@@ -98,12 +106,21 @@ class PlayerControls extends Component {
             onFocus={() => this.displayToolTip('skip')}
             onBlur={() => this.hideToolTip('skip')}
             onLeft={changeFocus(getMenuId('pause'))}
-            onRight={onRight}
+            onRight={(showThumbs) ? changeFocus(getMenuId('thumbsUp')) : onRight}
             onDown={onDown}
-            onUp={onFarRight}
             onClick={forwardSkip}>
             &nbsp;
           </Button>
+          {showThumbs && <Button mid={getMenuId('thumbsUp')}
+            focused={isFocused(getMenuId('thumbsUp'))}
+            onClick={() => { giveThumbs('thumbs_up') }}
+            onDown={onDown}
+            onFocus={() => this.displayToolTip('thumbsUp')}
+            onBlur={() => this.hideToolTip('thumbsUp')}
+            className={classForThumbsUp}
+            onLeft={changeFocus(getMenuId('skip'))} onRight={onRight}>
+            &nbsp;
+          </Button>}
         </div>
       </div>
     )

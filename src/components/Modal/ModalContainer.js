@@ -42,6 +42,7 @@ class Modal extends Component {
     if ( errorMsg && errorMsg.generalErrorReports && errorMsg.generalErrorReports._obj0 ) {
       return (
         <ReactModal
+          className='modalContent'
           isOpen={showModal}
           contentLabel="Minimal Modal Example">
           <div className="music-modal">

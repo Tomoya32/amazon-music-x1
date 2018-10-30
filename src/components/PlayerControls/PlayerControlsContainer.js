@@ -2,13 +2,12 @@ import React, { Component } from 'react'
 import PlayerControls from './PlayerControls'
 import Space from '../../lib/reactv-redux/SpaceRedux'
 import gt from 'lodash/get'
-import { random, indexOf } from 'lodash'
+import { random } from 'lodash'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
 import { mergeChunkWithPathAndQuery, getLocation } from '../../lib/utils'
-import querystring from 'querystring'
 
 import { setCurrentTime, setPlayerState, updateInitOnUpdate } from '../../store/modules/player'
 import { getTrackContainerChunkDescription } from '../../pages/Playback/selectors'
@@ -19,6 +18,8 @@ import $badger from '../../lib/badger'
 // import { toggleInfo } from '../../store/modules/player'
 import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import debugWrapper from 'debug'
+import { getRatingURI } from '../../lib/utils'
+import { sendThumbs } from '../../store/modules/thumbs'
 
 const Keys = new KeyEvents()
 
@@ -26,13 +27,14 @@ const Keys = new KeyEvents()
 const debug = console.info
 
 const mapStateToProps = (state, ownProps) => ({
+  shouldSkip: state.thumbs.shouldSkip,
   playerControlsState: state.player.playerControlsState,
-  playerTime: state.player.currentTime,
+  currentTime: state.player.currentTime,
   currentPath: state.router.location ? state.router.location.pathname : '',
   location: state.router.location,
   playable: state.playable,
   chunk: getTrackContainerChunkDescription(state),
-  duration: gt(state, 'npr.recommendation.attributes.duration', state.player.duration || 0),
+  duration: state.player.duration,
   music: state.music,
   // infoShowing: state.amazon.showInfo,
   // skippable: gt(state, 'amazon.playable.attributes.skippable', false),
@@ -46,14 +48,32 @@ const mapDispatchToProps = (dispatch) => {
     setPlayerState,
     setPlayable,
     push, replace,
-    // toggleInfo,
-    // thumbsDown, // stations only
-    // thumbsUp // stations only
+    sendThumbs
   }, dispatch)
   return creators
 }
 
 class PlayerControlsContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.initialState = {
+      thumbRating: 'neutral',
+      deriveState: true,
+    }
+    this.state = this.initialState;
+  }
+
+  static getDerivedStateFromProps (nextProps, prevState) {
+    if (prevState.deriveState && nextProps.trackRating && prevState.thumbRating !== nextProps.trackRating.thumbRating) {
+      return { thumbRating: nextProps.trackRating.thumbRating }
+    }
+    return null
+  }
+
+  reset() {
+    this.setState(this.initialState);
+  }
+
   componentDidMount () {
     this.playevent = Keys.subscribeTo('Play', () => {
       this.togglePlayState()
@@ -64,16 +84,38 @@ class PlayerControlsContainer extends Component {
     this.playevent.unsubscribe()
   }
 
-  // TODO: buttons
-  /*
-      thumbsDown
-      **restart**
-      previous
-      **play/pause**
-      **skip**
-      shuffle
-      thumbsUp
-  */
+  componentDidUpdate (prevProps) {
+    const { shouldSkip, duration, currentTime, playerControlsState, playable, chunk } = this.props;
+    if (!prevProps.shouldSkip && shouldSkip) this.forwardSkip()
+
+    const lastTrackChunk = (chunk) ? chunk['trackInstances'].length - 1 : null
+    const indexTrackChunk = (playable) ? parseInt(playable.indexWithinChunk) : null
+    if (duration > 0 && Math.floor(currentTime) > duration - 2 &&
+    playerControlsState === 'playing' &&
+    prevProps.playable.indexWithinChunk == playable.indexWithinChunk &&
+    lastTrackChunk !== indexTrackChunk) {
+      /* This is a hack to skip song forward onEnded, since <video onEnded does not work. */
+      this.forwardSkip()
+    }
+  }
+
+  giveThumbs = (feedback) => {
+    if (this.props.currentTime > 0) {
+      $badger.userActionMetricsHandler(`PlayerControlsThumbs`, {feedback})
+      const { currentTime, trackRating: { ratingURI }, currentPath, sendThumbs } = this.props;
+      const clockTime = new Date();
+      const trackRatingRequest = {}
+      const thumbRating = (this.state.thumbRating !== feedback) ? feedback : 'neutral';
+      trackRatingRequest.URI = getRatingURI(ratingURI, currentPath);
+      trackRatingRequest.body = {
+        thumbRating: thumbRating,
+        trackPosition: Math.floor(currentTime * 1000),
+        wallClockTime: clockTime.toISOString()
+      }
+      sendThumbs(trackRatingRequest)
+      this.setState({ thumbRating: thumbRating, deriveState: false })
+    }
+  }
 
   restart () {
     const { setCurrentTime } = this.props
@@ -139,25 +181,32 @@ class PlayerControlsContainer extends Component {
   }
 
   backwardSkip () {
-    const { playerTime } = this.props
-    if (playerTime > 2) this.restart()
+    this.reset()
+    const { currentTime } = this.props
+    if (currentTime > 2) this.restart()
     else this.handleTrackPlayback(0)
   }
 
   forwardSkip () {
-    const { playerTime } = this.props
+    this.reset()
+    const { currentTime } = this.props
     this.handleTrackPlayback(1)
-    $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, { playerTime })
+    $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, { currentTime })
   }
 
   render () {
+    const { trackRating } = this.props;
+    const showThumbs = ((typeof trackRating === 'object') && (trackRating !== null));
     return (
       <PlayerControls
+        giveThumbs={this.giveThumbs.bind(this)}
         restart={this.restart.bind(this)}
         pause={this.pause.bind(this)}
         play={this.play.bind(this)}
         backwardSkip={this.backwardSkip.bind(this)}
         togglePlayState={this.togglePlayState.bind(this)}
+        showThumbs={showThumbs}
+        thumbRating={this.state.thumbRating}
         forwardSkip={this.forwardSkip.bind(this)}
         {...this.props}
       />
