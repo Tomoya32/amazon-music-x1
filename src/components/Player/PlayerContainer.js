@@ -90,7 +90,6 @@ class PlayerWrapper extends Component {
     if (!this.props.playerUrl) {
       return null
     } else {
-      debug('playing rec....')
       return <Player {...this.props} disableTimeUpdates={false} disableInitOnUpdate={this.disableInitOnUpdate}
         errorHandler={this.errorHandler.bind(this)} />
     }

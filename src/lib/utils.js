@@ -127,7 +127,13 @@ export function proxyMediaUrl (src) {
   return (process.env.NPR_ONE_PROXY_MEDIA_URL) ? `${process.env.NPR_ONE_PROXY_MEDIA_URL}?url=${src}` : src
 }
 
-
+export function getRatingURI(ratingURI, enclosingPath = '', feedback) {
+  const path = enclosingPath.replace(/^\/playback\/?/,'');
+  const snippets = path.match(/[a-zA-Z0-9]+/g);
+  let parsePath = path;
+  if (snippets) parsePath = mergePath.apply(null, snippets.slice(0,3))
+  return mergePath(parsePath, ratingURI);
+}
 
 export function handleItemSelection(selected, enclosingPath = '') {
   if (!selected.navigationNodeSummary && selected.playable) {

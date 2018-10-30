@@ -14,8 +14,7 @@ const debug = debugWrapper('app:player')
 export default class Player extends Component {
 
   static defaultProps = {
-    disableTimeUpdates: false,
-    disableOnEnded: true
+    disableTimeUpdates: false
   }
 
   componentDidMount () {
@@ -141,8 +140,6 @@ export default class Player extends Component {
         }
       }
       if (time > 0) {
-        console.log('reached this with time: ', time)
-        console.log('currentTime: ',this.props.currentTime)
         this._lastTimeUpdate = time
         this.props.setCurrentTime(time)
       }

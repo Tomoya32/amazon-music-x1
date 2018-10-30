@@ -11,8 +11,10 @@ import errorModal from './errormodal'
 import {default as nav} from './nav'
 import { ReactTVReduxReducer, MenusRedux} from '../../lib/reactv-redux'
 import modal from './modal'
+import thumbs from './thumbs'
 
 export default combineReducers({
+  thumbs,
   linking,
   auth,
   errorModal,

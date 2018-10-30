@@ -1,6 +1,9 @@
 $time-width: 300px;
 $num-controls: 3;
 $control-width: 40px * $num-controls;
+$highlight: #4299d5;
+$blank: #ffffff;
+$saved: #68eaff;
 @import '../../styles/resize';
 //@import '../../styles/spritesmith-generated/sprite.scss';
 @mixin sprite($sprite) {
@@ -19,7 +22,7 @@ $control-width: 40px * $num-controls;
     display: inline-block;
     margin: 0 auto;
     height: 115px;
-    width: 500px;
+    width: 600px;
     text-align: center;
     position: relative;
     > div {
@@ -69,17 +72,40 @@ $control-width: 40px * $num-controls;
     .forward-off {
       @include sprite('forward-off.png')
     }
-    .interesting-on {
-      @include sprite('interestingSet-on.png')
+    .thumbs {
+      border-radius: 50%;
     }
-    .interesting-off {
-      @include sprite('interestingSet-off.png')
+    .thumbsDown-on {
+      @include sprite('thumbsdown-on.png')
+      background-color: $highlight;
     }
-    .interesting-set-on {
-      @include sprite('interesting-on.png')
+    .thumbsDown-off {
+      @include sprite('thumbsdown-off.png')
+      background-color: $blank;
     }
-    .interesting-set-off {
-      @include sprite('interesting-off.png')
+    .thumbsDown-set-on {
+      @include sprite('thumbsdown-on.png')
+      background-color: $saved;
+    }
+    .thumbsDown-set-off {
+      @include sprite('thumbsdown-off.png')
+      background-color: $saved;
+    }
+    .thumbsUp-on {
+      @include sprite('thumbsup-on.png')
+      background-color: $highlight;
+    }
+    .thumbsUp-off {
+      @include sprite('thumbsup-off.png')
+      background-color: $blank;
+    }
+    .thumbsUp-set-on {
+      @include sprite('thumbsup-on.png')
+      background-color: $saved;
+    }
+    .thumbsUp-set-off {
+      @include sprite('thumbsup-off.png')
+      background-color: $saved;
     }
     .x-on {
       @include sprite('x-on.png')

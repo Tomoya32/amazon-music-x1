@@ -31,6 +31,23 @@
   font-size: large;
 }
 
+.PlaybackResponse {
+  color: white;
+  opacity: 0.90;
+  position:fixed !important;
+  top: 450px !important;
+  left: 650px !important;
+  padding: 30px 100px;
+  margin-top: -9em; /*set to a negative number 1/2 of your height*/
+  margin-left: -13em; /*set to a negative number 1/2 of your width*/
+  border: 1px solid #ccc;
+  background-color: #131721 !important;
+}
+
+.ReactModal__Overlay {
+  background-color: transparent !important;
+}
+
 @keyframes Playback-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

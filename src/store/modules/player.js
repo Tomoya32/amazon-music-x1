@@ -172,7 +172,6 @@ const audioDefaults = {
 const initialState = {
   disableInitOnUpdate: true,
   playerState: 'playing',
-  disableOnEnded: true,
   badStateMessage: 'No message sent'
 }
 
