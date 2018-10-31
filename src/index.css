@@ -26,3 +26,12 @@ h3 {
   font-size: 1.1em;
   font-weight: normal;
 }
+
+.ReactModal__Overlay {
+  width: 1280px;
+  height: 720px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent !important;
+}
