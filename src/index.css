@@ -2,10 +2,16 @@ body {
   margin: 0;
   padding: 0;
   font-family: arial,sans-serif;
-  background: #252d41;
   font-size: 16px;
   color: white;
   -webkit-font-smoothing: antialiased;
+}
+
+body > #root {
+  height: 720px; width: 1280px;
+  background-image: radial-gradient(circle at 50% 50%, #394e8f, #000000);
+  background-repeat: no-repeat;
+  overflow: hidden;
 }
 
 .Page {

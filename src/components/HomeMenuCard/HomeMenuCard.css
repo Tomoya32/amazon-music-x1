@@ -1,6 +1,7 @@
 .HomeMenuCard {
-  height: 110px; width: 240px;
-  background-color: #7688c396;
+  width: 274px;
+  height: 144px;
+  background-color: rgba(255, 255, 255, 0.08);
   display: flex !important;
   align-items: center;
   color: white;
@@ -9,34 +10,101 @@
   text-align: center;
   display: inline-block;
   float: left;
-  box-sizing: content-box;
+  box-sizing: border-box;
   margin: 10px;
   position: relative;
   top: 20px;
-  left: 20px;
 }
+
+.HomeMenuCard:first-child {
+  margin-left: 0;
+}
+
 .HomeMenuCard > img  {
   vertical-align: middle;
-    float: left;
-    margin-right: 10px;
-    height: 100%;
-    width: auto;
-    max-width: 50%;
+  float: left;
+  width: 110px;
+  height: 110px;
 }
+
 .HomeMenuCard > div.itemLabel {
   width: 50%;
+  padding-left: 20px;
+}
+
+.HomeMenuCard > div.itemLabel--subtitle {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  -o-flex-direction: column;
+  flex-direction: column;
+}
+
+.HomeMenuCard > div.itemLabel > .title {
+  opacity: 0.9;
+  font-family: "HelveticaNeue";
+  font-size: 22px;
+  color: #ffffff;
+  white-space: pre-wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 108px;
+  max-width: 110px;
+  line-height: 27px;
+}
+
+.HomeMenuCard > div.itemLabel--subtitle > .title {
+  max-height: 54px;
+}
+
+.HomeMenuCard > div.itemLabel--subtitle > .subtitle {
+  opacity: 0.6;
+  font-family: HelveticaNeue;
+  font-size: 16px;
+  color: #ffffff;
+  white-space: pre-wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 36px;
+  line-height: 18px;
+  max-width: 110px;
 }
 
 .HomeMenuCard.focused {
-    height: 150px; width: 280px;
-    margin: 0;
-    margin-left: -10px;
-    margin-right: -10px;
-    margin-top: -10px;
-    background: #68eaff;
-    color: #252d41;
+  width: 314px;
+  height: 184px;
+  padding: 22px 17px 22px 22px;
+  margin: 0;
+  margin-left: -10px;
+  margin-right: -10px;
+  margin-top: -10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  background-image: linear-gradient(to left, #61beeb, #3f86c3);
+  color: #252d41;
+}
+
+.HomeMenuCard.focused:first-child {
+  margin-left: -20px;
+}
+
+.HomeMenuCard.focused > img {
+  width: 140px;
+  height: 140px;
 }
 
 .HomeMenuCard.focused > div.itemLabel {
-  padding: 20px;
+}
+
+.HomeMenuCard.focused > div.itemLabel > .title {
+  color: #000;
+}
+
+.HomeMenuCard.focused > div.itemLabel--subtitle > .subtitle {
+  opacity: 0.55;
+  color: #0d0c0f;
 }

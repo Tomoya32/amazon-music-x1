@@ -1,20 +1,25 @@
 .VerticalTextMenuCard {
-    display: inline-block;
-    height: 40px; line-height: 40px;
-    color: white;
-    font-size: 1.3em;
-    margin: 0 10px;
-    text-align: center;
-    text-transform: uppercase;
+  display: inline-block;
+  height: 45px;
+  line-height: 40px;
+  color: white;
+  font-size: 22px;
+  margin: 0 15px;
+  text-align: center;
+  text-transform: uppercase;
+  opacity: 0.5;
+  font-family: 'HelveticaNeue';
 }
 .VerticalTextMenuCard.focused {
-    border-bottom: solid 2px;
-    height: 38px; /* Account for border height on focus */
+  border-bottom: solid 3px #53aef5;
+  height: 42px; /* Account for border height on focus */
+  opacity: 1;
 }
 
 .VerticalTextMenuCard:nth-child(n+5) {
   text-transform: capitalize;
   position: relative;
-  left: 45%;
-  font-size: 1em;
+  left: 585px;
+  font-size: 18px;
+  opacity: 0.7;
 }
