@@ -32,20 +32,24 @@
 }
 
 .PlaybackResponse {
-  color: white;
-  opacity: 0.90;
-  position:fixed !important;
-  top: 450px !important;
-  left: 650px !important;
-  padding: 30px 100px;
-  margin-top: -9em; /*set to a negative number 1/2 of your height*/
-  margin-left: -13em; /*set to a negative number 1/2 of your width*/
-  border: 1px solid #ccc;
-  background-color: #131721 !important;
+  width: 267px;
+  min-height: 70px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  border: solid 1px rgba(83, 174, 245, 0.9);
+  background-color: #101527;
+  padding: 15px 25px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
 }
 
-.ReactModal__Overlay {
-  background-color: transparent !important;
+.PlaybackResponse > label {
+  font-family: 'HelveticaNeue';
+  font-size: 16px;
+  line-height: 1.25;
+  color: #ffffff;
 }
 
 @keyframes Playback-logo-spin {

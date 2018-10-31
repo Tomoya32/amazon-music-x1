@@ -22,7 +22,7 @@ const Playback = ({isFocused, menuid, title, artist, album, shuffle, image, onNe
         mid='progressbar'/>
     </div>
     <ReactModal className='PlaybackResponse' isOpen={showModal}>
-      <div>{modalMessage}</div>
+      <label>{modalMessage}</label>
     </ReactModal>
   </div>
 )
