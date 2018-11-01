@@ -139,7 +139,9 @@ export function handleItemSelection(selected, enclosingPath = '') {
   if (!selected.navigationNodeSummary && selected.playable) {
     const {itemDescriptions, playables} = this.props
     const item = itemDescriptions[noha(selected.ref)]
+    if (!item || !item.playable) debugger
     const playable = playables[noha(item.playable)]
+    if (!playable) debugger
     console.info('here', enclosingPath, item.playable)
     const dest = mergeChunkWithPathAndQuery(['/playback', enclosingPath], playable.naturalTrackPointer.chunk, {indexWithinChunk: playable.naturalTrackPointer.indexWithinChunk} )
     this.props.replace(dest)

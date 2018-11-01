@@ -21,11 +21,12 @@ import Home from '../Home/HomeSearchResults'
 import topnav from '../../components/MainMenu/topnav'
 
 const mapStateToProps = (state, props) => ({
+  // beginning of connection to search results
   allMenuIDs: getMenuIDsSelector(state),
   catalog: getCatalogData(state),
   location: state.router.location,
   pathKey: getKeySelector(state),
-  // summary: getNavigationDescriptionFromSummarySelector(state, props),
+  // summary: getNavigationDescriptionFromSummarySelector(state, props), // not in HomeContainer
   term: state.search.term,
   itemDescriptions: getItemDescriptionsSelectors(state),
   playables: getPlayableSelector(state),
@@ -38,6 +39,7 @@ const mapDispatchToProps = {
 }
 
 class SearchResult extends Component {
+  // this component is equivalent to HomeContainer
   constructor (props) {
     super(props)
     this.handleSelection = dest => {
@@ -55,17 +57,6 @@ class SearchResult extends Component {
   render() {
     const { focused, isFocused, changeFocus } = this.props;
     if (this.props.catalog) {
-      // return (
-      //     <HomeMenuHorizontalLoadingMenu
-      //       {...this.props.catalog}
-      //       onClick={this.handleSelection.bind(this)}
-      //       menuid={'home:main'}
-      //       focused={isFocused('home:main')}
-      //       onFocusItem={'home:main'}
-      //       onUp={changeFocus('search:atoz')}
-      //       name={"#search"}
-      //       allMenuIDs={this.props.allMenuIDs}
-      //     />)
       return (
         <Home
           catalog={this.props.catalog}
@@ -84,4 +75,5 @@ class SearchResult extends Component {
   }
 }
 
+// TODO: export default Space(SearchResult)
 export default connect(mapStateToProps, mapDispatchToProps)(Space(SearchResult))

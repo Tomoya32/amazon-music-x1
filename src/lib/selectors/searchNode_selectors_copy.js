@@ -5,6 +5,7 @@ import { mergePath } from '../utils'
 import up from 'url-parse'
 
 const getKey = state => {
+  // will return '/search'
   const {pathname, search} = state.router.location
   let key = pathname.replace(/^\/(list|music)\/*/, '/')
   if (key === '/search/widescreen_catalog/') {
@@ -13,9 +14,8 @@ const getKey = state => {
     else
       key = pathname.replace(/^\/(list|search)\/*/, '/')
     }
-  const result = ((key === '' || key === '/') && /^\/?music(\/|$)/.test(pathname))
+  return ((key === '' || key === '/') && /^\/?music(\/|$)/.test(pathname))
     ? config.music.browse_node : key === '' ? '/' : key
-    return result
 }
 
 const getNodeSegment = (state, item) => {
@@ -38,7 +38,17 @@ const getDocumentResult = (state) => getNodeSegment(state, 'result')
 const getItemDescriptions = (state) => getNodeSegment(state, 'itemDescriptions')
 const getNavigationNodeDescriptions = (state) => getNodeSegment(state, 'navigationNodeDescriptions')
 const getNavigationNodeSummaries = (state) => getNodeSegment(state, 'navigationNodeSummaries')
-const getPlayables = (state) => getNodeSegment(state, 'playables')
+const getPlayables = (state) => {
+  const playables = getNodeSegment(state, 'playables')
+  // if (!playables) return
+  // // use state to get the playables
+  // const result = getNodeSegment(state,'result')
+  // const navigationNodeDescriptions = getNodeSegment(state, 'navigationNodeDescriptions')
+  // const navigationNodeDescription = navigationNodeDescriptions[noha(result)];
+  // debugger
+  // old:
+  return playables
+}
 const getResult = (state) => getNodeSegment(state, 'result')
 const getHash = state => state.router.location.hash
 const getNavigationNodeDescription = (state, { navigationNode }) => {
@@ -73,14 +83,30 @@ descsList.map(_desc => navigationNodeDescriptions[noha(_desc)].items))
 
 // navigationNodeSummaries of document.result
 const getDocNavigationNodeSummarySelector = createSelector([getDocNavigationNodeDescription,getNavigationNodeSummaries],
-(desc,summaries) => summaries[noha(desc.summary)])
+(desc,summaries) => summaries[noha(desc.summary)]
+)
+
 
 export const getNavigationNodeSelector = createSelector([getNavigationNodeDescription], node => node)
-export const getPlayableSelector = createSelector([getPlayables], (playables) => playables)
 export const getItemDescriptionsSelectors = createSelector([getItemDescriptions], (items) => items)
 export const getNavigationNodeSummariesSelector = createSelector([getNavigationNodeSummaries], (items) => items)
 export const getNavigationNodeSummarySelector = createSelector([getNavigationNodeSummary], summary => summary)
+export const getPlayableSelector = createSelector(
+  [getDocumentResult,getItemDescriptions,getNavigationNodeSummaries,getNavigationNodeDescriptions,getPlayables],
+  (result,itemDescriptions,summaries,descriptions,playables) => {
+    if (!playables) return
+  const currentNode = noha(result)
+  const description = descriptions[currentNode]
+  if (playables) debugger
+  // get listOfPlayablesForNode
 
+//   select from playables
+  const realPlayables = {};
+  // listOfPlayablesForNode.forEach( item => {
+  //   realPlayables[item] = playables[noha(item)]
+  // })
+  return playables
+})
 
 
 export const getMenuIDsSelector = createSelector([getItemDescriptions], (items) => {
@@ -93,7 +119,26 @@ export const getMenuIDsSelector = createSelector([getItemDescriptions], (items) 
   }
   else return
 })
-
+export const getNavigationDescriptionFromSummarySelector = createSelector([getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
+  if (!summary) {
+    return null
+  }
+  if (summary.description.indexOf('#') === 0) {
+    //TODO: this is not right, we need a path to get this back.....
+    return descs[noha(summary.description)]
+  }
+  else {
+    const path = mergePath(key, summary.description)
+    const {pathname, hash} = up(path)
+    if(nodes[pathname]) {
+      const node = nodes[pathname]
+      const {itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result} = node
+      return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
+    } else {
+      return pathname
+    }
+  }
+})
 export const getKeySelector = createSelector([getKey], key => key)
 
 export const getChildData = createSelector(
@@ -107,45 +152,32 @@ export const getChildData = createSelector(
 )
 
 export const getCatalogData = createSelector(
+  // [getItemDescriptions],
+  // (itemDescriptions) => {
+  // return parseDescription(itemDescriptions)
   [getItemDescriptions, getNavigationNodeDescriptions, getNavigationNodeSummaries, getResult, getHash],
   (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
     return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
   }
 )
-export const getChildItemPathname = createSelector(
-  [getNavigationNodeSummarySelector, getKey], (summary, key) => {
-    if (!summary) return null
-    const tmp = up(summary.description);
-    if (tmp.pathname == '/') return summary.description
+
+export const getChildItemDescriptionsSelector = createSelector(
+  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
     const path = mergePath(key, summary.description)
     const {pathname} = up(path)
-    // pathname = '/catalog/recs/albums' || '#catalog_search_desc'
-    return pathname
+    if(nodes[pathname]) return nodes[pathname].itemDescriptions
+    else return null
   }
 )
-export const getChildItemDescriptionsSelector = createSelector(
-  [getNavigationNodeSummarySelector, getItemDescriptionsSelectors, getNavigationNodeDescriptions, getKey, getNodes],
-  (summary, itemDesc, descs, key, nodes) => {
-    // TODO: Return the itemDescriptions for the items of this node
-    // summary.description = "#catalog_stations_search_desc"
-    // TODO: consider when summary.description is a URL
-    if (!summary) return null
-    const currentNode = summary.description;
-    const { items } = descs[noha(currentNode)];
-    const itemDescriptions = {};
-    items.forEach(item => {
-      const item_desc = item.replace(/_item$/,'_desc');
-      itemDescriptions[noha(item_desc)] = itemDesc[noha(item)]
-    })
-    return itemDescriptions
+export const getChildItemPathname = createSelector(
+  [getNavigationNodeSummarySelector, getKey], (summary, key) => {
+    const path = mergePath(key, summary.description)
+    const {pathname} = up(path)
+    return pathname
   }
 )
 export const getChildItemPlayablesSelector = createSelector(
   [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
-    debugger
-    if (!summary) return null
-    const tmp = up(summary.description);
-    if (tmp.pathname == '/') return summary.description
     const path = mergePath(key, summary.description)
     const {pathname} = up(path)
     if(nodes[pathname]) return nodes[pathname].playables
@@ -153,9 +185,7 @@ export const getChildItemPlayablesSelector = createSelector(
   }
 )
 export const getChildItemDescriptionSelector = createSelector(
-  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes],
-  (summary, descs, key, nodes) => {
-    if (!summary) return null
+  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
     const path = mergePath(key, summary.description)
     const {pathname} = up(path)
     if(nodes[pathname]) return nodes[pathname].navigationNodeSummaries
@@ -163,72 +193,26 @@ export const getChildItemDescriptionSelector = createSelector(
   }
 )
 
-export const getNavigationDescriptionFromSummarySelector = createSelector(
-  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes],
-  (summary, descs, key, nodes) => {
-    // return navigationNodeDescription (to be used as props.summary by HomeMenuHorizontalLoadingMenuContainer)
-  if (!summary) return null
-  const parentNode = nodes[key];
-  if (parentNode && summary.description.indexOf('#') === 0) {
-    const currentNode_desc = noha(summary.description);
-    const currentNode_summary = noha(descs[currentNode_desc].summary);
-    const navigationNodeDescription = Object.assign({}, descs[currentNode_desc])
-    const { items } = descs[currentNode_desc];
-    navigationNodeDescription.itemsData = items.map(item => {
-      let result = parentNode.itemDescriptions[noha(item)]
-      if (!result) {
-        console.error('Error because descs is not updating with every search. Need to fix getNavigationNodeDescriptions. \n descs: \n',descs,'\n parentNode: \n',parentNode)
-        debugger
-        return
-      }
-      // console.clear()
-      // console.assert(item.match(/^_desc/),{ref: item, errorMsg: 'ref does not end in _desc'})
-      // result.ref = item.replace(/_item$/,'_desc');
-      result.ref = item.replace(/_item/,'_desc');
-      return result
-    })
-    navigationNodeDescription.summaryData = parentNode.navigationNodeSummaries[currentNode_summary];
-    // TODO: check if navigationNodeDescription.items[any key] can end with '_item' or needs '_desc'
-    // compare navigationNodeDescription to this.props.summary of HomeMenuHorizontalLoadingMenuContainer
-    return navigationNodeDescription
-  } else {
-    // TODO: what do i do here?
-    debugger
-    const path = mergePath(key, summary.description)
-    const {pathname, hash} = up(path)
-    if(nodes[pathname]) {
-      const node = nodes[pathname]
-      const {itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result} = node
-      return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
-    } else {
-      return pathname
-    }
-  }
-})
-
-
-const parseChildren = (summary, descriptions, node) => {
-  let desc = Object.assign({}, descriptions[noha(summary.description)]) // get a copy
-  const { items } = desc;
-  // TODO: need to generalize this
-  desc.itemsData = items.map(item => {
-    let itemDesc = node.itemDescriptions[noha(item)]
-    if (itemDesc) return itemDesc.ref = item.replace(/_item$/,'_desc')
-    return itemDesc
-  })
-  desc.summaryData = node.navigationNodeSummaries[summary]
-  return desc
-}
-
-
 const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
   if (!result || !navigationNodeDescriptions) return
   let currentNavigationNode = hash || result
   let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
   desc.summaryData = navigationNodeSummaries[noha(desc.summary)]
+  // desc.items = ["#catalog_search_item", "#library_search_item"]
   const summaries = desc.items.map(item => itemDescriptions[noha(item)].navigationNodeSummary)
+  // summaries = ["#catalog_search_summary", "#library_search_summary"]
   const descriptions = summaries.map(summary => navigationNodeSummaries[noha(summary)].description);
+  // descriptions = ["#catalog_search_desc", "#library_search_desc"]
   const items = descriptions.map(desc => navigationNodeDescriptions[noha(desc)].items);
+  // items = [
+  //   ["#catalog_artists_search_item",
+  //   "#catalog_stations_search_item",
+  //   "#catalog_albums_search_item",
+  //   "#catalog_tracks_search_item",
+  //   "#catalog_playlists_search_item"],
+  //   ["#library_albums_search_item",
+  //   "#library_tracks_search_item"]
+  // ]
   let itemsParsed = [];
   for (let i=0; i < items.length; i++) {
     itemsParsed = itemsParsed.concat(items[i])

@@ -23,7 +23,7 @@ const Search = (props) => {
         onLeft={() => props.updateMenu('search:atoz', { index: alphabet.length - 1 })}
       />
       <div className='search-content field'>{props.term}<span className='blinker'>|</span></div>
-    
+
       <SearchResult
         menuid='result'
         onFocusItem='home:main'

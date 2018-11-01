@@ -5,8 +5,8 @@ import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
 import PropTypes from 'prop-types'
 import { showNode } from '../../store/modules/home'
-import { handleItemSelection } from '../../lib/utils'
-import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
+import { handleItemSelection, noha } from '../../lib/utils'
+import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenuSearchResults'
 import {replace} from '../../store/modules/nav'
 import {
   getMenuIDsSelector,
@@ -25,12 +25,12 @@ const mapStateToProps = (state, props) => ({
   location: state.router.location,
   // allMenuIDs: getMenuIDsSelector(state),
   // catalog: getCatalogData(state),
-  // summary: getNavigationDescriptionFromSummarySelector(state, props),
-  // pathKey: getKeySelector(state),
-  // itemDescriptions: getChildItemDescriptionsSelector(state, props),
-  // playables: getChildItemPlayablesSelector(state, props),
-  // navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
-  // pathname: getChildItemPathname(state, props)
+  summary: getNavigationDescriptionFromSummarySelector(state, props),
+  pathKey: getKeySelector(state),
+  itemDescriptions: getChildItemDescriptionsSelector(state, props),
+  playables: getChildItemPlayablesSelector(state, props),
+  navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
+  pathname: getChildItemPathname(state, props) // /catalog/recs/albums
 })
 
 const mapDispatchToProps = {
@@ -41,9 +41,13 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
   constructor (p) {
     super(p)
     this.handleSelection = dest => {
-      const {pathname, replace} = this.props
-      if(dest.type === 'SEE_MORE') replace(`/list/${pathname}`)
-      else handleItemSelection.call(this, dest, this.props.pathname)
+      const { pathname } = this.props.location;
+      // TODO: .ref is missing from itemDescription
+      if (!dest.type && dest.itemLabel === 'See more') {
+        const { description } = this.props.navigationNodeSummaries[noha(dest.navigationNodeSummary)]
+        this.props.replace(`/search/${description}`)
+      }
+      handleItemSelection.call(this, dest, pathname)
     }
     this.handleOpenModal = this.handleOpenModal.bind(this);
   }
@@ -63,8 +67,8 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
   loadIfNeeded () {
     if (typeof(this.props.summary) === 'string') {
       console.info('loadChildNode: ', this.props.summary)
-      debugger
-      this.props.loadChildNode(this.props.summary)
+      // debugger
+      // this.props.addChildNode(payload.data, action.path, responsePath)
     }
   }
 

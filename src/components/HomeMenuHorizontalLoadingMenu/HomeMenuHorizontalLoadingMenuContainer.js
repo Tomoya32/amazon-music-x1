@@ -65,6 +65,8 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
   loadIfNeeded () {
     if (typeof(this.props.summary) === 'string') {
       this.props.loadChildNode(this.props.summary)
+    // } else {
+    //   debugger
     }
   }
 
