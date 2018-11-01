@@ -5,18 +5,17 @@ import { mergePath } from '../utils'
 import up from 'url-parse'
 
 const getKey = state => {
-  // will return '/search'
   const {pathname, search} = state.router.location
   let key = pathname.replace(/^\/(list|music)\/*/, '/')
+
   if (key === '/search/widescreen_catalog/') {
     if ( getSearchterm(state) )
       key = '/search/?keywords=<' + getSearchterm(state) + '>'
     else
       key = pathname.replace(/^\/(list|search)\/*/, '/')
     }
-  const result = ((key === '' || key === '/') && /^\/?music(\/|$)/.test(pathname))
+  return ((key === '' || key === '/') && /^\/?music(\/|$)/.test(pathname))
     ? config.music.browse_node : key === '' ? '/' : key
-    return result
 }
 
 const getNodeSegment = (state, item) => {

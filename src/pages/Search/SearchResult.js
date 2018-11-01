@@ -21,12 +21,10 @@ import Home from '../Home/HomeSearchResults'
 import topnav from '../../components/MainMenu/topnav'
 
 const mapStateToProps = (state, props) => ({
-  // beginning of connection to search results
   allMenuIDs: getMenuIDsSelector(state),
   catalog: getCatalogData(state),
   location: state.router.location,
   pathKey: getKeySelector(state),
-  // summary: getNavigationDescriptionFromSummarySelector(state, props), // not in HomeContainer
   term: state.search.term,
   itemDescriptions: getItemDescriptionsSelectors(state),
   playables: getPlayableSelector(state),

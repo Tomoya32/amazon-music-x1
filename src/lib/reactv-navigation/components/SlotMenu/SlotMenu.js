@@ -15,15 +15,13 @@ class SlotMenuItemRenderer extends React.Component {
   }
 }
 
-const SlotMenu = ({data, renderItem, className, index, focused, horizontal, style, passRef}) => {
-  // debugger
-  return (
+const SlotMenu = ({data, renderItem, className, index, focused, horizontal, style, passRef}) => (
   <div className={cx('SlotMenu', className, {horizontal})} style={style}  ref={passRef}>
     {data.map((item, currentIndex) => {
       return <SlotMenuItemRenderer key={currentIndex} item={item} focused={ focused && currentIndex === index} render={renderItem} />
     })}
   </div>
-)}
+)
 /*
     <SlotMenu data={data} renderItem={ListCard} horizontal focused menuid='single-list-menu' />
  */
