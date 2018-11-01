@@ -7,12 +7,25 @@ import Buttonizer from '../../lib/reactv-navigation/components/Buttonizer'
 import ReactModal from 'react-modal'
 
 const ScrubbableProgressBar = Buttonizer(({focused}) => (
-  <ProgressBar focused={focused}/>
+  <ProgressBar focused={focused} />
 ))
 
 const Playback = ({isFocused, menuid, title, artist, album, shuffle, image, onNext, onShuffleNext, changeFocus, seek, trackRating, showModal, modalMessage, ...props}) => (
-  <div className='Playback Page' style={image ? {backgroundImage: `url(${image.uri})`, backgroundSize: 'cover' } : { backgroundSize: 'cover' }}>
-    <TrackInfo title={title} artist={artist} shuffle={shuffle} album={album} image={image} onNext={onNext} onShuffleNext={onShuffleNext} focused={isFocused('trackInfo')} menuid='track-info-button' onFocusItem={'playback:playercontrols'} onDown={changeFocus('progressbar')} trackRating={trackRating}/>
+  <div className='Playback Page'>
+    <div className='Playback-background' style={image ? {backgroundImage: `url(${image.uri})` } : { backgroundSize: 'cover' }} />
+    <TrackInfo
+      title={title}
+      artist={artist}
+      shuffle={shuffle}
+      album={album}
+      image={image}
+      onNext={onNext}
+      onShuffleNext={onShuffleNext}
+      focused={isFocused('trackInfo')}
+      menuid='track-info-button'
+      onFocusItem={'playback:playercontrols'}
+      onDown={changeFocus('progressbar')}
+      trackRating={trackRating}/>
     <div style={{display: 'block'}}>
       <ScrubbableProgressBar
         onLeft={() => { seek(-1) }}

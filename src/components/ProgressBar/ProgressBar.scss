@@ -5,47 +5,50 @@
   width: $screen-width;
   position: absolute;
   bottom: 0px;
+  display: flex;
+  justify-content: center;
 
-  .bar {
-      width: $screen-width;
+  .barWrapper {
+    width: $screen-width - 320;
+    position: relative;
+
+    .bar {
+      width: 100%;
       height: resize(6px);
-      background-color: grey;
+      opacity: 0.1;
+      border-radius: 5px;
+      background-color: #ffffff;
       position: absolute;
-      bottom: resize(179px);
-      .indicator {
-          height: 100%;
-          background: $dark-sky-blue;
-      }
-      .focused {
+      bottom: 60px;
+    }
+
+    .indicator {
+      height: resize(6px);
+      border-radius: 5px;
+      background: $dark-sky-blue;
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+
+      &.focused {
         background: $focused-bar;
       }
+    }
   }
 
   .playTimeContainer {
-    bottom: 122px;
-    left: 0;
-    position: relative;
-    width: $screen-width;
-    height: 50px;
-    .focused {
-      border-right: 1px solid $focused-bar !important;
-    }
-    .innerPlayTimeContainer {
-      position: absolute; top:0;left:0;
-      border-right: 1px solid $dark-sky-blue;
-      height: 50px;
-    }
+    position: absolute;
+    left:0;
+    bottom: 80px;
+    width: $screen-width - 320;
+    display: flex;
+    justify-content: space-between;
+
     .playTimeDisplay {
-      position: absolute;
-      top: -30px;
-      right: -150px;
-      width: 300px;
-      overflow: hidden;
-      font-size: 14px;
-      height: 30px;
-      line-height: 30px;
-      color: $dark-sky-blue;
-      text-align: center;
+      opacity: 0.6;
+      font-family: 'HelveticaNeue';
+      font-size: 18px;
+      color: #ffffff;
     }
   }
 }
