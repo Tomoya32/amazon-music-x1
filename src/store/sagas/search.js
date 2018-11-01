@@ -2,7 +2,7 @@ import { call, put, takeLatest, takeEvery, select } from 'redux-saga/effects'
 import API from '../../services/service'
 import config from '../../config'
 import { addChildNode, ADD_CHILD_NODE } from '../modules/music'
-import { searchResults, LOAD_SEARCH_NODE } from '../modules/search'
+import { searchResults, clearResults, LOAD_SEARCH_NODE } from '../modules/search'
 import { CLEAR_AUTH_DATA } from '../modules/auth'
 
 const getData = state => state.music.nodes
@@ -14,8 +14,7 @@ function * loadSearchResultsNode (action) {
     const payload = yield call(API.loadNavigationNode, action.path)
     const {responseURL} = payload.request
     const responsePath = responseURL.replace(config.music.endpoint, '')
-    // yield put(addChildNode(payload.data, payload.data.result, responsePath))
-    yield put(addChildNode(payload.data, '/search', responsePath)) // TODO: delete
+    yield put(clearResults())
     yield put(searchResults(payload))
   } catch (e) {
     if (e.status === 401 || e.status === 403) {
@@ -31,7 +30,6 @@ function * loadSearchResultsNode (action) {
 
 function * searchSaga () {
   yield takeLatest(LOAD_SEARCH_NODE, loadSearchResultsNode)
-  // yield takeEvery(LOAD_SEARCH_NODE, loadSearchResultsNode)
 }
 
 export default searchSaga

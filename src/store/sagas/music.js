@@ -4,7 +4,6 @@ import config from '../../config'
 import {
   addChildNode, LOAD_CHILD_NODE, ADD_CHILD_NODE
 } from '../modules/music'
-import { searchResults } from '../modules/search'
 import { SET_AUTH_DATA, CLEAR_AUTH_DATA } from '../modules/auth'
 
 const getData = state => state.music.nodes

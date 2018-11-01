@@ -21,6 +21,7 @@ import Home from '../Home/HomeSearchResults'
 import topnav from '../../components/MainMenu/topnav'
 
 const mapStateToProps = (state, props) => ({
+  search: state.search,
   allMenuIDs: getMenuIDsSelector(state),
   catalog: getCatalogData(state),
   location: state.router.location,
@@ -54,22 +55,18 @@ class SearchResult extends Component {
 
   render() {
     const { focused, isFocused, changeFocus } = this.props;
-    if (this.props.catalog) {
-      return (
-        <Home
-          catalog={this.props.catalog}
-          pathKey={this.props.pathKey}
-          topnav={topnav}
-          focused
-          menuid={'homespace'}
-          onFocusItem='home:main'
-          {...this.props}
-          entryFocus='home:main'/>)
-    } else {
-      return (
-        <PageLoading />
-      )
-    }
+    if (this.props.term !== '' && !this.props.search.results.length && Array.isArray(this.props.results)) return (<PageLoading />)
+    if (this.props.catalog) return (
+      <Home
+        catalog={this.props.catalog}
+        pathKey={this.props.pathKey}
+        topnav={topnav}
+        focused
+        menuid={'homespace'}
+        onFocusItem='home:main'
+        {...this.props}
+        entryFocus='home:main'/>)
+    return null
   }
 }
 

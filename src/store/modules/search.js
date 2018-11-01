@@ -4,11 +4,19 @@ export const AMZN_REMOVE_LETTER_FROM_SEARCHTERM = 'search/AMZN_REMOVE_LETTER_FRO
 export const AMZN_SET_SEARCHTERM = 'search/AMZN_SET_SEARCHTERM'
 export const AMZN_RESET_SEARCH= 'search/AMZN_RESET_SEARCH'
 export const LOAD_SEARCH_NODE = 'search/LOAD_SEARCH_NODE'
+export const AMZN_CLEAR_RESULTS = 'search/AMZN_CLEAR_RESULTS'
 
-export const resetSearch = () => {
-  return {type: AMZN_RESET_SEARCH}
+export const clearResults = () => {
+  return {
+    type: AMZN_CLEAR_RESULTS
+  }
 }
-export function loadSearchNode(path) {
+export const resetSearch = () => {
+  return {
+    type: AMZN_RESET_SEARCH
+  }
+}
+export const loadSearchNode = (path) => {
   return {
     type: LOAD_SEARCH_NODE,
     path,
@@ -50,6 +58,7 @@ const ACTION_HANDLERS = {
   [AMZN_REMOVE_LETTER_FROM_SEARCHTERM]: (state, action) => Object.assign({}, state, {term: state.term.slice(0, -1)}),
   [AMZN_SET_SEARCHTERM]: (state, action) => Object.assign({}, state, {term: action.term}),
   [AMZN_RESET_SEARCH]: (state, action) => Object.assign({}, state, {results: [], term: ''}),
+  [AMZN_CLEAR_RESULTS]: (state, action) => Object.assign({}, state, {results: []}),
 }
 
 const initialState = {
