@@ -5,6 +5,7 @@ import { mergePath } from '../utils'
 import up from 'url-parse'
 
 const getKey = state => {
+  // will return '/search'
   const {pathname, search} = state.router.location
   let key = pathname.replace(/^\/(list|music)\/*/, '/')
   if (key === '/search/widescreen_catalog/') {
@@ -45,9 +46,14 @@ const getNavigationNodeDescription = (state, { navigationNode }) => {
   const node = getNavigationNodeDescriptions(state)
   return node[navigationNode]
 }
+const getState = (state) => state
+const getProps = (state,props) => props
 const getNavigationNodeSummary= (state, props) => {
   if(!props) return null
+  // should have props.itemDescription.navigationNodeSummary
   const summary = props.navigationNodeSummary ||  props.itemDescription.navigationNodeSummary
+  console.clear()
+  console.log(props.itemDescription)
   if(!summary) return null
   const nodes = getNavigationNodeSummaries(state)
   const result = nodes[noha(summary)]
@@ -76,11 +82,24 @@ const getDocNavigationNodeSummarySelector = createSelector([getDocNavigationNode
 (desc,summaries) => summaries[noha(desc.summary)])
 
 export const getNavigationNodeSelector = createSelector([getNavigationNodeDescription], node => node)
-export const getPlayableSelector = createSelector([getPlayables], (playables) => playables)
 export const getItemDescriptionsSelectors = createSelector([getItemDescriptions], (items) => items)
 export const getNavigationNodeSummariesSelector = createSelector([getNavigationNodeSummaries], (items) => items)
 export const getNavigationNodeSummarySelector = createSelector([getNavigationNodeSummary], summary => summary)
+export const getPlayableSelector = createSelector(
+  [getDocumentResult,getItemDescriptions,getNavigationNodeSummaries,getNavigationNodeDescriptions,getPlayables],
+  (result,itemDescriptions,summaries,descriptions,playables) => {
+    if (!playables) return
+  const currentNode = noha(result)
+  const description = descriptions[currentNode]
+  // get listOfPlayablesForNode
 
+//   select from playables
+  const realPlayables = {};
+  // listOfPlayablesForNode.forEach( item => {
+  //   realPlayables[item] = playables[noha(item)]
+  // })
+  return playables
+})
 
 
 export const getMenuIDsSelector = createSelector([getItemDescriptions], (items) => {
@@ -140,18 +159,6 @@ export const getChildItemDescriptionsSelector = createSelector(
     return itemDescriptions
   }
 )
-export const getChildItemPlayablesSelector = createSelector(
-  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
-    debugger
-    if (!summary) return null
-    const tmp = up(summary.description);
-    if (tmp.pathname == '/') return summary.description
-    const path = mergePath(key, summary.description)
-    const {pathname} = up(path)
-    if(nodes[pathname]) return nodes[pathname].playables
-    else return null
-  }
-)
 export const getChildItemDescriptionSelector = createSelector(
   [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes],
   (summary, descs, key, nodes) => {
@@ -205,7 +212,47 @@ export const getNavigationDescriptionFromSummarySelector = createSelector(
     }
   }
 })
+export const getChildItemPlayablesSelector = createSelector(
+  [getProps,getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (props,summary, descs, key, nodes) => {
+    // if (!summary || !props.summary) return null
+    if (!summary) return null
+    debugger
+    const parentNode = nodes[key];
+    const currentNode_desc = noha(summary.description);
+    const { items } = descs[currentNode_desc];
+    const itemsData = items.map(item => {
+      let result = parentNode.itemDescriptions[noha(item)]
+      if (!result) {
+        console.error('Error because descs is not updating with every search. Need to fix getNavigationNodeDescriptions. \n descs: \n',descs,'\n parentNode: \n',parentNode)
+        return
+      }
+      // console.clear()
+      // console.assert(item.match(/^_desc/),{ref: item, errorMsg: 'ref does not end in _desc'})
+      result.ref = item.replace(/_item$/,'_desc');
+      // result.ref = item.replace(/_item/,'_desc');
+      // result.ref = item
+      return result
+    })
+    // use getProps to load props.summary.itemsData then:
+    // Can get each playable by looping through:
+    const playablesList = itemsData.map(item => item.playable)
 
+    // then get the playable object for each in playablesList:
+
+    const playables = {}
+    playablesList.forEach( playable => {
+      const current = noha(playable);
+      playables[current] = nodes['/search'].playables[current]
+    })
+    return playables
+    // const tmp = up(summary.description);
+    // if (tmp.pathname == '/') return summary.description
+    // const path = mergePath(key, summary.description)
+    // const {pathname} = up(path)
+    // if(nodes[pathname]) return nodes[pathname].playables
+    // else return null
+  }
+)
 
 const parseChildren = (summary, descriptions, node) => {
   let desc = Object.assign({}, descriptions[noha(summary.description)]) // get a copy

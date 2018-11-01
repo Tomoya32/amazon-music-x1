@@ -136,6 +136,7 @@ export function getRatingURI(ratingURI, enclosingPath = '', feedback) {
 }
 
 export function handleItemSelection(selected, enclosingPath = '') {
+  debugger
   if (!selected.navigationNodeSummary && selected.playable) {
     const {itemDescriptions, playables} = this.props
     const item = itemDescriptions[noha(selected.ref)]

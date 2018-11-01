@@ -25,10 +25,10 @@ const mapStateToProps = (state, props) => ({
   location: state.router.location,
   // allMenuIDs: getMenuIDsSelector(state),
   // catalog: getCatalogData(state),
-  summary: getNavigationDescriptionFromSummarySelector(state, props),
+  summary: getNavigationDescriptionFromSummarySelector(state, props), // line 117
   pathKey: getKeySelector(state),
   itemDescriptions: getChildItemDescriptionsSelector(state, props),
-  playables: getChildItemPlayablesSelector(state, props),
+  playables: getChildItemPlayablesSelector(state, props), // line 215
   navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
   pathname: getChildItemPathname(state, props) // /catalog/recs/albums
 })
