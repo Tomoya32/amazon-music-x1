@@ -82,11 +82,11 @@ export const getMenuIDsSelector = createSelector([getItemDescriptions], (items) 
   else return
 })
 export const getNavigationDescriptionFromSummarySelector = createSelector(
-  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes],
-  (summary, descs, key, nodes) => {
+  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes,getSearchNode],
+  (summary, descs, key, nodes, searchNode) => {
     // return navigationNodeDescription (to be used as props.summary by HomeMenuHorizontalLoadingMenuContainer)
   if (!summary) return null
-  const parentNode = nodes[key];
+  const parentNode = searchNode;
   if (parentNode && summary.description.indexOf('#') === 0) {
     const currentNode_desc = noha(summary.description);
     const currentNode_summary = noha(descs[currentNode_desc].summary);
@@ -110,10 +110,10 @@ export const getNavigationDescriptionFromSummarySelector = createSelector(
     // compare navigationNodeDescription to this.props.summary of HomeMenuHorizontalLoadingMenuContainer
     return navigationNodeDescription
   } else {
-    // TODO: what do i do here?
-    // debugger
     const path = mergePath(key, summary.description)
     const {pathname, hash} = up(path)
+    // what is nodes[pathname]?
+    debugger
     if(nodes[pathname]) {
       const node = nodes[pathname]
       const {itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result} = node
@@ -129,6 +129,8 @@ export const getChildData = createSelector(
   [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descriptions, key, nodes) => {
     const path = mergePath(key, summary.description)
     const {pathname} = up(path)
+    // what is nodes[pathname]?
+    debugger
     return {
       summary, descriptions, parentKey: key, node: nodes[pathname], pathname,
     }
@@ -171,11 +173,10 @@ export const getChildItemPathname = createSelector(
   }
 )
 export const getChildItemPlayablesSelector = createSelector(
-  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
+  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes,getSearchNode], (summary, descs, key, nodes, searchNode) => {
     // if (!summary || !props.summary) return null
     if (!summary) return null
-    // debugger
-    const parentNode = nodes[key];
+    const parentNode = searchNode
     const currentNode_desc = noha(summary.description);
     const { items } = descs[currentNode_desc];
     const itemsData = items.map(item => {
@@ -199,7 +200,7 @@ export const getChildItemPlayablesSelector = createSelector(
     const playables = {}
     playablesList.forEach( playable => {
       const current = noha(playable);
-      playables[current] = nodes['/search'].playables[current]
+      playables[current] = searchNode.playables[current]
     })
     return playables
     // const tmp = up(summary.description);
@@ -211,12 +212,12 @@ export const getChildItemPlayablesSelector = createSelector(
   }
 )
 export const getChildItemDescriptionSelector = createSelector(
-  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes],
-  (summary, descs, key, nodes) => {
+  [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes, getSearchNode],
+  (summary, descs, key, nodes, searchNode) => {
     if (!summary) return null
     const path = mergePath(key, summary.description)
     const {pathname} = up(path)
-    if(nodes[pathname]) return nodes[pathname].navigationNodeSummaries
+    if(searchNode) return searchNode.navigationNodeSummaries
     else return null
   }
 )
