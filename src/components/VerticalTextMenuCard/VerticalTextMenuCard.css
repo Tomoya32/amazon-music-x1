@@ -19,11 +19,11 @@
 .VerticalTextMenuCard:nth-child(n+5) {
   text-transform: capitalize;
   position: relative;
-  left: 580px;
+  left: 480px;
   font-size: 18px;
   opacity: 0.7;
 }
 
 .VerticalTextMenuCard:nth-child(n+6) {
-  left: 360px;
+  left: 480px;
 }

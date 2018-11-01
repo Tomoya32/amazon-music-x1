@@ -21,9 +21,11 @@ class MainMenuContainer extends Component {
   }
   updateCurrentPlayable() {
     const {topnav, playable} = this.props;
-    const newTopnav = topnav.slice(0);
+    let newTopnav = topnav.slice(0);
     const dest = mergeChunkWithPathAndQuery(['/playback', playable.node], playable.chunk, {indexWithinChunk: playable.indexWithinChunk} )
+    const settingsNav = newTopnav.pop();
     newTopnav.push({ name: 'Now Playing', path: dest })
+    newTopnav.push(settingsNav)
     this.setState({topnav: newTopnav})
   }
   handleSelection(dest) {
