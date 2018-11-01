@@ -14,9 +14,8 @@ function * loadSearchResultsNode (action) {
     const payload = yield call(API.loadNavigationNode, action.path)
     const {responseURL} = payload.request
     const responsePath = responseURL.replace(config.music.endpoint, '')
-    // TODO: change back:
     // yield put(addChildNode(payload.data, payload.data.result, responsePath))
-    yield put(addChildNode(payload.data, '/search', responsePath))
+    yield put(addChildNode(payload.data, '/search', responsePath)) // TODO: delete
     yield put(searchResults(payload))
   } catch (e) {
     if (e.status === 401 || e.status === 403) {
