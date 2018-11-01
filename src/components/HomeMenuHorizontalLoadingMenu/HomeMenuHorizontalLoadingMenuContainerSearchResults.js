@@ -5,9 +5,6 @@ import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
 import PropTypes from 'prop-types'
 import { showNode } from '../../store/modules/home'
-import { handleItemSelection, noha } from '../../lib/utils'
-import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
-import {replace} from '../../store/modules/nav'
 import {
   getMenuIDsSelector,
   getNavigationDescriptionFromSummarySelector,
@@ -19,18 +16,21 @@ import {
   getChildItemDescriptionsSelector,
   getChildItemPathname
 } from '../../lib/selectors/searchNode_selectors'
+import { handleItemSelection, noha } from '../../lib/utils'
+import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
+import {replace} from '../../store/modules/nav'
 import { openModal } from '../../store/modules/modal'
 
 const mapStateToProps = (state, props) => ({
   location: state.router.location,
-  // allMenuIDs: getMenuIDsSelector(state),
-  // catalog: getCatalogData(state),
+  allMenuIDs: getMenuIDsSelector(state),
+  catalog: getCatalogData(state),
   summary: getNavigationDescriptionFromSummarySelector(state, props), // line 117
   pathKey: getKeySelector(state),
   itemDescriptions: getChildItemDescriptionsSelector(state, props),
-  playables: getChildItemPlayablesSelector(state, props), // line 215
+  playables: getChildItemPlayablesSelector(state, props),
   navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
-  pathname: getChildItemPathname(state, props) // /catalog/recs/albums
+  pathname: getChildItemPathname(state, props)
 })
 
 const mapDispatchToProps = {
@@ -42,7 +42,6 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
     super(p)
     this.handleSelection = dest => {
       const { pathname } = this.props.location;
-      // TODO: .ref is missing from itemDescription
       if (!dest.type && dest.itemLabel === 'See more') {
         const { description } = this.props.navigationNodeSummaries[noha(dest.navigationNodeSummary)]
         this.props.replace(`/search/${description}`)
@@ -66,9 +65,7 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
 
   loadIfNeeded () {
     if (typeof(this.props.summary) === 'string') {
-      console.info('loadChildNode: ', this.props.summary)
-      // debugger
-      // this.props.addChildNode(payload.data, action.path, responsePath)
+      this.props.loadChildNode(this.props.summary)
     }
   }
 
