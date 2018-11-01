@@ -4,7 +4,7 @@ import css from './Linking.scss'
 
 const Linking = ({user_code, verification_uri}) => (
   <div className={cx(css.Linking, 'Page')}>
-    <label className='text-info'>To link your Samsung Device to Amazon Music please go to</label>
+    <label className='text-info'>To link your X1 TV Box to Amazon Music please go to</label>
     {verification_uri &&
       <a href={verification_uri} className='link' target='_blank'>{verification_uri}</a>
     }
