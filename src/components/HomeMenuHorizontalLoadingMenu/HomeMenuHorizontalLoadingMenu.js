@@ -18,8 +18,8 @@ const calculateStyle = (currentState, newState, ref) => {
 
 const HomeMenuHorizontalLoadingMenu = ({itemsData, name, focused, onClick, allMenuIDs, summary}) => {
   const menuid = `homemenu:${name}`;
-  const data = (itemsData.length >= 100) ? itemsData.slice(0,5) : itemsData;
-  if (summary != "/upsell-banner/") {
+  const data = (itemsData.length > 8) ? itemsData.slice(0,5) : itemsData;
+  if (summary != "/upsell-banner/" && itemsData.length > 8) {
     data.push({itemLabel: 'See More', navigationNodeSummary: name, type: 'SEE_MORE'})
   }
   return (

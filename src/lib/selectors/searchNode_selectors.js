@@ -184,7 +184,7 @@ export const getNavigationDescriptionFromSummarySelector = createSelector(
       let result = parentNode.itemDescriptions[noha(item)]
       if (!result) {
         console.error('Error because descs is not updating with every search. Need to fix getNavigationNodeDescriptions. \n descs: \n',descs,'\n parentNode: \n',parentNode)
-        debugger
+        // debugger
         return
       }
       // console.clear()
@@ -199,7 +199,7 @@ export const getNavigationDescriptionFromSummarySelector = createSelector(
     return navigationNodeDescription
   } else {
     // TODO: what do i do here?
-    debugger
+    // debugger
     const path = mergePath(key, summary.description)
     const {pathname, hash} = up(path)
     if(nodes[pathname]) {
@@ -215,7 +215,7 @@ export const getChildItemPlayablesSelector = createSelector(
   [getProps,getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (props,summary, descs, key, nodes) => {
     // if (!summary || !props.summary) return null
     if (!summary) return null
-    debugger
+    // debugger
     const parentNode = nodes[key];
     const currentNode_desc = noha(summary.description);
     const { items } = descs[currentNode_desc];
