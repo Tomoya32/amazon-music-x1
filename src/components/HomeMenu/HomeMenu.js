@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import HomeHorizontalLoadingMenu from '../HomeMenuHorizontalLoadingMenu'
+import HomeHorizontalLoadingMenu from '../HomeMenuHorizontalLoadingMenu/HomeMenuHorizontalLoadingMenuContainerSearchResults'
 
 const mapStateToProps = (state) => ({
   term: state.search.term,

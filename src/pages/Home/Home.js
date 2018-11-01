@@ -1,5 +1,5 @@
 import React from 'react'
-import HomeMenu from '../../components/HomeMenu'
+import HomeMenu from '../../components/HomeMenu/HomeMenuSearchResults'
 import MainMenu, { MenuComposer } from '../../components/MainMenu'
 import ListMenu, { calculateOffsetHeight } from '../../lib/reactv-redux/SlotMenuRedux'
 import Space from '../../lib/reactv-redux/SpaceRedux'
@@ -24,24 +24,17 @@ const calculateStyle = (currentState, newState, ref) => {
   }
 }
 
-const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, onSubmit, updateMenu, showModal, closeModal}) => {
-  if (showModal && !isFocused('modal')) { changeFocus('modal')() }
-  return (
-    <div>
-      {showModal && <Modal className='amazon-unlimited-modal' menuid='modal' onFocusItem='action' focused={isFocused('modal')}
-        onEnter={() => {
-          closeModal()
-          changeFocus('home:main')()
-      }}/>}
+const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, onSubmit, updateMenu, closeModal}) => {
+  if (itemsData && itemsData.length) {
+    return (
       <div className="Home-scrollable">
-        {itemsData && itemsData.length &&
         <ListMenu data={itemsData} renderItem={renderMenu(pathKey)} menuid={'home:main'}
           focused={isFocused('home:main')} onUp={changeFocus('topnav')}
           slots={2}
-          calculateStyle={calculateStyle}/>}
+          calculateStyle={calculateStyle}/>
       </div>
-    </div>
   )
+  } else return null
 }
 
-export default Space(MenuComposer(MainMenu,Home))
+export default Space(Home)

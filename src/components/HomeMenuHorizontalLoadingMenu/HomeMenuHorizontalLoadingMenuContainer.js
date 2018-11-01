@@ -5,34 +5,32 @@ import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
 import PropTypes from 'prop-types'
 import { showNode } from '../../store/modules/home'
-import {
-  getMenuIDsSelector,
-  getNavigationDescriptionFromSummarySelector,
-  getKeySelector
-} from '../../lib/selectors/node_selectors'
-import { handleItemSelection } from '../../lib/utils'
+import { handleItemSelection, noha } from '../../lib/utils'
 import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
 import {replace} from '../../store/modules/nav'
 import {
+  getMenuIDsSelector,
+  getNavigationDescriptionFromSummarySelector,
+  getKeySelector,
   getChildPathSelector,
   getChildItemPlayablesSelector,
   getChildItemDescriptionSelector,
   getCatalogData,
   getChildItemDescriptionsSelector,
   getChildItemPathname
-} from '../../lib/selectors/node_selectors'
+} from '../../lib/selectors/searchNode_selectors'
 import { openModal } from '../../store/modules/modal'
 
 const mapStateToProps = (state, props) => ({
-  allMenuIDs: getMenuIDsSelector(state),
-  catalog: getCatalogData(state),
   location: state.router.location,
-  summary: getNavigationDescriptionFromSummarySelector(state, props),
+  // allMenuIDs: getMenuIDsSelector(state),
+  // catalog: getCatalogData(state),
+  summary: getNavigationDescriptionFromSummarySelector(state, props), // line 117
   pathKey: getKeySelector(state),
   itemDescriptions: getChildItemDescriptionsSelector(state, props),
-  playables: getChildItemPlayablesSelector(state, props),
+  playables: getChildItemPlayablesSelector(state, props), // line 215
   navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
-  pathname: getChildItemPathname(state, props)
+  pathname: getChildItemPathname(state, props) // /catalog/recs/albums
 })
 
 const mapDispatchToProps = {
@@ -43,9 +41,13 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
   constructor (p) {
     super(p)
     this.handleSelection = dest => {
-      const {pathname, replace} = this.props
-      if(dest.type === 'SEE_MORE') replace(`/list/${pathname}`)
-      else handleItemSelection.call(this, dest, this.props.pathname)
+      const { pathname } = this.props.location;
+      // TODO: .ref is missing from itemDescription
+      if (!dest.type && dest.itemLabel === 'See more') {
+        const { description } = this.props.navigationNodeSummaries[noha(dest.navigationNodeSummary)]
+        this.props.replace(`/search/${description}`)
+      }
+      handleItemSelection.call(this, dest, pathname)
     }
     this.handleOpenModal = this.handleOpenModal.bind(this);
   }
@@ -64,7 +66,9 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
 
   loadIfNeeded () {
     if (typeof(this.props.summary) === 'string') {
-      this.props.loadChildNode(this.props.summary)
+      console.info('loadChildNode: ', this.props.summary)
+      // debugger
+      // this.props.addChildNode(payload.data, action.path, responsePath)
     }
   }
 
@@ -73,8 +77,7 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
   }
 
   render () {
-    if ( this.props.summary.itemsData ) {
-      if (this.props.itemDescription) {
+      if (this.props.summary && this.props.itemDescription) {
         const { ref, itemLabel }= this.props.itemDescription;
         if (ref== "#_obj0" && itemLabel.startsWith('Try')) {
           // If the data is for 'Try Amazon Unlimited Music', manipulate API response to populate HomeMenuCard
@@ -84,17 +87,11 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
             summary: "/upsell-banner/"
           }
           return (<HomeMenuHorizontalLoadingMenu {...summary} onClick={this.handleOpenModal} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
+        } else if (typeof(this.props.summary) === 'object') {
+          return ( <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection.bind(this)} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
         }
       }
-      if (typeof(this.props.summary) === 'object') {
-        return (
-          <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection.bind(this)} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
-      } else {
-        return null
-      }
-    } else {
       return null
-    }
   }
 }
 
