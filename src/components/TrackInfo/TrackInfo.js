@@ -1,21 +1,34 @@
 import React from 'react'
-import './TrackInfo.css'
 import Space from '../../lib/reactv-redux/SpaceRedux'
 import PlayerControls from '../PlayerControls'
+import style from './TrackInfo.scss'
 
-const TrackInfo = ({ title, artist, album, image, shuffle, onNext, onShuffleNext, isFocused, changeFocus, onDown, trackRating}) => (
-  <div className='TrackInfo'>
-    {image && (<img src={image.uri} alt={title} />)}
-    <div className={'TrackDeets'}>
-      <div>
-        <h1>{title}</h1>
-        {artist && artist.name && (<h2>{artist.name}</h2>)}
-        {album && album.name && (<h3>{album.name}</h3>)}
-        <PlayerControls menuid='playback:playercontrols' shuffle={shuffle} focused={isFocused('playback:playercontrols')}
-          defaultFocus={'playback:playercontrols:pause'} onFarRight={changeFocus('shuffleNextTrack')} onDown={onDown} trackRating={trackRating}/>
+const TrackInfo = ({title, artist, album, image, shuffle, onNext, onShuffleNext, isFocused, changeFocus, onDown, trackRating}) => {
+  const artistName = artist && artist.name
+  const albumName = album && album.name
+  const trackDeetsSubtitle = (artistName && albumName) ? (artistName + ' • ' + albumName) : (artistName || albumName)
+
+  return (
+    <div className={style.TrackInfo}>
+      {image && (<img src={image.uri} alt={title} />)}
+      <div className='TrackDeets'>
+        <label className='title'>{title}</label>
+        {(artistName || albumName) && (
+          <label className='subtitle'>{trackDeetsSubtitle}</label>
+        )}
+        <PlayerControls
+          menuid='playback:playercontrols'
+          focused={isFocused('playback:playercontrols')}
+          onFocusItem={'playback:playercontrols:pause'}
+          onFarRight={changeFocus('shuffleNextTrack')}
+          trackRating={trackRating}
+          shuffle={shuffle}
+          onDown={onDown}
+          trackRating={trackRating}
+        />
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 export default Space(TrackInfo)

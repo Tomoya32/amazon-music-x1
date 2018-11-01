@@ -12,7 +12,6 @@ const mapDispatchToProps = () => ({})
 
 class ProgressBarContainer extends Component {
   render () {
-    if (this.props.duration === 0 || this.props.currentTime === 0 || isNaN(this.props.duration) || isNaN(this.props.currentTime)) return null
     return <ProgressBar {...this.props} />
   }
 }

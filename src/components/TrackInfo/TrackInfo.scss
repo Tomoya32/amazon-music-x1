@@ -1,0 +1,51 @@
+:local(.TrackInfo) {
+    position: absolute;
+    top: 100px;
+    left: 200px;
+    width: 880px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+        height: 300px;
+        width: 300px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .TrackDeets {
+        margin-top: 25px;
+        width: 880px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .title {
+            opacity: 0.9;
+            font-family: HelveticaNeue;
+            font-size: 38px;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            margin-top: 5px;
+            opacity: 0.6;
+            color: #ffffff;
+            font-family: "Helvetica Neue";
+            font-size: 20px;
+        }
+    }
+
+    .NextButton {
+        display: inline-block;
+        height: 30px; line-height: 30px;
+        padding: 0 10px;
+        border: 1px solid white;
+    }
+
+    .NextButton.focused {
+        background: dodgerblue;
+        border: 1px solid dodgerblue;
+    }
+}

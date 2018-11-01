@@ -5,126 +5,41 @@ $highlight: #4299d5;
 $blank: #ffffff;
 $saved: #68eaff;
 @import '../../styles/resize';
-//@import '../../styles/spritesmith-generated/sprite.scss';
-@mixin sprite($sprite) {
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-image: url('../../assets/images/button/' + $sprite);
-}
 
 :local(.PlayerControls) {
   width: 100%;
-  // position: absolute;
-  left: 0;
-  // top: 5px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+
   .controls {
-    display: inline-block;
-    margin: 0 auto;
-    height: 115px;
-    width: 600px;
-    text-align: center;
-    position: relative;
-    > div {
-      float: left;
-      margin-right: 16px;
-      &:last-child {
-        margin-right: 0;
+    z-index: 100;
+    display: flex;
+    width: 120px;
+    justify-content: space-between;
+    align-items: center;
+
+    .pauseButton {
+      width: 38px;
+      height: 42px;
+
+      &.paused {
+        width: 60px;
+        height: 60px;
+        margin: -9px
       }
     }
-    .regularButton {
-      height: 70px;
-      width: 70px;
-      margin-top: 20px;
+
+    .previousTrack {
+      height: 17px;
+      width: 17px;
+
+      &.next {
+        transform: rotate(180deg);
+      }
     }
-    .largeButton {
-      height: 115px;
-      width: 115px;
-      margin-top: 0;
-    }
-    .info-on {
-      @include sprite('info-on.png')
-    }
-    .info-off {
-      @include sprite('info-off.png')
-    }
-    .back15-on {
-      @include sprite('back15-on.png')
-    }
-    .back15-off {
-      @include sprite('back15-off.png')
-    }
-    .play-on {
-      @include sprite('play-on.png')
-    }
-    .play-off {
-      @include sprite('play-off.png')
-    }
-    .pause-on {
-      @include sprite('pause-on.png')
-    }
-    .pause-off {
-      @include sprite('pause-off.png')
-    }
-    .forward-on {
-      @include sprite('forward-on.png')
-    }
-    .forward-off {
-      @include sprite('forward-off.png')
-    }
-    .thumbs {
-      border-radius: 50%;
-    }
-    .thumbsDown-on {
-      @include sprite('thumbsdown-on.png')
-      background-color: $highlight;
-    }
-    .thumbsDown-off {
-      @include sprite('thumbsdown-off.png')
-      background-color: $blank;
-    }
-    .thumbsDown-set-on {
-      @include sprite('thumbsdown-on.png')
-      background-color: $saved;
-    }
-    .thumbsDown-set-off {
-      @include sprite('thumbsdown-off.png')
-      background-color: $saved;
-    }
-    .thumbsUp-on {
-      @include sprite('thumbsup-on.png')
-      background-color: $highlight;
-    }
-    .thumbsUp-off {
-      @include sprite('thumbsup-off.png')
-      background-color: $blank;
-    }
-    .thumbsUp-set-on {
-      @include sprite('thumbsup-on.png')
-      background-color: $saved;
-    }
-    .thumbsUp-set-off {
-      @include sprite('thumbsup-off.png')
-      background-color: $saved;
-    }
-    .x-on {
-      @include sprite('x-on.png')
-    }
-    .x-off {
-      @include sprite('x-off.png')
-    }
-    .skip-on {
-      @include sprite('skip_On.svg')
-    }
-    .skip-off {
-      @include sprite('skip_Off.svg')
-    }
-    .previous-on {
-      @include sprite('previous_On.svg')
-    }
-    .previous-off {
-      @include sprite('previous_Off.svg')
-    }
+
     .tooltip {
       background-color: white;
       color: black;
@@ -148,5 +63,35 @@ $saved: #68eaff;
       border-width: 8px;
       margin-left: -8px;
     }
+  }
+
+  .ThumbSection {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0;
+
+    .thumbs {
+      width: 20px;
+      height: 20px;
+
+      &:first-child {
+        margin-right: 10px;
+      }
+    }
+
+    .thumbs {
+      &.thumbsUp-set-off svg g g g use {
+        fill: #68eaff;
+      }
+      &.thumbDown {
+        svg {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+
+  &.withoutThumbs {
+    margin-top: 25px;
   }
 }

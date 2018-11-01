@@ -5,11 +5,15 @@ import PropTypes from 'prop-types'
 import cx from 'classnames'
 import gt from 'lodash/get'
 import dw from 'debug'
+import ThumbIcon from '../../assets/images/icon/thumb-up.js'
+import PauseIcon from '../../assets/images/icon/pauseButton.js'
+import PreviousIcon from '../../assets/images/icon/previous-button.js'
+import PlayIcon from '../../assets/images/icon/play-icon.js'
+import { Space } from '../../lib/reactv-navigation';
 
 const debug = dw('app:player_controls_container')
 
 class PlayerControls extends Component {
-
   render () {
     const {
       giveThumbs,
@@ -57,70 +61,84 @@ class PlayerControls extends Component {
       'play-off': playerControlsState === 'paused' && !isFocused(getMenuId('pause')),
       largeButton: true
     })
+    const paused = playerControlsState === 'paused'
 
     return (
       <div className={style.PlayerControls}>
-        <div className='controls'>
-          {showThumbs && <Button mid={getMenuId('thumbsDown')}
-            focused={isFocused(getMenuId('thumbsDown'))}
-            onClick={() => { giveThumbs('thumbs_down') }}
-            onDown={onDown}
-            onFocus={() => this.displayToolTip('thumbsDown')}
-            onBlur={() => this.hideToolTip('thumbsDown')}
-            className={classForThumbsDown}
-            onLeft={onLeft} onRight={changeFocus(getMenuId('previous'))}>
-            &nbsp;
+        <div className='ThumbSection'>
+          {showThumbs && <Button
+            mid={getMenuId('thumbUp')}
+            menuid={getMenuId('thumbUp')}
+            className={classForThumbsUp}
+            focused={isFocused(getMenuId('thumbUp'))}
+            onDown={changeFocus(getMenuId('pause'))}
+            onRight={changeFocus(getMenuId('thumbDown'))}
+            onClick={() => { giveThumbs('thumbs_up') }}
+            onUp={onUp}
+            onLeft={onLeft}
+          >
+            <ThumbIcon fill={isFocused(getMenuId('thumbUp')) && '#53aef5'} />
           </Button>}
-          <Button mid={getMenuId('previous')}
-            className={cx('regularButton', {
-              'previous-off': !isFocused(getMenuId('previous')),
-              'previous-on': isFocused(getMenuId('previous'))
-            })}
-            focused={isFocused(getMenuId('previous'))}
+          {showThumbs && <Button
+            mid={getMenuId('thumbDown')}
+            menuid={getMenuId('thumbDown')}
+            className={cx(`${classForThumbsDown}`,'thumbDown')}
+            focused={isFocused(getMenuId('thumbDown'))}
+            onDown={changeFocus(getMenuId('pause'))}
+            onLeft={changeFocus(getMenuId('thumbUp'))}
+            onClick={() => { giveThumbs('thumbs_down') }}
+            onUp={onUp}
+            onRight={onRight}
+          >
+            <ThumbIcon fill={isFocused(getMenuId('thumbDown')) && '#53aef5'} />
+          </Button>}
+        </div>
+        <div
+          className='controls'>
+          <Button
+            mid={getMenuId('previousTrack')}
             disabled={false}
             onClick={backwardSkip}
             onFocus={() => this.displayToolTip('previous')}
             onBlur={() => this.hideToolTip('previous')}
+            className={cx('previousTrack')}
+            focused={isFocused(getMenuId('previousTrack'))}
+            onUp={showThumbs && changeFocus(getMenuId('thumbUp'))}
             onDown={onDown}
-            onLeft={(showThumbs) ? changeFocus(getMenuId('thumbsDown')) : onLeft}
-            onRight={changeFocus(getMenuId('pause'))}>
-            &nbsp;
+            onLeft={onLeft}
+            onRight={changeFocus(getMenuId('pause'))}
+          >
+            <PreviousIcon fill={isFocused(getMenuId('previousTrack')) && '#53aef5'} />
           </Button>
-          <Button mid={getMenuId('pause')}
+          <Button
+            mid={getMenuId('pause')}
+            menuid={getMenuId('pause')}
             className={playPauseIconClass}
             focused={isFocused(getMenuId('pause'))}
-            onFocus={() => this.displayToolTip('pause')}
-            onBlur={() => this.hideToolTip('pause')}
-            onLeft={changeFocus(getMenuId('previous'))}
-            onRight={changeFocus(getMenuId('skip'))}
+            onLeft={changeFocus(getMenuId('previousTrack'))}
+            onRight={changeFocus(getMenuId('nextTrack'))}
+            onUp={showThumbs && changeFocus(getMenuId('thumbUp'))}
+            onClick={togglePlayState}
             onDown={onDown}
-            onClick={togglePlayState}>
-            &nbsp;
+          >
+            {paused ? (
+              <PlayIcon fill={isFocused(getMenuId('pause')) && '#53aef5'} /> // todo change to play icon
+            ) : (
+              <PauseIcon fill={isFocused(getMenuId('pause')) && '#53aef5'} />
+            )}
           </Button>
-          <Button mid={getMenuId('skip')}
-            className={cx('regularButton', {
-              'skip-off': !isFocused(getMenuId('skip')),
-              'skip-on': isFocused(getMenuId('skip'))
-            })}
-            focused={isFocused(getMenuId('skip'))}
-            onFocus={() => this.displayToolTip('skip')}
-            onBlur={() => this.hideToolTip('skip')}
+          <Button
+            mid={getMenuId('nextTrack')}
+            className={cx('previousTrack next')}
+            focused={isFocused(getMenuId('nextTrack'))}
+            onUp={showThumbs && changeFocus(getMenuId('thumbUp'))}
+            onDown={onDown}
             onLeft={changeFocus(getMenuId('pause'))}
-            onRight={(showThumbs) ? changeFocus(getMenuId('thumbsUp')) : onRight}
-            onDown={onDown}
-            onClick={forwardSkip}>
-            &nbsp;
+            onRight={onRight}
+            onClick={forwardSkip}
+          >
+            <PreviousIcon fill={isFocused(getMenuId('nextTrack')) && '#53aef5'} />
           </Button>
-          {showThumbs && <Button mid={getMenuId('thumbsUp')}
-            focused={isFocused(getMenuId('thumbsUp'))}
-            onClick={() => { giveThumbs('thumbs_up') }}
-            onDown={onDown}
-            onFocus={() => this.displayToolTip('thumbsUp')}
-            onBlur={() => this.hideToolTip('thumbsUp')}
-            className={classForThumbsUp}
-            onLeft={changeFocus(getMenuId('skip'))} onRight={onRight}>
-            &nbsp;
-          </Button>}
         </div>
       </div>
     )
@@ -135,4 +153,4 @@ PlayerControls.propTypes = {
 PlayerControls.contextTypes = {
   getMenuId: PropTypes.func
 }
-export default PlayerControls
+export default Space(PlayerControls)
