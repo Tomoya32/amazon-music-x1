@@ -7,12 +7,7 @@ import './Home.css'
 import Modal from '../../components/Modal'
 
 const renderMenu = (pathKey) => (
-  ({item, focused}) => (
-    <HomeMenu
-      itemDescription={item}
-      pathKey={pathKey}
-      menuid={`homemenu:${item.itemLabel}`}
-      focused={focused} />)
+  ({item, focused}) => (<HomeMenu itemDescription={item} pathKey={pathKey} menuid={`homemenu:${item.itemLabel}`} focused={focused} />)
 )
 
 const calculateStyle = (currentState, newState, ref) => {

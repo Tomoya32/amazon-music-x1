@@ -6,7 +6,7 @@ import './HomeMenuHorizontalLoadingMenu.css'
 import PropTypes from 'prop-types'
 import { showNode } from '../../store/modules/home'
 import { handleItemSelection, noha } from '../../lib/utils'
-import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenuSearchResults'
+import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
 import {replace} from '../../store/modules/nav'
 import {
   getMenuIDsSelector,
