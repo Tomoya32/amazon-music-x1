@@ -14,6 +14,7 @@ $saved: #68eaff;
   align-items: center;
 
   .controls {
+    z-index: 100;
     display: flex;
     width: 120px;
     justify-content: space-between;
