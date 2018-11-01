@@ -5,6 +5,7 @@ import '../../components/HomeMenuHorizontalLoadingMenu/HomeMenuHorizontalLoading
 import PropTypes from 'prop-types'
 import Space from '../../lib/reactv-redux/SpaceRedux'
 import {
+  getNavigationDescriptionFromSummarySelector,
   getMenuIDsSelector,
   getKeySelector,
   getItemDescriptionsSelectors,
@@ -13,9 +14,11 @@ import {
   getCatalogData,
 } from '../../lib/selectors/searchNode_selectors'
 import { handleItemSelection } from '../../lib/utils'
-import HomeMenuHorizontalLoadingMenu from '../../components/HomeMenuHorizontalLoadingMenu/HomeMenuHorizontalLoadingMenu.js'
+import HomeMenuHorizontalLoadingMenu from '../../components/HomeMenuHorizontalLoadingMenu/HomeMenuHorizontalLoadingMenuContainerSearchResults.js'
 import {replace} from '../../store/modules/nav'
 import PageLoading from '../../components/PageLoading';
+import Home from '../Home/HomeSearchResults'
+import topnav from '../../components/MainMenu/topnav'
 
 const mapStateToProps = (state, props) => ({
   allMenuIDs: getMenuIDsSelector(state),
@@ -34,6 +37,7 @@ const mapDispatchToProps = {
 }
 
 class SearchResult extends Component {
+  // this component is equivalent to HomeContainer
   constructor (props) {
     super(props)
     this.handleSelection = dest => {
@@ -52,19 +56,15 @@ class SearchResult extends Component {
     const { focused, isFocused, changeFocus } = this.props;
     if (this.props.catalog) {
       return (
-        
-          <HomeMenuHorizontalLoadingMenu
-            {...this.props.catalog}
-            onClick={this.handleSelection.bind(this)}
-            menuid={'home:main'}
-            focused={isFocused('home:main')}
-            onFocusItem={'home:main'}
-            onUp={changeFocus('search:atoz')}
-            name={"#search"}
-            allMenuIDs={this.props.allMenuIDs}
-          />
-
-      )
+        <Home
+          catalog={this.props.catalog}
+          pathKey={this.props.pathKey}
+          topnav={topnav}
+          focused
+          menuid={'homespace'}
+          onFocusItem='home:main'
+          {...this.props}
+          entryFocus='home:main'/>)
     } else {
       return (
         <PageLoading />
@@ -73,4 +73,5 @@ class SearchResult extends Component {
   }
 }
 
+// TODO: export default Space(SearchResult)
 export default connect(mapStateToProps, mapDispatchToProps)(Space(SearchResult))

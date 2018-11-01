@@ -17,7 +17,6 @@ function * loadNavigationNode (action) {
     const {responseURL} = payload.request
     const responsePath = responseURL.replace(config.music.endpoint, '')
     yield put(addChildNode(payload.data, action.path, responsePath))
-    yield put(searchResults(payload))
   } catch (e) {
     if (e.status === 401 || e.status === 403) {
       yield put({type: CLEAR_AUTH_DATA})
@@ -56,10 +55,6 @@ function * registerPathChange (action) {
       if (!path || path.trim() === '') path = config.music.browse_node
       console.info(`Music loading path ${path}`)
       yield(put({type: LOAD_CHILD_NODE, path}))
-    } 
-    else if (API.loggedIn() && /^\/?search(\/|$)/.test(pathname)) { // TODO: Need a mechanism for managing these
-      action.payload.location.pathname = '/search' + config.music.browse_node
-      yield (put({ type: LOAD_CHILD_NODE, path: config.music.browse_node }))
     }
   } catch (e) {
     console.warn(`Error registering for path change ${e.message}`, e)
