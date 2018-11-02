@@ -225,7 +225,16 @@ const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigati
   let currentNavigationNode = hash || result
   let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
   desc.summaryData = navigationNodeSummaries[noha(desc.summary)]
-  desc.itemsData = desc.items.map(item => {
+  let validItems = desc.items.filter(item => {
+    const itemDescription = itemDescriptions[noha(item)];
+    const { navigationNodeSummary, playable } = itemDescription;
+    // it's a playable node
+    if (!navigationNodeSummary && playable.length) return true
+    // it's a navigational node: check if node has any items in it
+    const navigational = (navigationNodeSummaries[noha(navigationNodeSummary)].numItemsOfInterest > 0);
+    return (navigational || currentNavigationNode === "#sandbox")
+  })
+  desc.itemsData = validItems.map(item => {
     let itemDesc = itemDescriptions[noha(item)]
     itemDesc.ref = item
     return itemDesc
