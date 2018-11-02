@@ -20,8 +20,10 @@ import { handleItemSelection, noha } from '../../lib/utils'
 import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
 import {replace} from '../../store/modules/nav'
 import { openModal } from '../../store/modules/modal'
+import { loadSearchNode } from '../../store/modules/search'
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state, props) => {
+return ({
   location: state.router.location,
   allMenuIDs: getMenuIDsSelector(state),
   catalog: getCatalogData(state),
@@ -32,19 +34,21 @@ const mapStateToProps = (state, props) => ({
   navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
   pathname: getChildItemPathname(state, props)
 })
-
+}
 const mapDispatchToProps = {
-  loadChildNode, showNode, replace, openModal
+  loadChildNode, showNode, replace, openModal, loadSearchNode
 }
 
 class HomeMenuHorizontalLoadingMenuContainer extends Component {
   constructor (p) {
     super(p)
     this.handleSelection = dest => {
+      console.clear()
       const { pathname } = this.props.location;
-      if (!dest.type && dest.itemLabel === 'See more') {
+      if (dest.itemLabel === 'See more') {
         const { description } = this.props.navigationNodeSummaries[noha(dest.navigationNodeSummary)]
-        this.props.replace(`/search/${description}`)
+        this.props.loadSearchNode(`/search/${description}`)
+        // this.props.replace(`/search/${description}`)
       }
       handleItemSelection.call(this, dest, pathname)
     }
