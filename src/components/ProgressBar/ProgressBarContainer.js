@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import ProgressBar from './ProgressBar'
 
 const mapStateToProps = (state, ownProps) => ({
+  progressBarTime: state.player.progressBarTime,
   currentTime: state.player.currentTime,
   duration: state.player.duration,
   currentUrl: state.player.currentUrl
