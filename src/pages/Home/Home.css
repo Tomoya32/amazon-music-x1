@@ -35,6 +35,10 @@
   padding-left: 40px;
 }
 
+.Home-scrollable.faded {
+  opacity: .2;
+}
+
 .Home-scrollable > div.ListMenu {
   padding-bottom: 150px;
 }

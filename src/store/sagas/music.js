@@ -56,6 +56,10 @@ function * registerPathChange (action) {
       console.info(`Music loading path ${path}`)
       yield(put({type: LOAD_CHILD_NODE, path}))
     }
+    else if (API.loggedIn() && /^\/?settings(\/|$)/.test(pathname)) { // TODO: Need a mechanism for managing these
+      action.payload.location.pathname = '/music' + config.music.browse_node
+      yield (put({ type: LOAD_CHILD_NODE, path: config.music.browse_node }))
+    }
   } catch (e) {
     console.warn(`Error registering for path change ${e.message}`, e)
   }

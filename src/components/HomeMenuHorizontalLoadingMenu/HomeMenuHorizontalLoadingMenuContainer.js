@@ -73,25 +73,21 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
   }
 
   render () {
-    if ( this.props.summary.itemsData ) {
-      if (this.props.itemDescription) {
-        const { ref, itemLabel }= this.props.itemDescription;
-        if (ref== "#_obj0" && itemLabel.startsWith('Try')) {
-          // If the data is for 'Try Amazon Unlimited Music', manipulate API response to populate HomeMenuCard
-          let summary = {
-            image: ["#_obj0"],
-            itemsData: [this.props.itemDescription],
-            summary: "/upsell-banner/"
-          }
-          return (<HomeMenuHorizontalLoadingMenu {...summary} onClick={this.handleOpenModal} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
+    if (this.props.itemDescription) {
+      const { ref, itemLabel } = this.props.itemDescription;
+      if (ref== "#_obj0" && itemLabel.startsWith('Try')) {
+        // If the data is for 'Try Amazon Unlimited Music', manipulate API response to populate HomeMenuCard
+        let summary = {
+          image: ["#_obj0"],
+          itemsData: [this.props.itemDescription],
+          summary: "/upsell-banner/"
         }
+        return (<HomeMenuHorizontalLoadingMenu {...summary} onClick={this.handleOpenModal} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
       }
-      if (typeof(this.props.summary) === 'object') {
-        return (
-          <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection.bind(this)} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
-      } else {
-        return null
-      }
+    }
+    if (typeof(this.props.summary) === 'object') {
+      return (
+        <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection.bind(this)} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
     } else {
       return null
     }
