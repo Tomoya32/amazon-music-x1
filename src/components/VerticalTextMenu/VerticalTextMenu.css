@@ -6,3 +6,7 @@
 .VerticalTextMenu > div {
     display: inline-block;
 }
+
+.VerticalTextMenu.faded .VerticalTextMenuCard.focused {
+    opacity: 0.5;
+}

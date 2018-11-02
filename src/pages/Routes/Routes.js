@@ -20,6 +20,7 @@ const Routes = () => (
     <Route exact path="/mymusic" component={authWrapper(Music)} />
     <Route path="/search" component={authWrapper(Search)} />
     <Route exact path="/linking" component={userIsNotAuthenticated(Linking)} />
+    <Route exact path="/settings" component={authWrapper(Home)} />
   </main>
 )
 

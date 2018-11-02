@@ -16,6 +16,7 @@ import PageLoading from '../../components/PageLoading'
 
 const mapStateToProps = (state) => ({
   showModal: state.modal.showModal,
+  fading: state.modal.fading,
   allMenuIDs: getMenuIDsSelector(state),
   catalog: getCatalogData(state),
   itemDescriptions: getItemDescriptionsSelectors(state),
@@ -29,7 +30,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {updateMenu, closeModal}
 
 class HomeContainer extends React.Component {
-
   render() {
     if(this.props.catalog) {
       return (<Home catalog={this.props.catalog} pathKey={this.props.pathKey} topnav={topnav} focused menuid={'homespace'} onFocusItem='topnav' {...this.props} entryFocus='home:main'/>)
