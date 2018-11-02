@@ -5,7 +5,7 @@ import isNumber from 'lodash/isNumber'
 import cx from 'classnames'
 
 const getPlayerTime = (currentTime, duration, focused) => {
-  if (isNumber(currentTime)) {
+  if (isNumber(currentTime) && currentTime > 0) {
     let fancyCurrentTime = fancyTimeFormat(currentTime)
     let fancyDuration
 
