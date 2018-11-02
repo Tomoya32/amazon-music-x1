@@ -55,7 +55,7 @@ class PlaybackContainer extends Component {
 
   seek(direction) {
     const { currentTime, setCurrentTime, playerState, setPlayerState, duration, progressBarTime, setProgressBarTime } = this.props
-
+    if (playerState === 'playing') setPlayerState('paused') // PAUSE SONG
     let _progressBarTime = progressBarTime;
     const seekBy = 15; // seconds
     const right = (direction > 0);
@@ -66,27 +66,11 @@ class PlaybackContainer extends Component {
     newTime = (newTime > duration) ? duration : (newTime < 0 ? 0.001 : newTime)
     clearTimeout(this.resumeIn)
     // minimum delay = 500ms to avoid player.play() on first onLeft
-    /********************* OPTIONS FRO SCRUBBING *********************/
-
-    // OPTION 1: update `currentTime` once there are no more presses
-    // PAUSE SONG
-    if (playerState === 'playing') setPlayerState('paused')
     setProgressBarTime(newTime)
     this.resumeIn = setTimeout(() => {
       setCurrentTime(newTime)
-      // PLAY SONG
-      setPlayerState('playing')
+      setPlayerState('playing') // PLAY SONG
     }, 500)
-
-    // // OPTION 2: update `currentTime` on every press
-    // if (playerState === 'playing') setPlayerState('paused')
-    // setCurrentTime(newTime)
-    // this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 500)
-
-    // OPTION 3: do not pause song while scrubbing
-    // this.resumeIn = setTimeout(() => { setCurrentTime(newTime) }, 500)
-
-    /********************* END OF OPTIONS *********************/
   }
 
   componentDidMount () {
