@@ -6,24 +6,26 @@ import AtoZMenu from '../../components/AtoZMenu'
 import { alphabet } from '../../components/AtoZMenu/AtoZContainer'
 import topnav from '../../components/MainMenu/topnav'
 import SearchResult from './SearchResult'
-import './Search.css'
-// { changeFocus, isFocused, term, results, onLetter, updateMenu, ...props }
+import css from './Search.scss'
+import SearchIcon from '../../assets/images/icon/search-icon.js'
+
 const Search = (props) => {
   return (
-    <div className="Home-content">
-      <AtoZMenu
-        className='search-content'
-        menuid='search:atoz'
-        // mid='search:atoz'
-        focused={props.isFocused('search:atoz')}
-        onEnter={props.onLetter}
-        onUp={props.changeFocus('topnav')}
-        onDown={props.changeFocus('home:main')}
-        onRight={() => props.updateMenu('search:atoz', { index: 0 })}
-        onLeft={() => props.updateMenu('search:atoz', { index: alphabet.length - 1 })}
-      />
-      <div className='search-content field'>{props.term}<span className='blinker'>|</span></div>
+    <div className={css.Search}>
 
+      <div className='search-info'>
+        <div className='field'><SearchIcon /><label>{props.term}<span className='blinker'>|</span></label></div>
+        <AtoZMenu
+          menuid='search:atoz'
+          mid='search:atoz'
+          focused={props.isFocused('search:atoz')}
+          onEnter={props.onLetter}
+          onUp={props.changeFocus('topnav')}
+          onDown={props.term ? props.changeFocus('home:main') : null}
+          onRight={() => props.updateMenu('search:atoz', { index: 0 })}
+          onLeft={() => props.updateMenu('search:atoz', { index: alphabet.length - 1 })}
+        />
+      </div>
       <SearchResult
         menuid='result'
         onFocusItem='home:main'

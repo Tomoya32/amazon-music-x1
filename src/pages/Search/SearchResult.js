@@ -56,15 +56,19 @@ class SearchResult extends Component {
     const { focused, isFocused, changeFocus } = this.props;
     if (this.props.catalog) {
       return (
-        <Home
-          catalog={this.props.catalog}
-          pathKey={this.props.pathKey}
-          topnav={topnav}
-          focused
-          menuid={'homespace'}
-          onFocusItem='home:main'
-          {...this.props}
-          entryFocus='home:main'/>)
+        <div className='search-result-wrapper'>
+          <Home
+            catalog={this.props.catalog}
+            pathKey={this.props.pathKey}
+            topnav={topnav}
+            focused
+            menuid={'homespace'}
+            onFocusItem='home:main'
+            {...this.props}
+            entryFocus='home:main'
+          />
+        </div>
+      )
     } else {
       return (
         <PageLoading />
