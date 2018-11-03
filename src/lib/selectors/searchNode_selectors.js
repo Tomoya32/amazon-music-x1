@@ -188,14 +188,17 @@ export const getChildItemPlayablesSelector = createSelector(
       return result
     })
     // Can get each playable by looping through:
-    const playablesList = itemsData.map(item => item.playable)
+    // const playablesList = itemsData.map(item => item.playable)
+    const playablesList = itemsData.filter(item => (item.playable)).map(item => item.playable)
+    // what's in playablesList? Are they all valid items?
 
     // then get the playable object for each in playablesList:
 
     const playables = {}
-    // debugger
     playablesList.map( playable => {
       const current = noha(playable);
+      // when is current null? What is playable?
+      // if (!current) debugger
       playables[current] = searchNode.playables[current]
     })
     return playables

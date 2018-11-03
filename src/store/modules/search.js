@@ -4,6 +4,7 @@ export const AMZN_REMOVE_LETTER_FROM_SEARCHTERM = 'search/AMZN_REMOVE_LETTER_FRO
 export const AMZN_SET_SEARCHTERM = 'search/AMZN_SET_SEARCHTERM'
 export const AMZN_RESET_SEARCH= 'search/AMZN_RESET_SEARCH'
 export const LOAD_SEARCH_NODE = 'search/LOAD_SEARCH_NODE'
+export const LOAD_SEARCH_LIST = 'search/LOAD_SEARCH_LIST'
 export const AMZN_CLEAR_RESULTS = 'search/AMZN_CLEAR_RESULTS'
 
 export const clearResults = () => {
@@ -14,6 +15,12 @@ export const clearResults = () => {
 export const resetSearch = () => {
   return {
     type: AMZN_RESET_SEARCH
+  }
+}
+export const loadSearchList = (path,_this,selected,enclosingPath) => {
+  return {
+    type: LOAD_SEARCH_LIST,
+    path, _this, selected, enclosingPath
   }
 }
 export const loadSearchNode = (path) => {

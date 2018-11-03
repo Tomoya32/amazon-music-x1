@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { loadChildNode, addChildNode } from '../../store/modules/music'
+import { loadChildNode, addChildNode, clearNodes } from '../../store/modules/music'
 import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
 import PropTypes from 'prop-types'
@@ -20,7 +20,8 @@ import { handleItemSelection, noha } from '../../lib/utils'
 import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
 import {replace} from '../../store/modules/nav'
 import { openModal } from '../../store/modules/modal'
-import { loadSearchNode } from '../../store/modules/search'
+import { loadSearchList, clearResults } from '../../store/modules/search'
+import PageLoading from '../PageLoading'
 
 const mapStateToProps = (state, props) => {
 return ({
@@ -36,7 +37,7 @@ return ({
 })
 }
 const mapDispatchToProps = {
-  loadChildNode, showNode, replace, openModal, loadSearchNode, addChildNode
+  loadChildNode, showNode, replace, openModal, loadSearchList, addChildNode, clearNodes, clearResults
 }
 
 class HomeMenuHorizontalLoadingMenuContainer extends Component {
@@ -47,11 +48,12 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
       const { pathname } = this.props.location;
       if (dest.itemLabel === 'See more') {
         const { description } = this.props.navigationNodeSummaries[noha(dest.navigationNodeSummary)]
-        this.props.loadSearchNode(`/search/${description}`)
-        // this.props.replace(`/search/${description}`)
-        // TODO: use addChildNode('/search') with data from See More to be readable by CatalogContainer
+        this.props.clearNodes() // should show loading icon
+        // looks like pathname = '/search', so can use below
+        this.props.loadSearchList(`/search/${description}`,this,dest,pathname)
+      } else {
+        handleItemSelection.call(this, dest, pathname)
       }
-      handleItemSelection.call(this, dest, pathname)
     }
     this.handleOpenModal = this.handleOpenModal.bind(this);
   }
