@@ -31,8 +31,9 @@ const getPlayerTime = (currentTime, duration, focused) => {
 
 export default class ProgressBar extends Component {
   render () {
-    const {currentTime, duration, focused} = this.props
-    const progress = (isNumber(duration) && isNumber(currentTime)) ? (currentTime / duration) : 0
+    const {currentTime, duration, focused, progressBarTime} = this.props
+    let progressTime = (focused) ? progressBarTime : currentTime;
+    const progress = (isNumber(duration) && isNumber(progressTime)) ? (progressTime / duration) : 0
 
     return (
       <div className={style.ProgressBar}>

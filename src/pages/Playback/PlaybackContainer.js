@@ -6,7 +6,7 @@ import KeyEvents from '../../lib/reactv-navigation/KeyEvents'
 import { back } from '../../store/modules/nav'
 import Playback from './Playback'
 
-import { playerCurrentSrc, setCurrentTime, setPlayerState } from '../../store/modules/player'
+import { playerCurrentSrc, setCurrentTime, setPlayerState, setProgressBarTime } from '../../store/modules/player'
 import { setPlayable } from '../../store/modules/playable'
 
 import gt from 'lodash/get'
@@ -18,6 +18,7 @@ const debug = console.info
 const keys = new KeyEvents()
 
 const mapStateToProps = (state) => ({
+  progressBarTime: state.player.progressBarTime,
   modalMessage: state.thumbs.message,
   duration: state.player.duration,
   playerState: state.player.playerState,
@@ -32,6 +33,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
+  setProgressBarTime,
   loadTrack,
   replace,
   back,
@@ -52,14 +54,23 @@ class PlaybackContainer extends Component {
   }
 
   seek(direction) {
-    const { currentTime, setCurrentTime, playerState, setPlayerState, duration } = this.props
-    let skiperTime = currentTime + 1*direction;
-    skiperTime = (skiperTime > duration) ? duration : (skiperTime < 0 ? 0.001 : skiperTime)
-    if (playerState === 'playing') setPlayerState('paused')
+    const { currentTime, setCurrentTime, playerState, setPlayerState, duration, progressBarTime, setProgressBarTime } = this.props
+    if (playerState === 'playing') setPlayerState('paused') // PAUSE SONG
+    let _progressBarTime = progressBarTime;
+    const seekBy = 15; // seconds
+    const right = (direction > 0);
+    if (_progressBarTime < currentTime && right || _progressBarTime > currentTime && !right) {
+      _progressBarTime = currentTime
+    }
+    let newTime = _progressBarTime + seekBy*direction;
+    newTime = (newTime > duration) ? duration : (newTime < 0 ? 0.001 : newTime)
     clearTimeout(this.resumeIn)
     // minimum delay = 500ms to avoid player.play() on first onLeft
-    this.resumeIn = setTimeout(() => { setPlayerState('playing') }, 500)
-    setCurrentTime(skiperTime)
+    setProgressBarTime(newTime)
+    this.resumeIn = setTimeout(() => {
+      setCurrentTime(newTime)
+      setPlayerState('playing') // PLAY SONG
+    }, 500)
   }
 
   componentDidMount () {
