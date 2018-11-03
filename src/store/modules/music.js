@@ -61,6 +61,7 @@ const addNode = (state, {node, path, resolvePath, payload}) => {
   newState.nodes[key] = node
   newState.pathResolvers[path] = resolvePath
   newState.errorMsg = payload
+  // debugger
   return newState
 }
 

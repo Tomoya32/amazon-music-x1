@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { loadChildNode } from '../../store/modules/music'
+import { loadChildNode, addChildNode } from '../../store/modules/music'
 import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
 import PropTypes from 'prop-types'
@@ -36,7 +36,7 @@ return ({
 })
 }
 const mapDispatchToProps = {
-  loadChildNode, showNode, replace, openModal, loadSearchNode
+  loadChildNode, showNode, replace, openModal, loadSearchNode, addChildNode
 }
 
 class HomeMenuHorizontalLoadingMenuContainer extends Component {
@@ -49,6 +49,7 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
         const { description } = this.props.navigationNodeSummaries[noha(dest.navigationNodeSummary)]
         this.props.loadSearchNode(`/search/${description}`)
         // this.props.replace(`/search/${description}`)
+        // TODO: use addChildNode('/search') with data from See More to be readable by CatalogContainer
       }
       handleItemSelection.call(this, dest, pathname)
     }

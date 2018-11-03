@@ -15,6 +15,7 @@ function * loadSearchResultsNode (action) {
     const {responseURL} = payload.request
     const responsePath = responseURL.replace(config.music.endpoint, '')
     yield put(searchResults(payload))
+    yield put({type: ADD_CHILD_NODE, node: payload.data, path: '/search', resolvePath: config.music.base_url + action.path})
   } catch (e) {
     if (e.status === 401 || e.status === 403) {
       yield put({type: CLEAR_AUTH_DATA})

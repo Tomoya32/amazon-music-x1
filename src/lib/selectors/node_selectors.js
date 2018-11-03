@@ -232,9 +232,12 @@ const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigati
     if (!navigationNodeSummary && playable.length) return true
     // it's a navigational node: check if node has any items in it
     const navigational = (navigationNodeSummaries[noha(navigationNodeSummary)].numItemsOfInterest > 0);
+    // if (currentNavigationNode !== "#catalog_artists_search_desc") debugger
     return (navigational || currentNavigationNode === "#sandbox")
   })
-  desc.itemsData = validItems.map(item => {
+  // check desc.items because validItems returned an empty array.
+  // desc.itemsData = validItems.map(item => {
+  desc.itemsData = desc.items.map(item => {
     let itemDesc = itemDescriptions[noha(item)]
     itemDesc.ref = item
     return itemDesc
