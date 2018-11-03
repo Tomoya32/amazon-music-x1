@@ -16,25 +16,27 @@ const calculateStyle = (currentState, newState, ref) => {
   }
 }
 
-const HomeMenuHorizontalLoadingMenu = ({itemsData, name, focused, onClick, allMenuIDs, summary}) => {
+const HomeMenuHorizontalLoadingMenu = ({itemsData, name, focused, onClick, allMenuIDs, summary, slots, onFarLeft}) => {
   const menuid = `homemenu:${name}`;
   const data = (itemsData.length > 8) ? itemsData.slice(0,5) : itemsData;
   if (summary != "/upsell-banner/" && itemsData.length > 8) {
     data.push({itemLabel: 'See More', navigationNodeSummary: name, type: 'SEE_MORE'})
   }
   return (
-  <ListMenu
-    data={data}
-    menuid={menuid}
-    renderItem={HomeMenuCard}
-    className='HomeMenuHorizontalLoadingMenu'
-    horizontal
-    focused={focused}
-    onClick={onClick}
-    slots={3}
-    calculateStyle={calculateStyle}
-    onChange={linker.link(menuid,allMenuIDs)}
-    onFocus={linker.link(menuid,allMenuIDs)}/>
+    <ListMenu
+      data={data}
+      menuid={menuid}
+      renderItem={HomeMenuCard}
+      className='HomeMenuHorizontalLoadingMenu'
+      horizontal
+      focused={focused}
+      onClick={onClick}
+      slots={slots ? slots : 3}
+      calculateStyle={calculateStyle}
+      onChange={linker.link(menuid, allMenuIDs)}
+      onFocus={linker.link(menuid, allMenuIDs)}
+      onFarLeft={onFarLeft}
+    />
 )}
 
 export default HomeMenuHorizontalLoadingMenu

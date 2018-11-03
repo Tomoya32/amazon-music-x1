@@ -6,8 +6,16 @@ import Space from '../../lib/reactv-redux/SpaceRedux'
 import './Home.css'
 import Modal from '../../components/Modal'
 
-const renderMenu = (pathKey) => (
-  ({item, focused}) => (<HomeMenu itemDescription={item} pathKey={pathKey} menuid={`homemenu:${item.itemLabel}`} focused={focused} />)
+const renderMenu = (pathKey, onFarLeft) => (
+  ({item, focused}) => (
+    <HomeMenu
+      itemDescription={item}
+      pathKey={pathKey}
+      menuid={`homemenu:${item.itemLabel}`}
+      focused={focused}
+      onFarLeft={onFarLeft}
+    />
+  )
 )
 
 const calculateStyle = (currentState, newState, ref) => {
@@ -28,10 +36,15 @@ const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, onSubmit, 
   if (itemsData && itemsData.length) {
     return (
       <div className="Home-scrollable">
-        <ListMenu data={itemsData} renderItem={renderMenu(pathKey)} menuid={'home:main'}
-          focused={isFocused('home:main')} onUp={changeFocus('topnav')}
+        <ListMenu
+          data={itemsData}
+          renderItem={renderMenu(pathKey, changeFocus('search:atoz'))}
+          menuid={'home:main'}
+          focused={isFocused('home:main')}
+          onUp={changeFocus('topnav')}
           slots={2}
-          calculateStyle={calculateStyle}/>
+          calculateStyle={calculateStyle}
+        />
       </div>
   )
   } else return null

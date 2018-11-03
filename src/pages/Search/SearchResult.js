@@ -55,18 +55,26 @@ class SearchResult extends Component {
 
   render() {
     const { focused, isFocused, changeFocus } = this.props;
-    if (this.props.term !== '' && !this.props.search.results.length && Array.isArray(this.props.results)) return (<PageLoading />)
-    if (this.props.catalog) return (
-      <Home
-        catalog={this.props.catalog}
-        pathKey={this.props.pathKey}
-        topnav={topnav}
-        focused
-        menuid={'homespace'}
-        onFocusItem='home:main'
-        {...this.props}
-        entryFocus='home:main'/>)
-    return null
+    if (this.props.term !== '' && !this.props.search.results.length && Array.isArray(this.props.results)) {
+      return (<PageLoading />)
+    } else if (this.props.catalog) {
+      return (
+        <div className='search-result-wrapper'>
+          <Home
+            catalog={this.props.catalog}
+            pathKey={this.props.pathKey}
+            topnav={topnav}
+            focused
+            menuid={'homespace'}
+            onFocusItem='home:main'
+            {...this.props}
+            entryFocus='home:main'
+          />
+        </div>
+      )
+    } else {
+      return null
+    }
   }
 }
 

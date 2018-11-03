@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import RowMenuComposer from '../../lib/reactv-navigation/components/RowMenu/RowMenuComposer'
+import KeyboardComposer from '../../lib/reactv-navigation/components/Keyboard/KeyboardComposer'
 import AtoZMenu from './AtoZMenu'
 import omit from 'lodash/omit'
 import without from 'lodash/without'
@@ -8,9 +8,9 @@ import config from '../../lib/config'
 
 const debug = console.info
 
-const ComposedMenu = RowMenuComposer(AtoZMenu)
+const ComposedMenu = KeyboardComposer(AtoZMenu)
 
-export const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('').map(l => l.toUpperCase())
+export const alphabet = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('')
 alphabet.push(String.fromCharCode(parseInt(2423, 16)))
 alphabet.push('del')
 

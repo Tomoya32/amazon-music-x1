@@ -88,9 +88,29 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
             itemsData: [this.props.itemDescription],
             summary: "/upsell-banner/"
           }
-          return (<HomeMenuHorizontalLoadingMenu {...summary} onClick={this.handleOpenModal} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
+          return (
+            <HomeMenuHorizontalLoadingMenu
+              {...summary}
+              onClick={this.handleOpenModal}
+              focused={this.props.focused}
+              name={this.props.itemDescription.navigationNodeSummary}
+              allMenuIDs={this.props.allMenuIDs}
+              slots={2}
+              onFarLeft={this.props.onFarLeft}
+            />
+          )
         } else if (typeof(this.props.summary) === 'object') {
-          return ( <HomeMenuHorizontalLoadingMenu {...this.props.summary} onClick={this.handleSelection.bind(this)} focused={this.props.focused} name={this.props.itemDescription.navigationNodeSummary} allMenuIDs={this.props.allMenuIDs}/>)
+          return (
+            <HomeMenuHorizontalLoadingMenu
+              {...this.props.summary}
+              onClick={this.handleSelection.bind(this)}
+              focused={this.props.focused}
+              name={this.props.itemDescription.navigationNodeSummary}
+              allMenuIDs={this.props.allMenuIDs}
+              slots={2}
+              onFarLeft={this.props.onFarLeft}
+            />
+          )
         }
       }
       return null

@@ -178,6 +178,8 @@ class MenuWrapper extends React.Component {
       this.props.onLeft()
     } else if (this.props.onUp) {
       this.props.onUp()
+    } else if (typeof this.props.onFarLeft === 'function'){
+      this.props.onFarLeft()
     }
   }
 

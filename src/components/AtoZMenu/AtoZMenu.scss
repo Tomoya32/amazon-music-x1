@@ -1,0 +1,56 @@
+:local(.AtoZMenu) {
+  margin-top: 30px;
+
+  & > ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    height: 420px;
+
+    & > li {
+      margin: 2px;
+      width: 74px;
+      height: 56px;
+      background-color: rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      & > label {
+        opacity: 0.9;
+        color: #ffffff;
+        font-family: "Helvetica Neue";
+        font-size: 30px;
+      }
+        
+      &.space {
+        width: 308px;
+      }
+
+      &.del {
+        width: 152px;
+      }
+
+      &.focused {
+        width: 78px;
+        height: 60px;
+        margin: 0;
+        background-color: #53aef5;
+
+        & > label {
+          color: #000000;
+        }
+
+        &.space {
+          width: 312px;
+        }
+
+        &.del {
+          width: 156px;
+        }
+      }
+    }
+  }
+}
