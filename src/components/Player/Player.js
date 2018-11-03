@@ -87,7 +87,7 @@ export default class Player extends Component {
     clearTimeout(this.__checktimeout)
     this.__checktimeout = setTimeout(() => {
       if (this.player) {
-        if (this.player.currentTime < 1) {
+        if (this.player.currentTime < 0.001) {
           // this could also be triggered by autoplaying the song and immediately pausing it
           this.errorHandler(new Error('Stream has never seemed to play'), 302)
         }
@@ -100,9 +100,10 @@ export default class Player extends Component {
     const {currentTime, playerControlsState, playerState, playerUrl, setCurrentTime, updateInitOnUpdate} = this.props
     const oldPlayerUrl = prevProps.playerUrl
 
-    if (playerState === 'playing' && prevProps.playerState === 'paused') {
-      this.checkIfPlayed()
-    }
+    // not sure if `checkIfPlayed` is needed in the future
+    // if (playerState === 'playing' && prevProps.playerState === 'paused') {
+    //   this.checkIfPlayed()
+    // }
 
     if (this.player && prevProps.currentTime !== currentTime && isNumeric(currentTime)) {
       if (this.props.currentTime == 0) {
