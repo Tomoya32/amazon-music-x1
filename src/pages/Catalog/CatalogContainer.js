@@ -243,7 +243,7 @@ class CatalogContainer extends Component {
         kid={this.props.location.pathname + this.props.location.hash}
         onSelect={this.handleSelection.bind(this)} />
     } else {
-      return null
+      return <PageLoading/>
     }
   }
 }

@@ -21,6 +21,7 @@ import Home from '../Home/HomeSearchResults'
 import topnav from '../../components/MainMenu/topnav'
 
 const mapStateToProps = (state, props) => ({
+  search: state.search,
   allMenuIDs: getMenuIDsSelector(state),
   catalog: getCatalogData(state),
   location: state.router.location,
@@ -54,7 +55,9 @@ class SearchResult extends Component {
 
   render() {
     const { focused, isFocused, changeFocus } = this.props;
-    if (this.props.catalog) {
+    if (this.props.term !== '' && !this.props.search.results.length && Array.isArray(this.props.results)) {
+      return (<PageLoading className='results-loading'/>)
+    } else if (this.props.catalog) {
       return (
         <div className='search-result-wrapper'>
           <Home
@@ -70,9 +73,7 @@ class SearchResult extends Component {
         </div>
       )
     } else {
-      return (
-        <PageLoading />
-      )
+      return null
     }
   }
 }

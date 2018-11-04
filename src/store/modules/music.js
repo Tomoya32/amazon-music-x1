@@ -8,7 +8,13 @@ export const UPDATE_CURRENT_NODE = 'MUSIC/UPDATE_CURRENT_NODE'
 export const UPDATE_PREV_NODE = 'MUSIC/UPDATE_PREV_NODE'
 export const UPDATE_NEXT_NODE = 'MUSIC/UPDATE_NEXT_NODE'
 export const UPDATE_ALL_NODES = 'MUSIC/UPDATE_ALL_NODES'
+export const CLEAR_ALL_NODES = 'MUSIC/CLEAR_ALL_NODES'
 
+export function clearNodes() {
+  return {
+    type: CLEAR_ALL_NODES
+  }
+}
 export function loadChildNode(path) {
   return {
     type: LOAD_CHILD_NODE,
@@ -90,6 +96,8 @@ export default function musicReducer(state = initialState, action) {
       newState.currentNode = action.payload.currentNode
       newState.nextNode = action.payload.nextNode
       return newState
+    case CLEAR_ALL_NODES:
+      return initialState
     default:
       return state
   }

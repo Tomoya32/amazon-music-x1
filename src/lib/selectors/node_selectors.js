@@ -48,29 +48,11 @@ const getNavigationNodeSummary= (state, props) => {
   return result
 }
 
-
 export const getNavigationNodeSelector = createSelector([getNavigationNodeDescription], node => node)
 export const getPlayableSelector = createSelector([getPlayables], (playables) => playables)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const getItemDescriptionsSelectors = createSelector([getItemDescriptions], (items) => items)
 export const getNavigationNodeSummariesSelector = createSelector([getNavigationNodeSummaries], (items) => items)
 export const getNavigationNodeSummarySelector = createSelector([getNavigationNodeSummary], summary => summary)
-
-
-
 export const getMenuIDsSelector = createSelector([getItemDescriptions], (items) => {
   if (items) {
     let menuIDs = [];
@@ -101,30 +83,7 @@ export const getNavigationDescriptionFromSummarySelector = createSelector([getNa
     }
   }
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const getKeySelector = createSelector([getKey], key => key)
-
 export const getChildData = createSelector(
   [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descriptions, key, nodes) => {
     const path = mergePath(key, summary.description)
@@ -134,14 +93,12 @@ export const getChildData = createSelector(
     }
   }
 )
-
 export const getCatalogData = createSelector(
   [getItemDescriptions, getNavigationNodeDescriptions, getNavigationNodeSummaries, getResult, getHash],
   (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
     return parseDescription(itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash)
   }
 )
-
 export const getChildItemDescriptionsSelector = createSelector(
   [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
     const path = mergePath(key, summary.description)
@@ -150,15 +107,6 @@ export const getChildItemDescriptionsSelector = createSelector(
     else return null
   }
 )
-
-
-
-
-
-
-
-
-
 export const getChildItemPathname = createSelector(
   [getNavigationNodeSummarySelector, getKey], (summary, key) => {
     const path = mergePath(key, summary.description)
@@ -166,10 +114,6 @@ export const getChildItemPathname = createSelector(
     return pathname
   }
 )
-
-
-
-
 export const getChildItemPlayablesSelector = createSelector(
   [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
     const path = mergePath(key, summary.description)
@@ -178,38 +122,6 @@ export const getChildItemPlayablesSelector = createSelector(
     else return null
   }
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const getChildItemDescriptionSelector = createSelector(
   [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descs, key, nodes) => {
     const path = mergePath(key, summary.description)
@@ -218,14 +130,27 @@ export const getChildItemDescriptionSelector = createSelector(
     else return null
   }
 )
-
-
 const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
   if (!result || !navigationNodeDescriptions) return
   let currentNavigationNode = hash || result
+  if (!currentNavigationNode) return
   let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
+  if (!desc.items) return
   desc.summaryData = navigationNodeSummaries[noha(desc.summary)]
-  desc.itemsData = desc.items.map(item => {
+  let validItems = desc.items.filter(item => {
+    const itemDescription = itemDescriptions[noha(item)];
+    const { navigationNodeSummary, playable } = itemDescription;
+    // it's a playable node
+    if (playable && playable.length) return true
+    // major differences with: if (!navigationNodeSummary && playable && playable.length) return true
+    // it's a navigational node: check if node has any items in it
+    const nodeSummary = navigationNodeSummaries[noha(navigationNodeSummary)];
+    const navigational = (nodeSummary && nodeSummary.numItemsOfInterest > 0);
+    const sandBoxItem = (!nodeSummary || !nodeSummary.playable && !nodeSummary.numItemsOfInterest)
+    return (navigational || sandBoxItem)
+  })
+  // check desc.items because validItems returned an empty array.
+  desc.itemsData = validItems.map(item => {
     let itemDesc = itemDescriptions[noha(item)]
     itemDesc.ref = item
     return itemDesc

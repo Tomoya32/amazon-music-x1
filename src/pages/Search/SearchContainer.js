@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import Search from './Search'
 import { addLetterToSearchTerm, removeLetterFromSearchTerm } from '../../store/modules/search'
-import { loadSearchNode } from '../../store/modules/search'
+import { loadSearchNode, clearResults } from '../../store/modules/search'
 import { connect } from 'react-redux'
 import { push, replace } from '../../store/modules/nav'
 import { uuid } from '../../lib/utils'
@@ -16,6 +16,7 @@ const mapDispatchToProps = {
   replace,
   updateMenu,
   loadSearchNode,
+  clearResults,
 }
 const mapStateToProps = (state) => ({
   term: state.search.term,
@@ -48,6 +49,7 @@ class SearchContainer extends PureComponent {
     } else {
       this.props.addLetterToSearchTerm(letter)
     }
+    this.props.clearResults()
     this.props.loadSearchNode('/search/?keywords=<' + this.props.term + '>')
   }
 

@@ -96,7 +96,6 @@ export const getNavigationDescriptionFromSummarySelector = createSelector(
       let result = parentNode.itemDescriptions[noha(item)]
       if (!result) {
         console.error('Error because descs is not updating with every search. Need to fix getNavigationNodeDescriptions. \n descs: \n',descs,'\n parentNode: \n',parentNode)
-        // debugger
         return
       }
       // console.clear()
@@ -112,8 +111,6 @@ export const getNavigationDescriptionFromSummarySelector = createSelector(
   } else {
     const path = mergePath(key, summary.description)
     const {pathname, hash} = up(path)
-    // what is nodes[pathname]?
-    debugger
     if(nodes[pathname]) {
       const node = nodes[pathname]
       const {itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result} = node
@@ -129,8 +126,6 @@ export const getChildData = createSelector(
   [getNavigationNodeSummarySelector, getNavigationNodeDescriptions, getKey, getNodes], (summary, descriptions, key, nodes) => {
     const path = mergePath(key, summary.description)
     const {pathname} = up(path)
-    // what is nodes[pathname]?
-    debugger
     return {
       summary, descriptions, parentKey: key, node: nodes[pathname], pathname,
     }
@@ -193,22 +188,14 @@ export const getChildItemPlayablesSelector = createSelector(
       return result
     })
     // Can get each playable by looping through:
-    const playablesList = itemsData.map(item => item.playable)
-
+    const playablesList = itemsData.filter(item => (item.playable)).map(item => item.playable)
     // then get the playable object for each in playablesList:
-
     const playables = {}
-    playablesList.forEach( playable => {
+    playablesList.map( playable => {
       const current = noha(playable);
       playables[current] = searchNode.playables[current]
     })
     return playables
-    // const tmp = up(summary.description);
-    // if (tmp.pathname == '/') return summary.description
-    // const path = mergePath(key, summary.description)
-    // const {pathname} = up(path)
-    // if(nodes[pathname]) return nodes[pathname].playables
-    // else return null
   }
 )
 export const getChildItemDescriptionSelector = createSelector(
@@ -223,22 +210,29 @@ export const getChildItemDescriptionSelector = createSelector(
 )
 const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
   if (!result || !navigationNodeDescriptions) return
-  let currentNavigationNode = hash || result
+  let currentNavigationNode = result
+  // assigns navigationNodeDescription of currentNavigationNode to desc
   let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
+  // adds navigationNodeSummary of currentNavigationNode to .summaryData
   desc.summaryData = navigationNodeSummaries[noha(desc.summary)]
+  // makes list of summaries from items (_items -> _summary) for items of currentNavigationNode (search results)
   const summaries = desc.items.map(item => itemDescriptions[noha(item)].navigationNodeSummary)
+  // makes list of descriptions from items (_summary -> _desc) for items of currentNavigationNode
   const descriptions = summaries.map(summary => navigationNodeSummaries[noha(summary)].description);
-  const items = descriptions.map(desc => navigationNodeDescriptions[noha(desc)].items);
+  // takes items (catalog_search & library_search, catagories) and grabs their items (e.g. catalog_artists_search_item, row)
+  const items = descriptions.map(_desc => navigationNodeDescriptions[noha(_desc)].items);
   let itemsParsed = [];
+  // flatten items array into itemsParsed (all rows are here)
   for (let i=0; i < items.length; i++) {
     itemsParsed = itemsParsed.concat(items[i])
   }
+  // adds itemDescriptions of grandchildren (e.g. catalog_artists_search_item) to itemsData
   desc.itemsData = itemsParsed.map(item => {
     let itemDesc = itemDescriptions[noha(item)]
     itemDesc.ref = item
     return itemDesc
   })
-  desc.items = itemsParsed;
+  desc.items = itemsParsed; // all rows
   desc.summaryData.numItemsOfInterest = itemsParsed.length;
   return desc
 }
@@ -246,7 +240,6 @@ const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigati
 const parseChildren = (summary, descriptions, node) => {
   let desc = Object.assign({}, descriptions[noha(summary.description)]) // get a copy
   const { items } = desc;
-  // TODO: need to generalize this
   desc.itemsData = items.map(item => {
     let itemDesc = node.itemDescriptions[noha(item)]
     if (itemDesc) return itemDesc.ref = item.replace(/_item$/,'_desc')
