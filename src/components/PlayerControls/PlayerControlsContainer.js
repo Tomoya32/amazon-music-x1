@@ -158,7 +158,7 @@ class PlayerControlsContainer extends Component {
           else {
             if(chunk['nextTrackPointer']) {
               const totalURL = getLocation(music.pathResolvers[playable.node])
-              const path = totalURL.protocol + '//' + totalURL.host + '/playback' + totalURL.pathname
+              const path = totalURL.protocol + '/' + totalURL.host + '/playback' + totalURL.pathname
               const dest = mergeChunkWithPathAndQuery(path, chunk['nextTrackPointer'].chunk, { indexWithinChunk: chunk['nextTrackPointer'].indexWithinChunk })
               this.props.history.push(dest)
             }
