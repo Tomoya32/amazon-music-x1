@@ -133,21 +133,23 @@ export const getChildItemDescriptionSelector = createSelector(
 const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
   if (!result || !navigationNodeDescriptions) return
   let currentNavigationNode = hash || result
+  if (!currentNavigationNode) return
   let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
+  if (!desc.items) return
   desc.summaryData = navigationNodeSummaries[noha(desc.summary)]
   let validItems = desc.items.filter(item => {
     const itemDescription = itemDescriptions[noha(item)];
     const { navigationNodeSummary, playable } = itemDescription;
     // it's a playable node
-    if (!navigationNodeSummary && playable.length) return true
+    if (!navigationNodeSummary && playable && playable.length) return true
     // it's a navigational node: check if node has any items in it
-    const navigational = (navigationNodeSummaries[noha(navigationNodeSummary)].numItemsOfInterest > 0);
-    // if (currentNavigationNode !== "#catalog_artists_search_desc") debugger
-    return (navigational || currentNavigationNode === "#sandbox")
+    const nodeSummary = navigationNodeSummaries[noha(navigationNodeSummary)];
+    const navigational = (nodeSummary && nodeSummary.numItemsOfInterest > 0);
+    const sandBoxItem = (!nodeSummary || !nodeSummary.playable && !nodeSummary.numItemsOfInterest)
+    return (navigational || sandBoxItem)
   })
   // check desc.items because validItems returned an empty array.
-  // desc.itemsData = validItems.map(item => {
-  desc.itemsData = desc.items.map(item => {
+  desc.itemsData = validItems.map(item => {
     let itemDesc = itemDescriptions[noha(item)]
     itemDesc.ref = item
     return itemDesc
