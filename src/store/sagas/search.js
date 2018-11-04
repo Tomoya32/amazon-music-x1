@@ -15,6 +15,8 @@ function * loadSearchResultsNode (action) {
     const payload = yield call(API.loadNavigationNode, action.path) // pull search results from API
     const {responseURL} = payload.request
     const responsePath = responseURL.replace(config.music.endpoint, '')
+    // add search results to state.music.nodes['/search']:
+    yield put({type: ADD_CHILD_NODE, node: payload.data, path: '/search', resolvePath: config.music.base_url + action.path})
     yield put(searchResults(payload)) // adds search results to state.search.results.data
   } catch (e) {
     if (e.status === 401 || e.status === 403) {
