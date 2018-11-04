@@ -70,7 +70,7 @@ class PlaybackContainer extends Component {
     this.resumeIn = setTimeout(() => {
       setCurrentTime(newTime)
       setPlayerState('playing') // PLAY SONG
-    }, 500)
+    }, 2000)
   }
 
   componentDidMount () {

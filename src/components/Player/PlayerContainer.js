@@ -67,7 +67,6 @@ class PlayerWrapper extends Component {
     const playerMismatch = (nextProps.playerState !== this.props.playerControlsState);
     const restart = (nextProps.currentTime === 0 || nextProps.currentTime !== this.props.currentTime);
     const shouldUpdate = (newUrl || playerMismatch || restart);
-    // if (shouldUpdate) { debugger }
     return shouldUpdate
   }
 
