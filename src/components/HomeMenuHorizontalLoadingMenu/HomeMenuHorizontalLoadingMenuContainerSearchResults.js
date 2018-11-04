@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { loadChildNode, addChildNode, clearNodes } from '../../store/modules/music'
+import { loadChildNode } from '../../store/modules/music'
 import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
 import PropTypes from 'prop-types'
@@ -20,11 +20,9 @@ import { handleItemSelection, noha } from '../../lib/utils'
 import HomeMenuHorizontalLoadingMenu from './HomeMenuHorizontalLoadingMenu'
 import {replace} from '../../store/modules/nav'
 import { openModal } from '../../store/modules/modal'
-import { loadSearchList, clearResults } from '../../store/modules/search'
-import PageLoading from '../PageLoading'
+import { loadSearchList } from '../../store/modules/search'
 
-const mapStateToProps = (state, props) => {
-return ({
+const mapStateToProps = (state, props) => ({
   location: state.router.location,
   allMenuIDs: getMenuIDsSelector(state),
   catalog: getCatalogData(state),
@@ -35,9 +33,9 @@ return ({
   navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
   pathname: getChildItemPathname(state, props)
 })
-}
+
 const mapDispatchToProps = {
-  loadChildNode, showNode, replace, openModal, loadSearchList, addChildNode, clearNodes, clearResults
+  loadChildNode, showNode, replace, openModal, loadSearchList
 }
 
 class HomeMenuHorizontalLoadingMenuContainer extends Component {

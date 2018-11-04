@@ -2,7 +2,7 @@ import { call, put, takeLatest, takeEvery, select } from 'redux-saga/effects'
 import API from '../../services/service'
 import config from '../../config'
 import { addChildNode, ADD_CHILD_NODE, clearNodes } from '../modules/music'
-import { searchResults, clearResults, LOAD_SEARCH_NODE, LOAD_SEARCH_LIST } from '../modules/search'
+import { searchResults, LOAD_SEARCH_NODE, LOAD_SEARCH_LIST } from '../modules/search'
 import { CLEAR_AUTH_DATA } from '../modules/auth'
 import { handleItemSelection } from '../../lib/utils'
 

@@ -141,7 +141,8 @@ const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigati
     const itemDescription = itemDescriptions[noha(item)];
     const { navigationNodeSummary, playable } = itemDescription;
     // it's a playable node
-    if (!navigationNodeSummary && playable && playable.length) return true
+    if (playable && playable.length) return true
+    // major differences with: if (!navigationNodeSummary && playable && playable.length) return true
     // it's a navigational node: check if node has any items in it
     const nodeSummary = navigationNodeSummaries[noha(navigationNodeSummary)];
     const navigational = (nodeSummary && nodeSummary.numItemsOfInterest > 0);

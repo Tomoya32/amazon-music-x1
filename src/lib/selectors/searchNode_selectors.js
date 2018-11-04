@@ -188,26 +188,14 @@ export const getChildItemPlayablesSelector = createSelector(
       return result
     })
     // Can get each playable by looping through:
-    // const playablesList = itemsData.map(item => item.playable)
     const playablesList = itemsData.filter(item => (item.playable)).map(item => item.playable)
-    // what's in playablesList? Are they all valid items?
-
     // then get the playable object for each in playablesList:
-
     const playables = {}
     playablesList.map( playable => {
       const current = noha(playable);
-      // when is current null? What is playable?
-      // if (!current) debugger
       playables[current] = searchNode.playables[current]
     })
     return playables
-    // const tmp = up(summary.description);
-    // if (tmp.pathname == '/') return summary.description
-    // const path = mergePath(key, summary.description)
-    // const {pathname} = up(path)
-    // if(nodes[pathname]) return nodes[pathname].playables
-    // else return null
   }
 )
 export const getChildItemDescriptionSelector = createSelector(
@@ -222,8 +210,6 @@ export const getChildItemDescriptionSelector = createSelector(
 )
 const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigationNodeSummaries, result, hash) => {
   if (!result || !navigationNodeDescriptions) return
-  // let currentNavigationNode = hash || result
-  // will it ever need to equal hash ^?
   let currentNavigationNode = result
   // assigns navigationNodeDescription of currentNavigationNode to desc
   let desc = Object.assign({}, navigationNodeDescriptions[noha(currentNavigationNode)]) // get a copy
@@ -254,7 +240,6 @@ const parseDescription = (itemDescriptions, navigationNodeDescriptions, navigati
 const parseChildren = (summary, descriptions, node) => {
   let desc = Object.assign({}, descriptions[noha(summary.description)]) // get a copy
   const { items } = desc;
-  // TODO: need to generalize this
   desc.itemsData = items.map(item => {
     let itemDesc = node.itemDescriptions[noha(item)]
     if (itemDesc) return itemDesc.ref = item.replace(/_item$/,'_desc')

@@ -14,8 +14,6 @@ const API = {
   },
 
   request: (path, method) => {
-    // This might be the reason 'reselect' node selectors are not updated on
-    // every state change: not immutable function
     path = path.replace(/\/?$/, '/');
     console.info('requesting ', path, method)
     return client[method.toLowerCase()](path)
