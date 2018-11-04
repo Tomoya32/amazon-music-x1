@@ -56,7 +56,7 @@ class SearchResult extends Component {
   render() {
     const { focused, isFocused, changeFocus } = this.props;
     if (this.props.term !== '' && !this.props.search.results.length && Array.isArray(this.props.results)) {
-      return (<PageLoading />)
+      return (<PageLoading className='results-loading'/>)
     } else if (this.props.catalog) {
       return (
         <div className='search-result-wrapper'>
