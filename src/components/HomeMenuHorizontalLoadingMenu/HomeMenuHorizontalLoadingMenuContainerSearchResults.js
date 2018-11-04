@@ -44,13 +44,11 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
   constructor (p) {
     super(p)
     this.handleSelection = dest => {
-      console.clear()
       const { pathname } = this.props.location;
       if (dest.itemLabel === 'See more') {
         const { description } = this.props.navigationNodeSummaries[noha(dest.navigationNodeSummary)]
-        this.props.clearNodes() // should show loading icon
-        // looks like pathname = '/search', so can use below
-        this.props.loadSearchList(`/search/${description}`,this,dest,pathname)
+        const endpoint = (description) ? `/${description}` : ''
+        this.props.loadSearchList(pathname + endpoint,this,dest,pathname)
       } else {
         handleItemSelection.call(this, dest, pathname)
       }
