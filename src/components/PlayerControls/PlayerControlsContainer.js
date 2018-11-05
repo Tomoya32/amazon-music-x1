@@ -9,7 +9,7 @@ import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
 import { mergeChunkWithPathAndQuery, getLocation } from '../../lib/utils'
 
-import { setCurrentTime, setPlayerState, updateInitOnUpdate, onStarted } from '../../store/modules/player'
+import { setCurrentTime, setPlayerState, updateInitOnUpdate, onStarted, setPlayerControlsState } from '../../store/modules/player'
 import { getTrackContainerChunkDescription } from '../../pages/Playback/selectors'
 import { setPlayable } from '../../store/modules/playable'
 
@@ -44,6 +44,7 @@ const mapDispatchToProps = (dispatch) => {
     updateInitOnUpdate,
     setCurrentTime,
     setPlayerState,
+    setPlayerControlsState,
     setPlayable,
     push, replace,
     sendThumbs
@@ -114,20 +115,11 @@ class PlayerControlsContainer extends Component {
     setCurrentTime(restartFrom)
   }
 
-  pause () {
-    $badger.userActionMetricsHandler('PlayerControlsPaused')
-    this.props.setPlayerState('paused')
-  }
-
-  play () {
-    $badger.userActionMetricsHandler('PlayerControlsPlaying')
-    this.props.setPlayerState('playing')
-  }
-
   togglePlayState () {
     const newState = this.props.playerControlsState === 'playing' ? 'paused' : 'playing'
     // this will update playerState based on state of playerControlsState
     $badger.userActionMetricsHandler(`PlayerControlsTogglePlayState`, {from: this.props.playerControlsState, to: newState})
+    this.props.setPlayerControlsState(newState)
     this.props.setPlayerState(newState)
   }
 
@@ -193,8 +185,6 @@ class PlayerControlsContainer extends Component {
       <PlayerControls
         giveThumbs={this.giveThumbs.bind(this)}
         restart={this.restart.bind(this)}
-        pause={this.pause.bind(this)}
-        play={this.play.bind(this)}
         backwardSkip={this.backwardSkip.bind(this)}
         togglePlayState={this.togglePlayState.bind(this)}
         showThumbs={showThumbs}

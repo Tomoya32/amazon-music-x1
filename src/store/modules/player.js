@@ -18,11 +18,19 @@ export const PLAYER_STARTED = 'player/PLAYER_STARTED'
 export const PLAYER_ENDED = 'player/PLAYER_ENDED'
 export const PLAYER_DISABLE = 'player/PLAYER_DISABLE'
 export const PLAYER_BAD_STATE = 'player/PLAYER_BAD_STATE'
-export const PROGRESSBAR_UPDATE_TIME = 'progressbar/PROGRESSBAR_UPDATE_TIME'
+export const PLAYER_PROGRESSBAR_UPDATE_TIME = 'player/PLAYER_PROGRESSBAR_UPDATE_TIME'
+export const PLAYER_DEBUG = 'player/DEBUG_MESSAGE_IN_PAYLOAD'
+
+export function sendDebugMessage(payload) {
+  return {
+    type: PLAYER_DEBUG,
+    payload
+  }
+}
 
 export function setProgressBarTime (payload) {
   return {
-    type: PROGRESSBAR_UPDATE_TIME,
+    type: PLAYER_PROGRESSBAR_UPDATE_TIME,
     payload
   }
 }
@@ -150,7 +158,7 @@ export function playerGotDuration (payload) {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [PROGRESSBAR_UPDATE_TIME]: (state, action) => Object.assign({}, state, {progressBarTime: action.payload}),
+  [PLAYER_PROGRESSBAR_UPDATE_TIME]: (state, action) => Object.assign({}, state, {progressBarTime: action.payload}),
   [PLAYER_DISABLE_INIT]: (state, action) => Object.assign({}, state, {disableInitOnUpdate: action.payload}),
   [PLAYER_ERROR]: (state, action) => Object.assign({}, state, {currentError: action.payload}),
   [PLAYER_CONTROLS_STATE]: (state, action) => Object.assign({}, state, {playerControlsState: action.payload}),
@@ -187,9 +195,9 @@ const audioDefaults = {
 }
 
 const initialState = {
+  playerState: 'playing',
   progressBarTime: 0,
   disableInitOnUpdate: true,
-  playerState: 'playing',
   badStateMessage: 'No message sent'
 }
 

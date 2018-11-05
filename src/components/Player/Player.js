@@ -95,8 +95,14 @@ export default class Player extends Component {
 
   componentDidUpdate (prevProps) {
 
-    const {currentTime, playerControlsState, playerState, playerUrl, updateInitOnUpdate} = this.props
+    const {currentTime, playerControlsState, playerState, playerUrl, updateInitOnUpdate, setPlayerState} = this.props
     const oldPlayerUrl = prevProps.playerUrl
+    if (playerUrl !== oldPlayerUrl) {
+      this._lastTimeUpdate = 0
+        setTimeout(() => {
+          if (this.player.paused) setPlayerState('playing')
+        }, 1000)
+    }
 
     // not sure if `checkIfPlayed` is needed in the future
     // if (playerState === 'playing' && prevProps.playerState === 'paused') {
@@ -138,6 +144,7 @@ export default class Player extends Component {
 
   render () {
     const {
+      playerControlsState,
       disableInitOnUpdate,
       setPlayerControlsState,
       gotDuration,
@@ -197,14 +204,14 @@ export default class Player extends Component {
               $badger.userActionMetricsHandler('PlayerOnPause')
               $badger.userActionMetricsHandler('PausedPlaybackHeartbeat', {currentTime: event.target.currentTime})
               event.persist()
-              setPlayerControlsState('paused')
+              if (playerControlsState === 'playing') setPlayerControlsState('paused')
             },
             onPlay: (event) => {
               this.monitorPlayback()
               $badger.userActionMetricsHandler('PlayerOnPlay')
               $badger.userActionMetricsHandler('NormalPlaybackHeartbeat', {currentTime: event.target.currentTime})
               event.persist()
-              setPlayerControlsState('playing')
+              if (playerControlsState === 'paused') setPlayerControlsState('playing')
             },
             onEnded: (event) => {
               event.persist()

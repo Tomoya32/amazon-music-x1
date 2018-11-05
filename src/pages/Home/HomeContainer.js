@@ -14,6 +14,8 @@ import topnav from '../../components/MainMenu/topnav'
 import { closeModal } from '../../store/modules/modal'
 import PageLoading from '../../components/PageLoading'
 import { loadChildNode } from '../../store/modules/music'
+import { noha, mergePath } from '../../lib/utils'
+import up from 'url-parse'
 
 const mapStateToProps = (state, props) => ({
   showModal: state.modal.showModal,
@@ -48,14 +50,22 @@ class HomeContainer extends React.Component {
     this.loadIfNeeded()
   }
 
+  getNode (item) {
+    let summary = this.props.navigationNodeSummaries[item];
+    if (summary.description.indexOf('#') === 0) {
+      return noha(summary.description);
+    } else {
+      const path = mergePath('/widescreen_catalog/', summary.description)
+      return up(path).pathname
+    }
+  }
+
   loadIfNeeded () {
     if (this.props.catalog && !this.state.itemsHaveBeenFetched) {
 
       const lists = Object.keys(this.props.navigationNodeSummaries)
       lists.map(item => {
-        let string = this.props.navigationNodeSummaries[item].description
-        let toIndex = string.indexOf('#')
-        string = string.slice(2, toIndex - 1)
+        const string = this.getNode(item)
         this.props.loadChildNode(string)
       })
 
@@ -70,22 +80,11 @@ class HomeContainer extends React.Component {
       const lists = Object.keys(this.props.navigationNodeSummaries)
       const paths = []
       lists.map(item => {
-        let string = this.props.navigationNodeSummaries[item].description
-        let toIndex = string.indexOf('#')
-        string = string.slice(2, toIndex - 1)
+        const string = this.getNode(item)
         paths.push(string)
       })
 
       let renderHome = true
-
-      paths.map(item => {
-        // idescreen_catalog_des is 'Tracks just for you'. Loading extremely slow and because of that they're excluded here
-        // idescreen_library_des is something in 'MY MISIC'. Loading extremely slow and because of that they're excluded here
-        if (!this.props.nodes[item] && item !== 'idescreen_catalog_des' && item !== 'idescreen_library_des') {
-          renderHome = false
-        }
-      })
-
       if (renderHome) {
         return (<Home
           catalog={this.props.catalog}
