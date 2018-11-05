@@ -66,9 +66,7 @@ export default class Player extends Component {
   }
 
   onEnded (event) {
-    event.persist()
-    const { onEnded} = this.props
-    onEnded()
+    this.props.onEnded()
   }
 
   errorHandler (e, code = 301) {
@@ -97,7 +95,7 @@ export default class Player extends Component {
 
   componentDidUpdate (prevProps) {
 
-    const {currentTime, playerControlsState, playerState, playerUrl, setCurrentTime, updateInitOnUpdate} = this.props
+    const {currentTime, playerControlsState, playerState, playerUrl, updateInitOnUpdate} = this.props
     const oldPlayerUrl = prevProps.playerUrl
 
     // not sure if `checkIfPlayed` is needed in the future
@@ -131,19 +129,10 @@ export default class Player extends Component {
 
   onTimeUpdate (time) {
     const {playerControlsState, setPlayerControlsState} = this.props
-    const {disable_time_updates} = config.player;
-    if (!disable_time_updates && (time > this._lastTimeUpdate && (time - this._lastTimeUpdate) > 1) || time < this._lastTimeUpdate) {
-      if (this.player) {
-        if (playerControlsState === 'paused' && !this.player.paused) setPlayerControlsState('playing')
-        else if (playerControlsState === 'playing' && this.player.paused) {
-          // this shouldn't be called after pressing pause!
-          setPlayerControlsState('paused')
-        }
-      }
-      if (time > 0) {
-        this._lastTimeUpdate = time
-        this.props.setCurrentTime(time)
-      }
+    const { disableTimeUpdates } = this.props;
+    if (!disableTimeUpdates && time > 0 && (time > this._lastTimeUpdate + 1 || time < this._lastTimeUpdate)) {
+      this._lastTimeUpdate = time
+      if (this.player) this.props.setCurrentTime(time)
     }
   }
 
@@ -217,7 +206,10 @@ export default class Player extends Component {
               event.persist()
               setPlayerControlsState('playing')
             },
-            onEnded: () => this.onEnded.bind(this)
+            onEnded: (event) => {
+              event.persist()
+              this.onEnded()
+            }
           }}
 
         />

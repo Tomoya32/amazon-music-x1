@@ -9,7 +9,7 @@ import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
 import { mergeChunkWithPathAndQuery, getLocation } from '../../lib/utils'
 
-import { setCurrentTime, setPlayerState, updateInitOnUpdate } from '../../store/modules/player'
+import { setCurrentTime, setPlayerState, updateInitOnUpdate, onStarted } from '../../store/modules/player'
 import { getTrackContainerChunkDescription } from '../../pages/Playback/selectors'
 import { setPlayable } from '../../store/modules/playable'
 
@@ -27,22 +27,20 @@ const Keys = new KeyEvents()
 const debug = console.info
 
 const mapStateToProps = (state, ownProps) => ({
-  shouldSkip: state.thumbs.shouldSkip,
-  playerControlsState: state.player.playerControlsState,
   currentTime: state.player.currentTime,
+  playbackEnded: state.player.playbackEnded,
+  playerControlsState: state.player.playerControlsState,
+  shouldSkip: state.thumbs.shouldSkip,
   currentPath: state.router.location ? state.router.location.pathname : '',
   location: state.router.location,
   playable: state.playable,
-  chunk: getTrackContainerChunkDescription(state),
-  duration: state.player.duration,
   music: state.music,
-  // infoShowing: state.amazon.showInfo,
-  // skippable: gt(state, 'amazon.playable.attributes.skippable', false),
-  // thumbedUp: state.amazon.thumbedUp,
+  chunk: getTrackContainerChunkDescription(state)
 })
 
 const mapDispatchToProps = (dispatch) => {
   const creators = bindActionCreators({
+    onStarted,
     updateInitOnUpdate,
     setCurrentTime,
     setPlayerState,
@@ -84,19 +82,10 @@ class PlayerControlsContainer extends Component {
     this.playevent.unsubscribe()
   }
 
-  componentDidUpdate (prevProps) {
-    const { shouldSkip, duration, currentTime, playerControlsState, playable, chunk } = this.props;
-    if (!prevProps.shouldSkip && shouldSkip) this.forwardSkip()
 
-    const lastTrackChunk = (chunk) ? chunk['trackInstances'].length - 1 : null
-    const indexTrackChunk = (playable) ? parseInt(playable.indexWithinChunk) : null
-    if (duration > 0 && Math.floor(currentTime) > duration - 2 &&
-    playerControlsState === 'playing' &&
-    prevProps.playable.indexWithinChunk == playable.indexWithinChunk &&
-    lastTrackChunk !== indexTrackChunk) {
-      /* This is a hack to skip song forward onEnded, since <video onEnded does not work. */
-      this.forwardSkip()
-    }
+  componentDidUpdate (prevProps) {
+    const { shouldSkip, playbackEnded } = this.props;
+    if (!prevProps.shouldSkip && shouldSkip || playbackEnded) this.forwardSkip()
   }
 
   giveThumbs = (feedback) => {
@@ -118,9 +107,10 @@ class PlayerControlsContainer extends Component {
   }
 
   restart () {
-    const { setCurrentTime } = this.props
+    const { setCurrentTime, onStarted, playbackEnded } = this.props
     const restartFrom = 0
     $badger.userActionMetricsHandler(`PlayerControlsRestart`, {restartFrom})
+    if (playbackEnded) onStarted()
     setCurrentTime(restartFrom)
   }
 
@@ -182,16 +172,18 @@ class PlayerControlsContainer extends Component {
 
   backwardSkip () {
     this.reset()
-    const { currentTime } = this.props
+    const { currentTime, onStarted, playbackEnded } = this.props
     if (currentTime > 2) this.restart()
     else this.handleTrackPlayback(0)
+    if (playbackEnded) onStarted()
   }
 
   forwardSkip () {
     this.reset()
-    const { currentTime } = this.props
+    const { currentTime, onStarted, playbackEnded } = this.props
     this.handleTrackPlayback(1)
     $badger.userActionMetricsHandler(`PlayerControlsSkipCalled`, { currentTime })
+    if (playbackEnded) onStarted()
   }
 
   render () {

@@ -10,7 +10,6 @@ import {
   onReadyStateChange,
   onEnded,
   setProperties,
-  playerCurrentSrc,
   onLoadEnd,
   onLoadStart,
   setBadState
@@ -27,7 +26,6 @@ const debug = console.info
 
 const mapDispatchToProps = {
   updateInitOnUpdate,
-  playerCurrentSrc,
   setPlayerControlsState,
   playerError,
   onCanPlay,
@@ -64,7 +62,7 @@ class PlayerWrapper extends Component {
     const newUrl = (nextProps.playerUrl !== this.props.playerUrl);
     if (newUrl) this.disableInitOnUpdate = false;
     else this.disableInitOnUpdate = true;
-    const playerMismatch = (nextProps.playerState !== this.props.playerControlsState);
+    const playerMismatch = (nextProps.playerState !== this.props.playerState);
     const restart = (nextProps.currentTime === 0 || nextProps.currentTime !== this.props.currentTime);
     const shouldUpdate = (newUrl || playerMismatch || restart);
     return shouldUpdate
