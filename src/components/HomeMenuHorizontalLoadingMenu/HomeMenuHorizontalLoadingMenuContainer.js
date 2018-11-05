@@ -32,7 +32,8 @@ const mapStateToProps = (state, props) => ({
   itemDescriptions: getChildItemDescriptionsSelector(state, props),
   playables: getChildItemPlayablesSelector(state, props),
   navigationNodeSummaries: getChildItemDescriptionSelector(state, props),
-  pathname: getChildItemPathname(state, props)
+  pathname: getChildItemPathname(state, props),
+  nodes: state.music.nodes
 })
 
 const mapDispatchToProps = {
@@ -52,20 +53,6 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
 
   static propTypes = {
     itemDescription: PropTypes.object.isRequired
-  }
-
-  componentDidMount () {
-    this.loadIfNeeded()
-  }
-
-  componentDidUpdate () {
-    this.loadIfNeeded()
-  }
-
-  loadIfNeeded () {
-    if (typeof(this.props.summary) === 'string') {
-      this.props.loadChildNode(this.props.summary)
-    }
   }
 
   handleOpenModal () {

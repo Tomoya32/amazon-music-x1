@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { loadChildNode } from '../../store/modules/music'
 import { connect } from 'react-redux'
 import './HomeMenuHorizontalLoadingMenu.css'
 import PropTypes from 'prop-types'
@@ -35,7 +34,7 @@ const mapStateToProps = (state, props) => ({
 })
 
 const mapDispatchToProps = {
-  loadChildNode, showNode, replace, openModal, loadSearchList
+  showNode, replace, openModal, loadSearchList
 }
 
 class HomeMenuHorizontalLoadingMenuContainer extends Component {
@@ -56,20 +55,6 @@ class HomeMenuHorizontalLoadingMenuContainer extends Component {
 
   static propTypes = {
     itemDescription: PropTypes.object.isRequired
-  }
-
-  componentDidMount () {
-    this.loadIfNeeded()
-  }
-
-  componentDidUpdate () {
-    this.loadIfNeeded()
-  }
-
-  loadIfNeeded () {
-    if (typeof(this.props.summary) === 'string') {
-      this.props.loadChildNode(this.props.summary)
-    }
   }
 
   handleOpenModal () {

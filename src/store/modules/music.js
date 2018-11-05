@@ -62,9 +62,11 @@ const initialState = {
 }
 
 const addNode = (state, {node, path, resolvePath, payload}) => {
-  const newState = Object.assign({}, state)
   const key = path || node.result
-  newState.nodes[key] = node
+  // Deep object clone
+  let newNodes = JSON.parse(JSON.stringify(state.nodes))
+  newNodes[key] = node
+  const newState = Object.assign({}, state, { nodes: newNodes })
   newState.pathResolvers[path] = resolvePath
   newState.errorMsg = payload
   return newState

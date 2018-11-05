@@ -54,7 +54,7 @@ class PlayerControls extends Component {
       'thumbsUp-set-off': (!isFocused(getMenuId('thumbsUp')) && thumbedUp)
     })
 
-    const playPauseIconClass = cx({
+    const playPauseIconClass = cx('pauseButton', {
       'pause-on': playerControlsState !== 'paused' && isFocused(getMenuId('pause')),
       'pause-off': playerControlsState !== 'paused' && !isFocused(getMenuId('pause')),
       'play-on': playerControlsState === 'paused' && isFocused(getMenuId('pause')),

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import HomeMenu from '../../components/HomeMenu'
 import cx from 'classnames'
 import MainMenu, { MenuComposer } from '../../components/MainMenu'
@@ -6,6 +6,7 @@ import ListMenu, { calculateOffsetHeight } from '../../lib/reactv-redux/SlotMenu
 import Space from '../../lib/reactv-redux/SpaceRedux'
 import './Home.css'
 import Modal from '../../components/Modal'
+import PageLoading from '../../components/PageLoading';
 
 const renderMenu = (pathKey) => (
   ({item, focused}) => (<HomeMenu itemDescription={item} pathKey={pathKey} menuid={`homemenu:${item.itemLabel}`} focused={focused} />)
@@ -33,7 +34,7 @@ const Home = ({catalog: {itemsData}, pathKey, isFocused, changeFocus, onSubmit, 
         onEnter={() => {
           closeModal()
           changeFocus('home:main')()
-      }}/>}
+        }} />}
       <div className={cx('Home-scrollable', `${fading ? 'faded' : ''}`)}>
         {itemsData && itemsData.length &&
         <ListMenu data={itemsData} renderItem={renderMenu(pathKey)} menuid={'home:main'}
