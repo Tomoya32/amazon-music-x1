@@ -19,6 +19,7 @@ export default class Player extends Component {
 
   componentDidMount () {
     this._lastTimeUpdate = 0
+    this._actualTime = 0
   }
 
   componentWillUnmount () {
@@ -99,6 +100,7 @@ export default class Player extends Component {
     const oldPlayerUrl = prevProps.playerUrl
     if (playerUrl !== oldPlayerUrl) {
       this._lastTimeUpdate = 0
+      this._actualTime = 0
         setTimeout(() => {
           if (this.player.paused) setPlayerState('playing')
         }, 1000)
@@ -111,7 +113,9 @@ export default class Player extends Component {
 
     if (this.player && prevProps.currentTime !== currentTime && isNumeric(currentTime)) {
       if (this.props.currentTime == 0) {
-        this.player.currentTime=0;
+        this._actualTime = 0;
+        this._lastTimeUpdate = 0;
+        this.player.currentTime = 0;
       }
     }
 
@@ -133,24 +137,25 @@ export default class Player extends Component {
     }
   }
 
+  updateTimes(time) {
+    this._lastTimeUpdate = time
+    if (this.player) this.props.setCurrentTime(this._actualTime)
+  }
+
   onTimeUpdate (time) {
-    const {playerControlsState, setPlayerControlsState, playerState, setPlayerState } = this.props
     const { disableTimeUpdates } = this.props;
     if (!disableTimeUpdates && time > 0) {
-      if (time - this._lastTimeUpdate > 1) {
-        this._lastTimeUpdate = time
-        if (this.player) this.props.setCurrentTime(time)
-      } else if (time < this._lastTimeUpdate) {
-        this._lastTimeUpdate = time
-        if (this.player) this.props.setCurrentTime(time)
-        setTimeout( () => {
-          setPlayerState('paused')
-          setPlayerControlsState('paused')
-        }, 100)
-        setTimeout( () => {
-          setPlayerState('playing')
-          setPlayerControlsState('playing')
-        }, 500)
+      if (time - this._actualTime > 1) {
+        this._actualTime = time
+        console.log(`Timer increasing`)
+        this.updateTimes(time)
+      } else if (time < this._actualTime) {
+        console.log(`Timer restarted`)
+        if (time - this._lastTimeUpdate > 1) {
+          this._actualTime += time - this._lastTimeUpdate
+          console.log(`onTimeUpdate received time = ${time}. Setting currentTime=${this._actualTime}`)
+          this.updateTimes(time)
+        }
       }
     }
   }
