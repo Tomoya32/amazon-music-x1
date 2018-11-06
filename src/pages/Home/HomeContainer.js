@@ -64,9 +64,10 @@ class HomeContainer extends React.Component {
     if (this.props.catalog && !this.state.itemsHaveBeenFetched) {
 
       const lists = Object.keys(this.props.navigationNodeSummaries)
-      lists.map(item => {
+      lists.map((item,index) => {
         const string = this.getNode(item)
         this.props.loadChildNode(string)
+        if (index === lists.length-1) console.log(`Loading ${lists.length} rows`)
       })
 
       this.setState({
@@ -79,10 +80,15 @@ class HomeContainer extends React.Component {
     if (this.props.catalog) {
       const lists = Object.keys(this.props.navigationNodeSummaries)
       const paths = []
-      lists.map(item => {
+      lists.map((item, index) => {
         const string = this.getNode(item)
         paths.push(string)
+        if (index === lists.length-2) {
+          console.log(`Current penultimate item in list is: ${string}`)
+          if (this.props.nodes[string]) console.log(`Loaded ${lists.length} rows`)
+        }
       })
+      console.log(paths)
 
       let renderHome = true
       if (renderHome) {
