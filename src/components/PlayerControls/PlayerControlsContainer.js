@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux'
 import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
 import { mergeChunkWithPathAndQuery, getLocation } from '../../lib/utils'
+import { loadChildNode } from '../../store/modules/music'
 
 import { setCurrentTime, setPlayerState, updateInitOnUpdate, onStarted, setPlayerControlsState } from '../../store/modules/player'
 import { getTrackContainerChunkDescription } from '../../pages/Playback/selectors'
@@ -46,6 +47,7 @@ const mapDispatchToProps = (dispatch) => {
     setPlayerState,
     setPlayerControlsState,
     setPlayable,
+    loadChildNode,
     push, replace,
     sendThumbs
   }, dispatch)
@@ -126,6 +128,7 @@ class PlayerControlsContainer extends Component {
   handleTrackPlayback(direction) {
     const { setPlayable, location, playable, chunk, shuffle, music } = this.props
     const node = location.pathname.replace(/^\/?playback\/*/, '/').replace(/\/$/, '')
+    this.props.loadChildNode(node)
     const musicPlayable = location.hash
     const lastTrackChunk = chunk['trackInstances'].length - 1
     const indexTrackChunk = parseInt(playable.indexWithinChunk)
@@ -135,8 +138,9 @@ class PlayerControlsContainer extends Component {
     } else {
       if (indexTrackChunk >= 0) {
         if (direction === 1) {
-          if (lastTrackChunk >= (indexTrackChunk + 1))
+          if (lastTrackChunk >= (indexTrackChunk + 1)) {
             setPlayable(node, musicPlayable, (indexTrackChunk + 1).toString())
+          }
           else {
             if(chunk['nextTrackPointer']) {
               const totalURL = getLocation(music.pathResolvers[playable.node])
@@ -163,10 +167,12 @@ class PlayerControlsContainer extends Component {
   }
 
   backwardSkip () {
-    this.reset()
     const { currentTime, onStarted, playbackEnded } = this.props
     if (currentTime > 2) this.restart()
-    else this.handleTrackPlayback(0)
+    else {
+      this.reset()
+      this.handleTrackPlayback(0)
+    }
     if (playbackEnded) onStarted()
   }
 
