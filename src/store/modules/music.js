@@ -9,6 +9,7 @@ export const UPDATE_PREV_NODE = 'MUSIC/UPDATE_PREV_NODE'
 export const UPDATE_NEXT_NODE = 'MUSIC/UPDATE_NEXT_NODE'
 export const UPDATE_ALL_NODES = 'MUSIC/UPDATE_ALL_NODES'
 export const CLEAR_ALL_NODES = 'MUSIC/CLEAR_ALL_NODES'
+export const SET_TRACKRATING = 'MUSIC/SET_TRACKRATING'
 
 export function clearNodes() {
   return {
@@ -72,6 +73,15 @@ const addNode = (state, {node, path, resolvePath, payload}) => {
   return newState
 }
 
+const setTrackRating = (state, { data, payload }) => {
+
+  let newNodes = JSON.parse(JSON.stringify(state.nodes))
+  const newState = Object.assign({}, state, { nodes: newNodes })
+  const track_def = 'track_def_' + data.indexWithinChunk
+  newState.nodes[data.node].trackDefinitions[track_def].trackRating.thumbRating = payload
+  return newState
+}
+
 export default function musicReducer(state = initialState, action) {
   let newState;
   switch(action.type) {
@@ -98,6 +108,8 @@ export default function musicReducer(state = initialState, action) {
       newState.currentNode = action.payload.currentNode
       newState.nextNode = action.payload.nextNode
       return newState
+    case SET_TRACKRATING:
+      return setTrackRating(state, action)
     case CLEAR_ALL_NODES:
       return initialState
     default:

@@ -42,13 +42,10 @@ const mapDispatchToProps = {
 }
 
 const mapStateToProps = (state) => ({
-  currentError: state.player.currentError,
   currentTime: state.player.currentTime,
   playerUrl: state.player.currentUrl,
   playerState: state.player.playerState,
-  playerControlsState: state.player.playerControlsState,
-  playerClearing: state.player.clearing,
-  disablePlayer: state.player.disablePlayer
+  playerControlsState: state.player.playerControlsState
 })
 
 class PlayerWrapper extends Component {
@@ -100,8 +97,7 @@ PlayerWrapper.propTypes = {
   recommendationEnded: PropTypes.func,
   getNextRecommendation: PropTypes.func,
   recommendationError: PropTypes.func,
-  currentTime: PropTypes.number,
-  currentError: PropTypes.object,
+  currentTime: PropTypes.number
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayerWrapper)
