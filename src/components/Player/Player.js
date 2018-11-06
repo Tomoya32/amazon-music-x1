@@ -134,11 +134,24 @@ export default class Player extends Component {
   }
 
   onTimeUpdate (time) {
-    const {playerControlsState, setPlayerControlsState} = this.props
+    const {playerControlsState, setPlayerControlsState, playerState, setPlayerState } = this.props
     const { disableTimeUpdates } = this.props;
-    if (!disableTimeUpdates && time > 0 && (time > this._lastTimeUpdate + 1 || time < this._lastTimeUpdate)) {
-      this._lastTimeUpdate = time
-      if (this.player) this.props.setCurrentTime(time)
+    if (!disableTimeUpdates && time > 0) {
+      if (time - this._lastTimeUpdate > 1) {
+        this._lastTimeUpdate = time
+        if (this.player) this.props.setCurrentTime(time)
+      } else if (time < this._lastTimeUpdate) {
+        this._lastTimeUpdate = time
+        if (this.player) this.props.setCurrentTime(time)
+        setTimeout( () => {
+          setPlayerState('paused')
+          setPlayerControlsState('paused')
+        }, 100)
+        setTimeout( () => {
+          setPlayerState('playing')
+          setPlayerControlsState('playing')
+        }, 500)
+      }
     }
   }
 
