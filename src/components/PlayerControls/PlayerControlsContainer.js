@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux'
 import { push, replace} from '../../store/modules/nav'
 import { withRouter } from 'react-router'
 import { mergeChunkWithPathAndQuery, getLocation } from '../../lib/utils'
-import { loadChildNode } from '../../store/modules/music'
 
 import { setCurrentTime, setPlayerState, updateInitOnUpdate, onStarted, setPlayerControlsState } from '../../store/modules/player'
 import { getTrackContainerChunkDescription } from '../../pages/Playback/selectors'
@@ -47,7 +46,6 @@ const mapDispatchToProps = (dispatch) => {
     setPlayerState,
     setPlayerControlsState,
     setPlayable,
-    loadChildNode,
     push, replace,
     sendThumbs
   }, dispatch)
@@ -105,7 +103,6 @@ class PlayerControlsContainer extends Component {
         wallClockTime: clockTime.toISOString()
       }
       sendThumbs(trackRatingRequest)
-      this.setState({ thumbRating: thumbRating, deriveState: false })
     }
   }
 
@@ -128,7 +125,6 @@ class PlayerControlsContainer extends Component {
   handleTrackPlayback(direction) {
     const { setPlayable, location, playable, chunk, shuffle, music } = this.props
     const node = location.pathname.replace(/^\/?playback\/*/, '/').replace(/\/$/, '')
-    this.props.loadChildNode(node)
     const musicPlayable = location.hash
     const lastTrackChunk = chunk['trackInstances'].length - 1
     const indexTrackChunk = parseInt(playable.indexWithinChunk)
