@@ -139,6 +139,7 @@ export default class Player extends Component {
 
   updateTimes(time) {
     this._lastTimeUpdate = time
+    console.log(`this._lastTimeUpdate = `,this._lastTimeUpdate)
     if (this.player) this.props.setCurrentTime(this._actualTime)
   }
 
@@ -147,10 +148,12 @@ export default class Player extends Component {
     if (!disableTimeUpdates && time > 0) {
       if (time - this._actualTime > 1) {
         this._actualTime = time
-        console.log(`Timer increasing`)
+        console.log(`Timer increasing normally, time = `,time)
         this.updateTimes(time)
       } else if (time < this._actualTime) {
-        console.log(`Timer restarted`)
+        console.log(`Timer reset, time = `,time)
+        if (this._lastTimeUpdate > time) this._lastTimeUpdate = time
+        console.log({time: time, _lastTimeUpdate: this._lastTimeUpdate})
         if (time - this._lastTimeUpdate > 1) {
           this._actualTime += time - this._lastTimeUpdate
           console.log(`onTimeUpdate received time = ${time}. Setting currentTime=${this._actualTime}`)
@@ -186,48 +189,48 @@ export default class Player extends Component {
           }}
           videoProps={{
             onError: event => {
+              $badger.userActionMetricsHandler('PlayerOnError', {error: event.target.error})
               event.persist()
               const e = event.target.error
               this.errorHandler(e)
             },
             onTimeUpdate: event => {
+              $badger.userActionMetricsHandler('onTimeUpdate', {readyState: event.target.readyState})
               event.persist() // Not sure what I was doing wrong but this was required on some events or React would get mad
               if (!disableTimeUpdates) this.onTimeUpdate(event.target.currentTime)
             },
             onLoadStart: (event) => {
-              $badger.userActionMetricsHandler('PlayerOnLoadStart')
+              $badger.userActionMetricsHandler('PlayerOnLoadStart', {readyState: event.target.readyState})
               event.persist()
               onReadyStateChange(event.target.readyState)
               onLoadStart()
             },
             onLoadedData: (event) => {
-              $badger.userActionMetricsHandler('PlayerOnLoadedData')
+              $badger.userActionMetricsHandler('PlayerOnLoadedData', {readyState: event.target.readyState})
               event.persist()
               onReadyStateChange(event.target.readyState)
               onLoadEnd()
             },
             onCanPlay: (event) => {
-              $badger.userActionMetricsHandler('PlayerOnCanPlay')
+              $badger.userActionMetricsHandler('PlayerOnCanPlay', {readyState: event.target.readyState})
               event.persist()
               onReadyStateChange(event.target.readyState)
               // add this if needed: onCanPlay()
             },
             onLoadedMetadata: event => {
-              $badger.userActionMetricsHandler('PlayerOnLoadedMetadata')
+              $badger.userActionMetricsHandler('PlayerOnLoadedMetadata', {readyState: event.target.readyState})
               event.persist()
               onReadyStateChange(event.target.readyState)
               gotDuration(event.target.duration)
             },
             onPause: (event) => {
-              $badger.userActionMetricsHandler('PlayerOnPause')
-              $badger.userActionMetricsHandler('PausedPlaybackHeartbeat', {currentTime: event.target.currentTime})
+              $badger.userActionMetricsHandler('PlayerOnPause', {currentTime: event.target.currentTime})
               event.persist()
               if (playerControlsState === 'playing') setPlayerControlsState('paused')
             },
             onPlay: (event) => {
               this.monitorPlayback()
-              $badger.userActionMetricsHandler('PlayerOnPlay')
-              $badger.userActionMetricsHandler('NormalPlaybackHeartbeat', {currentTime: event.target.currentTime})
+              $badger.userActionMetricsHandler('PlayerOnPlay', {currentTime: event.target.currentTime})
               event.persist()
               if (playerControlsState === 'paused') setPlayerControlsState('playing')
             },
