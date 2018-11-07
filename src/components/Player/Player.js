@@ -139,23 +139,28 @@ export default class Player extends Component {
 
   updateTimes(time) {
     this._lastTimeUpdate = time
-    console.log(`this._lastTimeUpdate = `,this._lastTimeUpdate)
     if (this.player) this.props.setCurrentTime(this._actualTime)
   }
 
   onTimeUpdate (time) {
-    const { disableTimeUpdates } = this.props;
+    const { disableTimeUpdates, currentTime } = this.props;
     if (!disableTimeUpdates && time > 0) {
       if (time - this._actualTime > 1) {
         this._actualTime = time
         console.log(`Timer increasing normally, time = `,time)
         this.updateTimes(time)
       } else if (time < this._actualTime) {
-        console.log(`Timer reset, time = `,time)
+        // X1 receives time=0 onPlay
+        if (currentTime !== this._actualTime) {
+          // scrubbed left / right
+          this._actualTime = currentTime;
+          this._lastTimeUpdate = currentTime;
+        }
         if (this._lastTimeUpdate > time) this._lastTimeUpdate = time
-        console.log({time: time, _lastTimeUpdate: this._lastTimeUpdate})
         if (time - this._lastTimeUpdate > 1) {
+          // normal pause/play
           this._actualTime += time - this._lastTimeUpdate
+          $badger.userActionMetricsHandler('onTimeUpdate', {adjustedTime: this._actualTime})
           console.log(`onTimeUpdate received time = ${time}. Setting currentTime=${this._actualTime}`)
           this.updateTimes(time)
         }
@@ -195,7 +200,6 @@ export default class Player extends Component {
               this.errorHandler(e)
             },
             onTimeUpdate: event => {
-              $badger.userActionMetricsHandler('onTimeUpdate', {readyState: event.target.readyState})
               event.persist() // Not sure what I was doing wrong but this was required on some events or React would get mad
               if (!disableTimeUpdates) this.onTimeUpdate(event.target.currentTime)
             },

@@ -58,7 +58,7 @@ class PlaybackContainer extends Component {
     if (playerState === 'playing') setPlayerState('paused') // PAUSE SONG
     let _progressBarTime = progressBarTime;
     const seekBy = 10; // seconds
-    const delay = 2000; // ms
+    const delay = 500; // ms
     const right = (direction > 0);
     if (_progressBarTime < currentTime && right || _progressBarTime > currentTime && !right) {
       _progressBarTime = currentTime
