@@ -2,7 +2,7 @@ import pick from 'lodash/pick'
 
 export const PLAYER_DISABLE_INIT = 'player/PLAYER_DISABLE_INITIALIZE'
 export const PLAYER_ERROR = 'player/PLAYER_ERROR'
-export const PLAYER_STATE = 'player/PLAYER_STATE'
+export const PLAYER_CONTROLS_STATE = 'player/PLAYER_CONTROLS_STATE'
 export const PLAYER_ON_CAN_PLAY = 'player/PLAYER_ON_CAN_PLAY'
 export const PLAYER_CURRENT_SRC = 'player/PLAYER_CURRENT_SRC'
 export const PLAYER_UPDATE_CURRENTTIME = 'player/PLAYER_UPDATE_CURRENTTIME'
@@ -14,14 +14,23 @@ export const PLAYER_LOAD_START = 'player/PLAYER_LOAD_START'
 export const PLAYER_LOAD_END = 'player/PLAYER_LOAD_END'
 export const PLAYER_CLEARING = 'player/PLAYER_CLEARING'
 export const PLAYER_SET_PROPERTIES = 'player/PLAYER_SET_PROPERTIES'
+export const PLAYER_STARTED = 'player/PLAYER_STARTED'
 export const PLAYER_ENDED = 'player/PLAYER_ENDED'
 export const PLAYER_DISABLE = 'player/PLAYER_DISABLE'
 export const PLAYER_BAD_STATE = 'player/PLAYER_BAD_STATE'
-export const PROGRESSBAR_UPDATE_TIME = 'progressbar/PROGRESSBAR_UPDATE_TIME'
+export const PLAYER_PROGRESSBAR_UPDATE_TIME = 'player/PLAYER_PROGRESSBAR_UPDATE_TIME'
+export const PLAYER_DEBUG = 'player/DEBUG_MESSAGE_IN_PAYLOAD'
+
+export function sendDebugMessage(payload) {
+  return {
+    type: PLAYER_DEBUG,
+    payload
+  }
+}
 
 export function setProgressBarTime (payload) {
   return {
-    type: PROGRESSBAR_UPDATE_TIME,
+    type: PLAYER_PROGRESSBAR_UPDATE_TIME,
     payload
   }
 }
@@ -56,6 +65,12 @@ export function setProperties (payload) {
   return {
     type: PLAYER_SET_PROPERTIES,
     payload
+  }
+}
+
+export function onStarted () {
+  return {
+    type: PLAYER_STARTED
   }
 }
 
@@ -121,7 +136,7 @@ export function onCanPlay (payload) {
 
 export function setPlayerControlsState (payload) {
   return {
-    type: PLAYER_STATE, payload
+    type: PLAYER_CONTROLS_STATE, payload
   }
 }
 
@@ -143,17 +158,18 @@ export function playerGotDuration (payload) {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [PROGRESSBAR_UPDATE_TIME]: (state, action) => Object.assign({}, state, {progressBarTime: action.payload}),
+  [PLAYER_PROGRESSBAR_UPDATE_TIME]: (state, action) => Object.assign({}, state, {progressBarTime: action.payload}),
   [PLAYER_DISABLE_INIT]: (state, action) => Object.assign({}, state, {disableInitOnUpdate: action.payload}),
   [PLAYER_ERROR]: (state, action) => Object.assign({}, state, {currentError: action.payload}),
-  [PLAYER_STATE]: (state, action) => Object.assign({}, state, {playerControlsState: action.payload}),
+  [PLAYER_CONTROLS_STATE]: (state, action) => Object.assign({}, state, {playerControlsState: action.payload}),
   [PLAYER_ON_CAN_PLAY]: (state, action) => Object.assign({}, state, ...pick(action.payload, [''])),
-  [PLAYER_UPDATE_CURRENTTIME]: (state, action) => Object.assign({}, state, {currentTime: action.payload}),
+  [PLAYER_UPDATE_CURRENTTIME]: (state, action) => Object.assign({}, state, {currentTime: action.payload, progressBarTime: action.payload}),
   [PLAYER_UPDATE_PLAYSTATE]: (state, action) => Object.assign({}, state, {playerState: action.payload}),
   [PLAYER_CURRENT_SRC]: (state, action) => Object.assign({}, state, {currentUrl: action.payload, ...audioDefaults}),
   [PLAYER_READY_STATE]: (state, action) => Object.assign({}, state, {readyState: action.payload}),
   [PLAYER_LOAD_START]: (state, action) => Object.assign({}, state, {loadStarted: true}),
   [PLAYER_LOAD_END]: (state, action) => Object.assign({}, state, {loadEnded: true}),
+  [PLAYER_STARTED]: (state, action) => Object.assign({}, state, {playbackEnded: false}),
   [PLAYER_ENDED]: (state, action) => Object.assign({}, state, {playbackEnded: true}),
   [PLAYER_SET_PROPERTIES]: (state, action) => Object.assign({}, state, {properties: action.payload}),
   [PLAYER_CLEARING]: (state, action) => Object.assign({}, state, {clearing: action.payload}),
@@ -179,9 +195,9 @@ const audioDefaults = {
 }
 
 const initialState = {
+  playerState: 'playing',
   progressBarTime: 0,
   disableInitOnUpdate: true,
-  playerState: 'playing',
   badStateMessage: 'No message sent'
 }
 

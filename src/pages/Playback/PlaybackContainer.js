@@ -57,7 +57,8 @@ class PlaybackContainer extends Component {
     const { currentTime, setCurrentTime, playerState, setPlayerState, duration, progressBarTime, setProgressBarTime } = this.props
     if (playerState === 'playing') setPlayerState('paused') // PAUSE SONG
     let _progressBarTime = progressBarTime;
-    const seekBy = 15; // seconds
+    const seekBy = 10; // seconds
+    const delay = 500; // ms
     const right = (direction > 0);
     if (_progressBarTime < currentTime && right || _progressBarTime > currentTime && !right) {
       _progressBarTime = currentTime
@@ -70,7 +71,7 @@ class PlaybackContainer extends Component {
     this.resumeIn = setTimeout(() => {
       setCurrentTime(newTime)
       setPlayerState('playing') // PLAY SONG
-    }, 500)
+    }, delay)
   }
 
   componentDidMount () {

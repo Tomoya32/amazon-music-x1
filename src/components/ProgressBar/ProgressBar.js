@@ -38,7 +38,7 @@ export default class ProgressBar extends Component {
     return (
       <div className={style.ProgressBar}>
         <div className='barWrapper'>
-          {getPlayerTime(currentTime, duration)}
+          {getPlayerTime(progressTime, duration)}
           <div className='bar' />
           <div className={cx({focused}, 'indicator')} style={{width: `${(progress || 0) * 100}%`}} />
         </div>

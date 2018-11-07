@@ -13,20 +13,22 @@ const ScrubbableProgressBar = Buttonizer(({focused}) => (
 const Playback = ({isFocused, menuid, title, artist, album, shuffle, image, onNext, onShuffleNext, changeFocus, seek, trackRating, showModal, modalMessage, ...props}) => (
   <div className='Playback Page'>
     <div className='Playback-background' style={image ? {backgroundImage: `url(${image.uri})` } : { backgroundSize: 'cover' }} />
-    <TrackInfo
-      title={title}
-      artist={artist}
-      shuffle={shuffle}
-      album={album}
-      image={image}
-      onNext={onNext}
-      onShuffleNext={onShuffleNext}
-      focused={isFocused('trackInfo')}
-      menuid='track-info-button'
-      onFocusItem={'playback:playercontrols'}
-      onDown={changeFocus('progressbar')}
-      trackRating={trackRating}/>
-    <div style={{display: 'block'}}>
+    <div id="TrackInfo">
+      <TrackInfo
+        title={title}
+        artist={artist}
+        shuffle={shuffle}
+        album={album}
+        image={image}
+        onNext={onNext}
+        onShuffleNext={onShuffleNext}
+        focused={isFocused('trackInfo')}
+        menuid='track-info-button'
+        onFocusItem={'playback:playercontrols'}
+        onDown={changeFocus('progressbar')}
+        trackRating={trackRating}/>
+    </div>
+    <div id="ProgressContainer" style={{display: 'block'}}>
       <ScrubbableProgressBar
         onLeft={() => { seek(-1) }}
         onRight={() => { seek(+1) }}

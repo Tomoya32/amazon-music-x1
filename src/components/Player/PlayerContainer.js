@@ -10,7 +10,6 @@ import {
   onReadyStateChange,
   onEnded,
   setProperties,
-  playerCurrentSrc,
   onLoadEnd,
   onLoadStart,
   setBadState
@@ -27,7 +26,6 @@ const debug = console.info
 
 const mapDispatchToProps = {
   updateInitOnUpdate,
-  playerCurrentSrc,
   setPlayerControlsState,
   playerError,
   onCanPlay,
@@ -44,13 +42,10 @@ const mapDispatchToProps = {
 }
 
 const mapStateToProps = (state) => ({
-  currentError: state.player.currentError,
   currentTime: state.player.currentTime,
   playerUrl: state.player.currentUrl,
   playerState: state.player.playerState,
-  playerControlsState: state.player.playerControlsState,
-  playerClearing: state.player.clearing,
-  disablePlayer: state.player.disablePlayer
+  playerControlsState: state.player.playerControlsState
 })
 
 class PlayerWrapper extends Component {
@@ -64,10 +59,9 @@ class PlayerWrapper extends Component {
     const newUrl = (nextProps.playerUrl !== this.props.playerUrl);
     if (newUrl) this.disableInitOnUpdate = false;
     else this.disableInitOnUpdate = true;
-    const playerMismatch = (nextProps.playerState !== this.props.playerControlsState);
+    const playerMismatch = (nextProps.playerState !== this.props.playerState);
     const restart = (nextProps.currentTime === 0 || nextProps.currentTime !== this.props.currentTime);
     const shouldUpdate = (newUrl || playerMismatch || restart);
-    // if (shouldUpdate) { debugger }
     return shouldUpdate
   }
 
@@ -103,8 +97,7 @@ PlayerWrapper.propTypes = {
   recommendationEnded: PropTypes.func,
   getNextRecommendation: PropTypes.func,
   recommendationError: PropTypes.func,
-  currentTime: PropTypes.number,
-  currentError: PropTypes.object,
+  currentTime: PropTypes.number
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayerWrapper)

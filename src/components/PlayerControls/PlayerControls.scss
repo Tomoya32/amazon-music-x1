@@ -12,6 +12,13 @@ $saved: #68eaff;
   justify-content: space-between;
   flex-direction: column;
   align-items: center;
+  height: 42px;
+  margin-top: 25px;
+
+  &.showThumbs {
+    height: 112px;
+    margin-top: 0;
+  }
 
   .controls {
     z-index: 100;
@@ -21,11 +28,9 @@ $saved: #68eaff;
     align-items: center;
 
     .pauseButton {
-      width: 38px;
       height: 42px;
 
       &.paused {
-        width: 60px;
         height: 60px;
         margin: -9px
       }
@@ -80,7 +85,8 @@ $saved: #68eaff;
     }
 
     .thumbs {
-      &.thumbsUp-set-off svg g g g use {
+      &.thumbsUp-set-off svg g g g use,
+      &.thumbsDown-set-off svg g g g use {
         fill: #68eaff;
       }
       &.thumbDown {

@@ -19,6 +19,7 @@ export default class Player extends Component {
 
   componentDidMount () {
     this._lastTimeUpdate = 0
+    this._actualTime = 0
   }
 
   componentWillUnmount () {
@@ -66,9 +67,7 @@ export default class Player extends Component {
   }
 
   onEnded (event) {
-    event.persist()
-    const { onEnded} = this.props
-    onEnded()
+    this.props.onEnded()
   }
 
   errorHandler (e, code = 301) {
@@ -97,8 +96,15 @@ export default class Player extends Component {
 
   componentDidUpdate (prevProps) {
 
-    const {currentTime, playerControlsState, playerState, playerUrl, setCurrentTime, updateInitOnUpdate} = this.props
+    const {currentTime, playerControlsState, playerState, playerUrl, updateInitOnUpdate, setPlayerState} = this.props
     const oldPlayerUrl = prevProps.playerUrl
+    if (playerUrl !== oldPlayerUrl) {
+      this._lastTimeUpdate = 0
+      this._actualTime = 0
+        setTimeout(() => {
+          if (this.player.paused) setPlayerState('playing')
+        }, 1000)
+    }
 
     // not sure if `checkIfPlayed` is needed in the future
     // if (playerState === 'playing' && prevProps.playerState === 'paused') {
@@ -107,7 +113,9 @@ export default class Player extends Component {
 
     if (this.player && prevProps.currentTime !== currentTime && isNumeric(currentTime)) {
       if (this.props.currentTime == 0) {
-        this.player.currentTime=0;
+        this._actualTime = 0;
+        this._lastTimeUpdate = 0;
+        this.player.currentTime = 0;
       }
     }
 
@@ -129,26 +137,40 @@ export default class Player extends Component {
     }
   }
 
+  updateTimes(time) {
+    this._lastTimeUpdate = time
+    if (this.player) this.props.setCurrentTime(this._actualTime)
+  }
+
   onTimeUpdate (time) {
-    const {playerControlsState, setPlayerControlsState} = this.props
-    const {disable_time_updates} = config.player;
-    if (!disable_time_updates && (time > this._lastTimeUpdate && (time - this._lastTimeUpdate) > 1) || time < this._lastTimeUpdate) {
-      if (this.player) {
-        if (playerControlsState === 'paused' && !this.player.paused) setPlayerControlsState('playing')
-        else if (playerControlsState === 'playing' && this.player.paused) {
-          // this shouldn't be called after pressing pause!
-          setPlayerControlsState('paused')
+    const { disableTimeUpdates, currentTime } = this.props;
+    if (!disableTimeUpdates && time > 0) {
+      if (time - this._actualTime > 1) {
+        this._actualTime = time
+        console.log(`Timer increasing normally, time = `,time)
+        this.updateTimes(time)
+      } else if (time < this._actualTime) {
+        // X1 receives time=0 onPlay
+        if (currentTime !== this._actualTime) {
+          // scrubbed left / right
+          this._actualTime = currentTime;
+          this._lastTimeUpdate = currentTime;
         }
-      }
-      if (time > 0) {
-        this._lastTimeUpdate = time
-        this.props.setCurrentTime(time)
+        if (this._lastTimeUpdate > time) this._lastTimeUpdate = time
+        if (time - this._lastTimeUpdate > 1) {
+          // normal pause/play
+          this._actualTime += time - this._lastTimeUpdate
+          $badger.userActionMetricsHandler('onTimeUpdate', {adjustedTime: this._actualTime})
+          console.log(`onTimeUpdate received time = ${time}. Setting currentTime=${this._actualTime}`)
+          this.updateTimes(time)
+        }
       }
     }
   }
 
   render () {
     const {
+      playerControlsState,
       disableInitOnUpdate,
       setPlayerControlsState,
       gotDuration,
@@ -172,6 +194,7 @@ export default class Player extends Component {
           }}
           videoProps={{
             onError: event => {
+              $badger.userActionMetricsHandler('PlayerOnError', {error: event.target.error})
               event.persist()
               const e = event.target.error
               this.errorHandler(e)
@@ -181,43 +204,44 @@ export default class Player extends Component {
               if (!disableTimeUpdates) this.onTimeUpdate(event.target.currentTime)
             },
             onLoadStart: (event) => {
-              $badger.userActionMetricsHandler('PlayerOnLoadStart')
+              $badger.userActionMetricsHandler('PlayerOnLoadStart', {readyState: event.target.readyState})
               event.persist()
               onReadyStateChange(event.target.readyState)
               onLoadStart()
             },
             onLoadedData: (event) => {
-              $badger.userActionMetricsHandler('PlayerOnLoadedData')
+              $badger.userActionMetricsHandler('PlayerOnLoadedData', {readyState: event.target.readyState})
               event.persist()
               onReadyStateChange(event.target.readyState)
               onLoadEnd()
             },
             onCanPlay: (event) => {
-              $badger.userActionMetricsHandler('PlayerOnCanPlay')
+              $badger.userActionMetricsHandler('PlayerOnCanPlay', {readyState: event.target.readyState})
               event.persist()
               onReadyStateChange(event.target.readyState)
               // add this if needed: onCanPlay()
             },
             onLoadedMetadata: event => {
-              $badger.userActionMetricsHandler('PlayerOnLoadedMetadata')
+              $badger.userActionMetricsHandler('PlayerOnLoadedMetadata', {readyState: event.target.readyState})
               event.persist()
               onReadyStateChange(event.target.readyState)
               gotDuration(event.target.duration)
             },
             onPause: (event) => {
-              $badger.userActionMetricsHandler('PlayerOnPause')
-              $badger.userActionMetricsHandler('PausedPlaybackHeartbeat', {currentTime: event.target.currentTime})
+              $badger.userActionMetricsHandler('PlayerOnPause', {currentTime: event.target.currentTime})
               event.persist()
-              setPlayerControlsState('paused')
+              if (playerControlsState === 'playing') setPlayerControlsState('paused')
             },
             onPlay: (event) => {
               this.monitorPlayback()
-              $badger.userActionMetricsHandler('PlayerOnPlay')
-              $badger.userActionMetricsHandler('NormalPlaybackHeartbeat', {currentTime: event.target.currentTime})
+              $badger.userActionMetricsHandler('PlayerOnPlay', {currentTime: event.target.currentTime})
               event.persist()
-              setPlayerControlsState('playing')
+              if (playerControlsState === 'paused') setPlayerControlsState('playing')
             },
-            onEnded: () => this.onEnded.bind(this)
+            onEnded: (event) => {
+              event.persist()
+              this.onEnded()
+            }
           }}
 
         />

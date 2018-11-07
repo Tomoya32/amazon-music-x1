@@ -1,6 +1,6 @@
 :local(.TrackInfo) {
     position: absolute;
-    top: 100px;
+    top: 60px;
     left: 200px;
     width: 880px;
     position: relative;
@@ -17,23 +17,37 @@
     .TrackDeets {
         margin-top: 25px;
         width: 880px;
+        height: 255px;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: space-between;
 
-        .title {
-            opacity: 0.9;
-            font-family: HelveticaNeue;
-            font-size: 38px;
-            color: #ffffff;
-        }
+        & .titleSection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
 
-        .subtitle {
-            margin-top: 5px;
-            opacity: 0.6;
-            color: #ffffff;
-            font-family: "Helvetica Neue";
-            font-size: 20px;
+            .title {
+                display: block;
+                opacity: 0.9;
+                font-family: HelveticaNeue;
+                font-size: 38px;
+                color: #ffffff;
+                overflow: hidden;
+                max-height: 90px;
+            }
+
+            .subtitle {
+                display: block;
+                margin-top: 5px;
+                opacity: 0.6;
+                color: #ffffff;
+                font-family: "Helvetica Neue";
+                font-size: 20px;
+                overflow: hidden;
+                max-height: 48px;
+            }
         }
     }
 

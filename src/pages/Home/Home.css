@@ -43,6 +43,14 @@
   padding-bottom: 150px;
 }
 
+.loadingScreen {
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  width: 1280px;
+  height: 720px;
+  background-color: rgba(255, 255, 255, 0.08);
+}
 @keyframes Home-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
