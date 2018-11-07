@@ -22,6 +22,20 @@ X-1's Amazon Music application that consumes Amazon Music API. This application 
 - Start application by running ```yarn test```
 - Tests report will be printed on terminal.
 
+### Screen Shots
+<div align="center">
+  <img width="512" heigth="512" src="/src/assets/images/homeScreen.png" alt="home screen">
+</div>
+<div align="center">
+  <img width="512" heigth="512" src="/src/assets/images/playbackScreen.png" alt="home screen">
+</div>
+<div align="center">
+  <img width="512" heigth="512" src="/src/assets/images/playbackScreen_station.png" alt="home screen">
+</div>
+<div align="center">
+  <img width="512" heigth="512" src="/src/assets/images/searchScreen.png" alt="home screen">
+</div>
+
 ## Development Guide Lines
 
 ### Git branch naming convention
