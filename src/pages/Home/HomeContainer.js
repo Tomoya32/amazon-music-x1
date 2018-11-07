@@ -53,7 +53,8 @@ class HomeContainer extends React.Component {
   getNode (item) {
     let summary = this.props.navigationNodeSummaries[item];
     if (summary.description.indexOf('#') === 0) {
-      return noha(summary.description);
+      const description = noha(summary.description).replace(/_desc$/,'');
+      return `/${description}/`
     } else {
       const path = mergePath('/widescreen_catalog/', summary.description)
       return up(path).pathname
@@ -64,9 +65,10 @@ class HomeContainer extends React.Component {
     if (this.props.catalog && !this.state.itemsHaveBeenFetched) {
 
       const lists = Object.keys(this.props.navigationNodeSummaries)
-      lists.map(item => {
+      lists.map((item,index) => {
         const string = this.getNode(item)
         this.props.loadChildNode(string)
+        if (index === lists.length-1) console.log(`Loading ${lists.length} rows`)
       })
 
       this.setState({
@@ -78,13 +80,22 @@ class HomeContainer extends React.Component {
   render () {
     if (this.props.catalog) {
       const lists = Object.keys(this.props.navigationNodeSummaries)
-      const paths = []
-      lists.map(item => {
+      let renderHome = false
+      const noNodePaths = {
+        '/upsell-banner/': true,
+        // TODO: figure out why /library/playlists is filtered out by selectors in (node_selectors)
+        // and remove this node from noNodePaths
+        "/library/playlists": true
+      }
+      let count = 0;
+      lists.map((item, index) => {
         const string = this.getNode(item)
-        paths.push(string)
+        const node = this.props.nodes[string];
+        if (node && node.result || noNodePaths[string]) count++
+        if (count === lists.length) renderHome = true;
+        else console.log(`Still loading nodes...`)
       })
 
-      let renderHome = true
       if (renderHome) {
         return (<Home
           catalog={this.props.catalog}
