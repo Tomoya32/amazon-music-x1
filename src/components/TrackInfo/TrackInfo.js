@@ -12,16 +12,17 @@ const TrackInfo = ({title, artist, album, image, shuffle, onNext, onShuffleNext,
     <div className={style.TrackInfo}>
       {image && (<img src={image.uri} alt={title} />)}
       <div className='TrackDeets'>
-        <label className='title'>{title}</label>
-        {(artistName || albumName) && (
-          <label className='subtitle'>{trackDeetsSubtitle}</label>
-        )}
+        <div className='titleSection'>
+          <label className='title'>{title}</label>
+          {(artistName || albumName) && (
+            <label className='subtitle'>{trackDeetsSubtitle}</label>
+          )}
+        </div>
         <PlayerControls
           menuid='playback:playercontrols'
           focused={isFocused('playback:playercontrols')}
           onFocusItem={'playback:playercontrols:pause'}
           onFarRight={changeFocus('shuffleNextTrack')}
-          trackRating={trackRating}
           shuffle={shuffle}
           onDown={onDown}
           trackRating={trackRating}

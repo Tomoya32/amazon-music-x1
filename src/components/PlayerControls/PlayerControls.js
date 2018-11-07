@@ -54,45 +54,48 @@ class PlayerControls extends Component {
       'thumbsUp-set-off': (!isFocused(getMenuId('thumbsUp')) && thumbedUp)
     })
 
+    const paused = playerControlsState === 'paused'
     const playPauseIconClass = cx('pauseButton', {
+      paused: paused,
       'pause-on': playerControlsState !== 'paused' && isFocused(getMenuId('pause')),
       'pause-off': playerControlsState !== 'paused' && !isFocused(getMenuId('pause')),
       'play-on': playerControlsState === 'paused' && isFocused(getMenuId('pause')),
       'play-off': playerControlsState === 'paused' && !isFocused(getMenuId('pause')),
       largeButton: true
     })
-    const paused = playerControlsState === 'paused'
 
     return (
-      <div className={style.PlayerControls}>
-        <div className='ThumbSection'>
-          {showThumbs && <Button
-            mid={getMenuId('thumbUp')}
-            menuid={getMenuId('thumbUp')}
-            className={classForThumbsUp}
-            focused={isFocused(getMenuId('thumbUp'))}
-            onDown={changeFocus(getMenuId('pause'))}
-            onRight={changeFocus(getMenuId('thumbDown'))}
-            onClick={() => { giveThumbs('thumbs_up') }}
-            onUp={onUp}
-            onLeft={onLeft}
-          >
-            <ThumbIcon fill={isFocused(getMenuId('thumbUp')) && '#53aef5'} />
-          </Button>}
-          {showThumbs && <Button
-            mid={getMenuId('thumbDown')}
-            menuid={getMenuId('thumbDown')}
-            className={cx(`${classForThumbsDown}`,'thumbDown')}
-            focused={isFocused(getMenuId('thumbDown'))}
-            onDown={changeFocus(getMenuId('pause'))}
-            onLeft={changeFocus(getMenuId('thumbUp'))}
-            onClick={() => { giveThumbs('thumbs_down') }}
-            onUp={onUp}
-            onRight={onRight}
-          >
-            <ThumbIcon fill={isFocused(getMenuId('thumbDown')) && '#53aef5'} />
-          </Button>}
-        </div>
+      <div className={cx(style.PlayerControls, {showThumbs})}>
+        { showThumbs &&
+          <div className='ThumbSection'>
+            <Button
+              mid={getMenuId('thumbUp')}
+              menuid={getMenuId('thumbUp')}
+              className={classForThumbsUp}
+              focused={isFocused(getMenuId('thumbUp'))}
+              onDown={changeFocus(getMenuId('pause'))}
+              onRight={changeFocus(getMenuId('thumbDown'))}
+              onClick={() => { giveThumbs('thumbs_up') }}
+              onUp={onUp}
+              onLeft={onLeft}
+            >
+              <ThumbIcon fill={isFocused(getMenuId('thumbUp')) && '#53aef5'} />
+            </Button>
+            <Button
+              mid={getMenuId('thumbDown')}
+              menuid={getMenuId('thumbDown')}
+              className={cx(`${classForThumbsDown}`,'thumbDown')}
+              focused={isFocused(getMenuId('thumbDown'))}
+              onDown={changeFocus(getMenuId('pause'))}
+              onLeft={changeFocus(getMenuId('thumbUp'))}
+              onClick={() => { giveThumbs('thumbs_down') }}
+              onUp={onUp}
+              onRight={onRight}
+            >
+              <ThumbIcon fill={isFocused(getMenuId('thumbDown')) && '#53aef5'} />
+            </Button>
+          </div>
+        }
         <div
           className='controls'>
           <Button
